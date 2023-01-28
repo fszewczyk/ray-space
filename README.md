@@ -1,5 +1,7 @@
 # Ray Tracing
 
+![Sample](img/image.png)
+
 ## Building
 
 ### Setup
@@ -11,5 +13,5 @@ chmod +x ./build.sh
 chmod +x ./run.sh
 
 ./build.sh
-./run.sh
+./run.sh > out.ppm
 ```
