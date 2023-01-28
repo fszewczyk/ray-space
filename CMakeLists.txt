@@ -21,6 +21,7 @@ add_library(
 add_library(
     shapes
     src/shapes/sphere.cpp
+    src/shapes/material.cpp
     src/shapes/hittable.hpp
     )
 

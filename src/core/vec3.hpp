@@ -90,6 +90,10 @@ inline vec3 randomInUnitHemisphere(const vec3 &normal) {
 
 inline vec3 randomUnitVector() { return unitVector(randomInUnitSphere()); }
 
+inline vec3 reflect(const vec3 &v, const vec3 &normal) {
+    return v - 2 * dot(v, normal) * normal;
+}
+
 } // namespace fg
 
 #endif

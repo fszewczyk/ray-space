@@ -7,7 +7,7 @@ namespace fg {
 
 class ray {
   public:
-    ray();
+    ray() = default;
     ray(const point3 &origin, const vec3 &direction);
 
     point3 origin() const;

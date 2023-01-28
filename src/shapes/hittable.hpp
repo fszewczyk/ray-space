@@ -2,12 +2,16 @@
 #define HITTABLE_H
 
 #include "core/ray.hpp"
+#include "core/utils.hpp"
 
 namespace fg {
+
+class material;
 
 struct hitData {
     point3 p;
     vec3 normal;
+    shared_ptr<material> material;
     double t;
     bool frontFace;
 

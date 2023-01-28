@@ -8,7 +8,7 @@ namespace fg {
 class sphere : public hittable {
   public:
     sphere();
-    sphere(point3 center, double radius);
+    sphere(point3 center, double radius, shared_ptr<material> mat);
 
     virtual bool hit(const ray &r, double minT, double maxT,
                      hitData &data) const override;
@@ -16,6 +16,7 @@ class sphere : public hittable {
   private:
     point3 m_center;
     double m_radius;
+    shared_ptr<material> m_material;
 };
 
 } // namespace fg

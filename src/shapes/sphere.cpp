@@ -4,8 +4,8 @@
 
 namespace fg {
 
-sphere::sphere(point3 center, double radius)
-    : m_center(center), m_radius(radius) {}
+sphere::sphere(point3 center, double radius, shared_ptr<material> mat)
+    : m_center(center), m_radius(radius), m_material(mat) {}
 
 bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     vec3 displacement = r.origin() - m_center;
@@ -32,6 +32,7 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     data.p = r.at(data.t);
     vec3 outwardNormal = (data.p - m_center) / m_radius;
     data.setFaceNormal(r, outwardNormal);
+    data.material = m_material;
 
     return true;
 }
