@@ -1,3 +1,5 @@
+[![LICENSE](https://img.shields.io/badge/license-BEERWARE-orange)](LICENSE)
+
 # Ray Tracing
 
 ![Sample](img/image.png)
