@@ -65,7 +65,7 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
                 u.x() * v.y() - u.y() * v.x());
 }
 
-inline vec3 unit_vector(const vec3 &v) { return v / v.length(); }
+inline vec3 unitVector(const vec3 &v) { return v / v.length(); }
 
 } // namespace fg
 
