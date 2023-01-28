@@ -80,6 +80,16 @@ inline vec3 randomInUnitSphere() {
     }
 }
 
+inline vec3 randomInUnitHemisphere(const vec3 &normal) {
+    vec3 v = randomInUnitSphere();
+    if (dot(v, normal) > 0)
+        return v;
+    else
+        return -v;
+}
+
+inline vec3 randomUnitVector() { return unitVector(randomInUnitSphere()); }
+
 } // namespace fg
 
 #endif

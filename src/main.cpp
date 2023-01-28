@@ -14,7 +14,8 @@ color rayColor(const ray &r, const hittable &world, int depth) {
 
     hitData data;
     if (world.hit(r, 0.001, infinity, data)) {
-        point3 target = data.p + data.normal + randomInUnitSphere();
+        point3 target =
+            data.p + data.normal + randomInUnitHemisphere(data.normal);
         return 0.5 * rayColor(ray(data.p, target - data.p), world, depth - 1);
     }
 
@@ -27,8 +28,8 @@ int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
-    const int samplesPerPixel = 100;
-    const int maxDepth = 50;
+    const int samplesPerPixel = 200;
+    const int maxDepth = 100;
 
     hittableWorld world;
     world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
