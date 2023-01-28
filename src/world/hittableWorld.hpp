@@ -1,7 +1,7 @@
 #ifndef HITTABLE_WORLD_H
 #define HITTABLE_WORLD_H
 
-#include "hittable.hpp"
+#include "shapes/hittable.hpp"
 
 #include <memory>
 #include <vector>

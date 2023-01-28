@@ -1,4 +1,4 @@
-#include "shapes/hittableWorld.hpp"
+#include "world/hittableWorld.hpp"
 
 namespace fg {
 

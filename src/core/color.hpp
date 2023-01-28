@@ -1,16 +1,20 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "vec3.hpp"
+#include "core/utils.hpp"
 
 #include <iostream>
 
 namespace fg {
 
 void writeColor(std::ostream &out, color pixelColor) {
-    out << static_cast<int>(255.999 * pixelColor.x()) << ' '
-        << static_cast<int>(255.999 * pixelColor.y()) << ' '
-        << static_cast<int>(255.999 * pixelColor.z()) << '\n';
+    auto r = pixelColor.x();
+    auto g = pixelColor.y();
+    auto b = pixelColor.z();
+
+    out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
 
 } // namespace fg

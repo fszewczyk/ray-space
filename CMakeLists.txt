@@ -13,16 +13,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_library(
     core
     src/core/vec3.cpp
-    src/core/color.cpp
     src/core/ray.cpp
     src/core/utils.hpp
+    src/core/color.hpp
     )
 
 add_library(
     shapes
     src/shapes/sphere.cpp
-    src/shapes/hittableWorld.cpp
     src/shapes/hittable.hpp
+    )
+
+add_library(
+    world
+    src/world/hittableWorld.cpp
+    src/world/camera.cpp
     )
 
 
@@ -32,8 +37,9 @@ add_executable(freengine src/main.cpp)
 
 target_include_directories(freengine PRIVATE src)
 target_include_directories(shapes PRIVATE src)
+target_include_directories(world PRIVATE src)
 
-target_link_libraries(freengine PRIVATE core shapes)
+target_link_libraries(freengine PRIVATE core shapes world)
 
 
 
