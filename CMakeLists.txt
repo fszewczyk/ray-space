@@ -9,4 +9,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+add_library(
+    core
+    src/core/vec3.cpp
+    src/core/color.cpp
+    )
+
 add_executable(ray src/main.cpp)
+
+target_link_libraries(ray PRIVATE core)
