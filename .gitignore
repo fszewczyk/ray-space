@@ -1,1 +1,5 @@
 build/
+.vscode
+.vscode/*.json
+*.ppm
+.clang-format
