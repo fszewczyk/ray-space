@@ -1,12 +1,23 @@
 #include "core/color.hpp"
-#include "core/ray.hpp"
-#include "core/vec3.hpp"
+#include "core/utils.hpp"
+#include "shapes/hittableWorld.hpp"
+#include "shapes/sphere.hpp"
 
 #include <iostream>
 
-int main(int argc, char *argv[]) {
-    using namespace fg;
+using namespace fg;
 
+color rayColor(const ray &r, const hittableWorld &world) {
+    hitData data;
+    if (world.hit(r, 0, infinity, data))
+        return 0.5 * (data.normal + color(1, 1, 1));
+
+    vec3 unitDirection = unitVector(r.direction());
+    auto t = 0.5 * (unitDirection.y() + 1.0);
+    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+}
+
+int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
@@ -14,6 +25,10 @@ int main(int argc, char *argv[]) {
     auto viewportHeight = 2.0;
     auto viewportWidth = aspectRatio * viewportHeight;
     auto focalLength = 1.0;
+
+    hittableWorld world;
+    world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+    world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
     point3 origin(0, 0, 0);
     vec3 horizontal(viewportWidth, 0, 0);
@@ -32,7 +47,7 @@ int main(int argc, char *argv[]) {
             ray r(origin,
                   lowerLeftCorner + u * horizontal + v * vertical - origin);
 
-            color pixel = ray::rayColor(r);
+            color pixel = rayColor(r, world);
 
             writeColor(std::cout, pixel);
         }

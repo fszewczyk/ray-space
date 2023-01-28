@@ -11,6 +11,10 @@ double vec3::x() const { return m_cords[0]; }
 double vec3::y() const { return m_cords[1]; }
 double vec3::z() const { return m_cords[2]; }
 
+vec3 vec3::operator-() const {
+    return vec3(-m_cords[0], -m_cords[1], -m_cords[2]);
+}
+
 double vec3::operator[](int i) const { return m_cords[i]; }
 double &vec3::operator[](int i) { return m_cords[i]; }
 

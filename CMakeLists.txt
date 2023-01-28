@@ -15,13 +15,27 @@ add_library(
     src/core/vec3.cpp
     src/core/color.cpp
     src/core/ray.cpp
+    src/core/utils.hpp
+    )
+
+add_library(
+    shapes
+    src/shapes/sphere.cpp
+    src/shapes/hittableWorld.cpp
+    src/shapes/hittable.hpp
     )
 
 
 set(SOURCES src/main.cpp)
 
-add_executable(freengine ${SOURCES})
+add_executable(freengine src/main.cpp)
 
-target_link_libraries(freengine PRIVATE core)
+target_include_directories(freengine PRIVATE src)
+target_include_directories(shapes PRIVATE src)
+
+target_link_libraries(freengine PRIVATE core shapes)
+
+
+
 
 

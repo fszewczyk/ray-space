@@ -15,8 +15,6 @@ class ray {
 
     point3 at(double t) const;
 
-    static color rayColor(const ray &r);
-
   private:
     point3 m_origin;
     point3 m_direction;
