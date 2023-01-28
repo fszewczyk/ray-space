@@ -36,6 +36,7 @@ set(SOURCES src/main.cpp)
 add_executable(freengine src/main.cpp)
 
 target_include_directories(freengine PRIVATE src)
+target_include_directories(core PRIVATE src)
 target_include_directories(shapes PRIVATE src)
 target_include_directories(world PRIVATE src)
 

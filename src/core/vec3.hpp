@@ -25,6 +25,10 @@ class vec3 {
     double length() const;
     double lengthSquared() const;
 
+    static vec3 random();
+    static vec3 random(double min, double max);
+    static vec3 sqrt(const vec3 &v);
+
   private:
     double m_cords[3];
 };
@@ -66,6 +70,15 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
 }
 
 inline vec3 unitVector(const vec3 &v) { return v / v.length(); }
+
+inline vec3 randomInUnitSphere() {
+    while (true) {
+        vec3 v = vec3::random(-1, 1);
+        if (v.lengthSquared() >= 1)
+            continue;
+        return v;
+    }
+}
 
 } // namespace fg
 

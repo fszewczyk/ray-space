@@ -8,10 +8,15 @@
 
 using namespace fg;
 
-color rayColor(const ray &r, const hittable &world) {
+color rayColor(const ray &r, const hittable &world, int depth) {
+    if (depth <= 0)
+        return color(0, 0, 0);
+
     hitData data;
-    if (world.hit(r, 0, infinity, data))
-        return 0.5 * (data.normal + color(1, 1, 1));
+    if (world.hit(r, 0.001, infinity, data)) {
+        point3 target = data.p + data.normal + randomInUnitSphere();
+        return 0.5 * rayColor(ray(data.p, target - data.p), world, depth - 1);
+    }
 
     vec3 unitDirection = unitVector(r.direction());
     auto t = 0.5 * (unitDirection.y() + 1.0);
@@ -23,6 +28,7 @@ int main(int argc, char *argv[]) {
     const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
     const int samplesPerPixel = 100;
+    const int maxDepth = 50;
 
     hittableWorld world;
     world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
@@ -41,9 +47,12 @@ int main(int argc, char *argv[]) {
                 auto v = (y + randomDouble()) / (imageHeight - 1);
 
                 ray r = cam.getRay(u, v);
-                pixel += rayColor(r, world);
+                pixel += rayColor(r, world, maxDepth);
             }
+
             pixel /= samplesPerPixel;
+            pixel = color::sqrt(pixel);
+
             writeColor(std::cout, pixel);
         }
     }

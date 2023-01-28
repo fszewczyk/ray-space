@@ -1,4 +1,5 @@
-#include "vec3.hpp"
+#include "core/vec3.hpp"
+#include "core/utils.hpp"
 
 #include <cmath>
 
@@ -45,6 +46,19 @@ double vec3::length() const { return std::sqrt(lengthSquared()); }
 double vec3::lengthSquared() const {
     return m_cords[0] * m_cords[0] + m_cords[1] * m_cords[1] +
            m_cords[2] * m_cords[2];
+}
+
+vec3 vec3::random() {
+    return vec3(randomDouble(), randomDouble(), randomDouble());
+}
+
+vec3 vec3::random(double min, double max) {
+    return vec3(randomDouble(min, max), randomDouble(min, max),
+                randomDouble(min, max));
+}
+
+vec3 vec3::sqrt(const vec3 &v) {
+    return vec3(std::sqrt(v.x()), std::sqrt(v.y()), std::sqrt(v.z()));
 }
 
 } // namespace fg
