@@ -86,8 +86,8 @@ int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 500;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
-    const int samplesPerPixel = 200;
-    const int maxDepth = 50;
+    const int samplesPerPixel = 10;
+    const int maxDepth = 5;
 
     hittableWorld world = randomScene();
 
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
     point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.1;
+    auto aperture = 0.2;
 
     camera cam(lookfrom, lookat, vup, 20, aspectRatio, aperture, dist_to_focus);
 
@@ -108,26 +108,24 @@ int main(int argc, char *argv[]) {
 
     std::cout << "P3\n" << imageWidth << ' ' << imageHeight << "\n255\n";
 
-    std::for_each(verticalPixels.begin(), verticalPixels.end(), [&](int y) {
-        std::cerr << "\rScanlines remaining: " << (imageHeight - y) << ' '
-                  << std::flush;
-        for (int x = 0; x < imageWidth; ++x) {
-            color pixel(0, 0, 0);
-            for (int s = 0; s < samplesPerPixel; ++s) {
+    for (int s = 0; s < samplesPerPixel; ++s) {
+        std::for_each(verticalPixels.begin(), verticalPixels.end(), [&](int y) {
+            std::cerr << "scans remaining: " << samplesPerPixel - s << ' '
+                      << "\rScanlines remaining: " << (imageHeight - y) << ' '
+                      << std::flush;
+            for (int x = 0; x < imageWidth; ++x) {
                 auto u = (x + randomDouble()) / (imageWidth - 1);
                 auto v =
                     ((imageHeight - y) + randomDouble()) / (imageHeight - 1);
 
                 ray r = cam.getRay(u, v);
-                pixel += rayColor(r, world, maxDepth);
+                color c = rayColor(r, world, maxDepth);
+
+                image[y][x] =
+                    image[y][x] * (double(s) / (s + 1)) + (1.0 / (s + 1)) * c;
             }
-
-            pixel /= samplesPerPixel;
-            pixel = color::sqrt(pixel);
-
-            image[y][x] = pixel;
-        }
-    });
+        });
+    }
 
     for (const auto &row : image) {
         for (const auto &pixel : row) {
