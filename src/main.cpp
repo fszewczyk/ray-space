@@ -2,34 +2,17 @@
 #include "core/utils.hpp"
 #include "shapes/material.hpp"
 #include "shapes/sphere.hpp"
+#include "ui/renderer.hpp"
 #include "ui/ui.hpp"
 #include "world/camera.hpp"
 #include "world/hittableWorld.hpp"
 
 #include <iostream>
 #include <numeric>
+#include <thread>
 #include <vector>
 
 using namespace fg;
-
-color rayColor(const ray &r, const hittable &world, int depth) {
-    if (depth <= 0)
-        return color(0, 0, 0);
-
-    hitData data;
-    if (world.hit(r, 0.001, INFINITY, data)) {
-        ray scattered;
-        color attenuation;
-
-        if (data.material->scatter(r, data, attenuation, scattered))
-            return attenuation * rayColor(scattered, world, depth - 1);
-        return color(0, 0, 0);
-    }
-
-    vec3 unitDirection = unitVector(r.direction());
-    auto t = 0.5 * (unitDirection.y() + 1.0);
-    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
-}
 
 hittableWorld randomScene() {
     hittableWorld world;
@@ -83,15 +66,10 @@ hittableWorld randomScene() {
 }
 
 int main(int argc, char *argv[]) {
-    ui interface;
-    while (true) {
-        interface.run();
-    }
     const auto aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 500;
+    const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
-    const int samplesPerPixel = 20;
-    const int maxDepth = 5;
+    const int samplesPerPixel = 1;
 
     hittableWorld world = randomScene();
 
@@ -99,34 +77,25 @@ int main(int argc, char *argv[]) {
     point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.2;
+    auto aperture = 0.3;
 
     camera cam(lookfrom, lookat, vup, 20, aspectRatio, aperture, dist_to_focus);
-
     image im(imageWidth, imageHeight);
+    ui interface(im);
 
-    for (int s = 0; s < samplesPerPixel; ++s) {
-        std::for_each(
-            im.verticalPixels().begin(), im.verticalPixels().end(), [&](int y) {
-                std::cerr << "scans remaining: " << samplesPerPixel - s << ' '
-                          << "\rScanlines remaining: " << (imageHeight - y)
-                          << ' ' << std::flush;
-                std::for_each(im.horizontalPixels().begin(),
-                              im.horizontalPixels().end(), [&](int x) {
-                                  auto u =
-                                      (x + randomDouble()) / (imageWidth - 1);
-                                  auto v =
-                                      ((imageHeight - y) + randomDouble()) /
-                                      (imageHeight - 1);
+    renderer r(world, cam, im);
 
-                                  ray r = cam.getRay(u, v);
-                                  color c = rayColor(r, world, maxDepth);
+    interface.init();
 
-                                  im(x, y) = im(x, y) * (double(s) / (s + 1)) +
-                                             (1.0 / (s + 1)) * c;
-                              });
-            });
+    std::thread renderThread = r.startRendering();
+
+    while (true) {
+        interface.run();
     }
+
+    interface.close();
+
+    return 0;
 
     im.writeImage(std::cout);
 

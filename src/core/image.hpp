@@ -17,6 +17,7 @@ class image {
     std::vector<int> &verticalPixels();
     std::vector<int> &horizontalPixels();
 
+    void clear();
     void writeImage(std::ostream &out) const;
 
     color &operator()(int x, int y);

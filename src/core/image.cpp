@@ -23,7 +23,12 @@ void image::writeImage(std::ostream &out) const {
 }
 
 int image::width() const { return m_width; }
-int image::height() const { return m_width; }
+int image::height() const { return m_height; }
+
+void image::clear() {
+    std::fill(m_data.begin(), m_data.end(),
+              std::vector<color>(m_width, color(0, 0, 0)));
+}
 
 std::vector<int> &image::verticalPixels() { return m_verticalPixels; }
 std::vector<int> &image::horizontalPixels() { return m_horizontalPixels; }
