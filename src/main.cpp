@@ -2,6 +2,7 @@
 #include "core/utils.hpp"
 #include "shapes/material.hpp"
 #include "shapes/sphere.hpp"
+#include "ui/ui.hpp"
 #include "world/camera.hpp"
 #include "world/hittableWorld.hpp"
 
@@ -82,6 +83,10 @@ hittableWorld randomScene() {
 }
 
 int main(int argc, char *argv[]) {
+    ui interface;
+    while (true) {
+        interface.run();
+    }
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 500;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);

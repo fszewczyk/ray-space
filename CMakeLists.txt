@@ -49,10 +49,10 @@ target_include_directories(freengine PRIVATE src)
 target_include_directories(core PRIVATE src)
 target_include_directories(shapes PRIVATE src)
 target_include_directories(world PRIVATE src)
-target_include_directories(ui PRIVATE src)
+target_include_directories(ui PRIVATE ${CMAKE_BINARY_DIR}/_deps/imgui-src ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
 
-target_link_libraries(freengine PRIVATE core shapes world)
-target_link_libraries(ui PRIVATE imgui)
+target_link_libraries(freengine PRIVATE core shapes world ui imgui glfw glad)
+target_link_libraries(ui PRIVATE imgui glfw glad)
 
 
 
