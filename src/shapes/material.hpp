@@ -35,6 +35,19 @@ class metal : public material {
     double m_fuzz;
 };
 
+class refractor : public material {
+  public:
+    refractor(double eta);
+
+    virtual bool scatter(const ray &rayIn, const hitData &data,
+                         color &attenuation, ray &rayOut) const override;
+
+  private:
+    static double reflectance(double cosine, double eta);
+
+    double m_eta;
+};
+
 } // namespace fg
 
 #endif

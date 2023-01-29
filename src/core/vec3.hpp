@@ -1,6 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include <cmath>
 #include <iostream>
 
 namespace fg {
@@ -92,6 +93,15 @@ inline vec3 randomUnitVector() { return unitVector(randomInUnitSphere()); }
 
 inline vec3 reflect(const vec3 &v, const vec3 &normal) {
     return v - 2 * dot(v, normal) * normal;
+}
+
+inline vec3 refract(const vec3 &u, const vec3 &normal, double refractionRatio) {
+    auto cosTheta = fmin(dot(-u, normal), 1.0);
+    vec3 outParpendicular = refractionRatio * (u + cosTheta * normal);
+    vec3 outParallel =
+        -sqrt(fabs(1.0 - outParpendicular.lengthSquared())) * normal;
+
+    return outParpendicular + outParallel;
 }
 
 } // namespace fg
