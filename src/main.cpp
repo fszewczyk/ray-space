@@ -1,11 +1,10 @@
-#include "core/color.hpp"
+#include "core/image.hpp"
 #include "core/utils.hpp"
 #include "shapes/material.hpp"
 #include "shapes/sphere.hpp"
 #include "world/camera.hpp"
 #include "world/hittableWorld.hpp"
 
-#include <execution>
 #include <iostream>
 #include <numeric>
 #include <vector>
@@ -38,8 +37,8 @@ hittableWorld randomScene() {
         make_shared<sphere>(point3(0, -1000, 0), 1000,
                             make_shared<lambertian>(color(0.5, 0.5, 0.5))));
 
-    for (int a = -11; a < 11; a++) {
-        for (int b = -11; b < 11; b++) {
+    for (int a = -11; a < 11; a += 6) {
+        for (int b = -11; b < 11; b += 6) {
             auto choose_mat = randomDouble();
             point3 center(a + 0.9 * randomDouble(), 0.2,
                           b + 0.9 * randomDouble());
@@ -86,7 +85,7 @@ int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 500;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
-    const int samplesPerPixel = 10;
+    const int samplesPerPixel = 20;
     const int maxDepth = 5;
 
     hittableWorld world = randomScene();
@@ -99,39 +98,32 @@ int main(int argc, char *argv[]) {
 
     camera cam(lookfrom, lookat, vup, 20, aspectRatio, aperture, dist_to_focus);
 
-    std::vector<std::vector<color>> image(imageHeight,
-                                          std::vector<color>(imageWidth));
-    std::vector<int> verticalPixels(imageHeight);
-    std::vector<int> horizontalPixels(imageWidth);
-    std::iota(verticalPixels.begin(), verticalPixels.end(), 0);
-    std::iota(horizontalPixels.begin(), horizontalPixels.end(), 0);
-
-    std::cout << "P3\n" << imageWidth << ' ' << imageHeight << "\n255\n";
+    image im(imageWidth, imageHeight);
 
     for (int s = 0; s < samplesPerPixel; ++s) {
-        std::for_each(verticalPixels.begin(), verticalPixels.end(), [&](int y) {
-            std::cerr << "scans remaining: " << samplesPerPixel - s << ' '
-                      << "\rScanlines remaining: " << (imageHeight - y) << ' '
-                      << std::flush;
-            for (int x = 0; x < imageWidth; ++x) {
-                auto u = (x + randomDouble()) / (imageWidth - 1);
-                auto v =
-                    ((imageHeight - y) + randomDouble()) / (imageHeight - 1);
+        std::for_each(
+            im.verticalPixels().begin(), im.verticalPixels().end(), [&](int y) {
+                std::cerr << "scans remaining: " << samplesPerPixel - s << ' '
+                          << "\rScanlines remaining: " << (imageHeight - y)
+                          << ' ' << std::flush;
+                std::for_each(im.horizontalPixels().begin(),
+                              im.horizontalPixels().end(), [&](int x) {
+                                  auto u =
+                                      (x + randomDouble()) / (imageWidth - 1);
+                                  auto v =
+                                      ((imageHeight - y) + randomDouble()) /
+                                      (imageHeight - 1);
 
-                ray r = cam.getRay(u, v);
-                color c = rayColor(r, world, maxDepth);
+                                  ray r = cam.getRay(u, v);
+                                  color c = rayColor(r, world, maxDepth);
 
-                image[y][x] =
-                    image[y][x] * (double(s) / (s + 1)) + (1.0 / (s + 1)) * c;
-            }
-        });
+                                  im(x, y) = im(x, y) * (double(s) / (s + 1)) +
+                                             (1.0 / (s + 1)) * c;
+                              });
+            });
     }
 
-    for (const auto &row : image) {
-        for (const auto &pixel : row) {
-            writeColor(std::cout, pixel);
-        }
-    }
+    im.writeImage(std::cout);
 
     std::cerr << "\nDone\n";
 

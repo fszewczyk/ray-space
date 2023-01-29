@@ -15,7 +15,7 @@ add_library(
     src/core/vec3.cpp
     src/core/ray.cpp
     src/core/utils.hpp
-    src/core/color.hpp
+    src/core/image.cpp
     )
 
 add_library(
