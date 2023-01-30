@@ -1,6 +1,6 @@
 [![LICENSE](https://img.shields.io/badge/license-BEERWARE-orange)](LICENSE)
 
-# Ray Tracing
+# Shkyera Engine
 
 ![Sample](img/image.png)
 
