@@ -1,7 +1,6 @@
 #include "ui.hpp"
 #include "core/utils.hpp"
 
-#include "imgui.h"
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <glad/glad.h>
@@ -17,7 +16,7 @@
 
 namespace fg {
 
-ui::ui(image &im) : m_image(im), m_loadedImage(false) {}
+ui::ui(image &im) : m_renderWindow(im) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -52,7 +51,7 @@ void ui::init() { // Setup window
 #endif
 
     // Create window with graphics context
-    m_window = glfwCreateWindow(1280, 720, "Freengine", NULL, NULL);
+    m_window = glfwCreateWindow(1280, 720, "SHKYERA Engine", NULL, NULL);
     if (m_window == NULL)
         return;
 
@@ -63,8 +62,11 @@ void ui::init() { // Setup window
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    m_io = ImGui::GetIO();
-    (void)m_io;
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |=
+        ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -82,6 +84,11 @@ void ui::init() { // Setup window
 void ui::run() {
     // Main loop
     if (!glfwWindowShouldClose(m_window)) {
+        glfwPollEvents();
+
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to
         // tell if dear imgui wants to use your inputs.
@@ -92,36 +99,81 @@ void ui::run() {
         // data to your main application, or clear/overwrite your copy of the
         // keyboard data. Generally you may always pass all inputs to dear
         // imgui, and hide them from your application based on those two flags.
-        glfwPollEvents();
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in
-        // ImGui::ShowDemoWindow()! You can browse its code to learn more about
-        // Dear ImGui!).
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End
-        // pair to create a named window.
+        ImGuiWindowFlags window_flags =
+            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+
+        bool open = true;
+        ImGui::Begin("Shkyera Engine", &open, window_flags);
+        ImGui::PopStyleVar(3);
+
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Load scene")) {
+                }
+                if (ImGui::MenuItem("Save scene")) {
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
+        ImGuiIO &io = ImGui::GetIO();
+
+        if (io.ConfigFlags) {
+            ImGuiID dockspace_id = ImGui::GetID("Shkyera Engine");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
+                             ImGuiDockNodeFlags_PassthruCentralNode |
+                                 ImGuiDockNodeFlags_NoWindowMenuButton);
+
+            static auto firstTime = true;
+            if (firstTime) {
+                firstTime = false;
+
+                ImGui::DockBuilderRemoveNode(dockspace_id);
+                ImGui::DockBuilderAddNode(
+                    dockspace_id, ImGuiDockNodeFlags_PassthruCentralNode |
+                                      ImGuiDockNodeFlags_DockSpace);
+                ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+                ImGuiID dock_id_left, dock_id_right, dock_id_top_right,
+                    dock_id_bottom_right;
+                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f,
+                                            &dock_id_right, &dock_id_left);
+
+                ImGui::DockBuilderDockWindow("Settings", dock_id_left);
+                ImGui::DockBuilderDockWindow("Render", dock_id_right);
+                ImGui::DockBuilderFinish(dockspace_id);
+            }
+        }
+
+        ImGui::End();
+
+        m_renderWindow.render();
+
         {
             static float f = 0.0f;
             static int counter = 0;
-
-            ImGui::Begin("Camera Settings"); // Create a window called "Hello,
-                                             // world!" and append into it.
-            ImGui::End();
-        }
-
-        updateImageTexture();
-
-        {
-            ImGui::Begin("Render");
-
-            if (m_loadedImage)
-                ImGui::Image((void *)m_loadTexId,
-                             ImVec2(m_loadWidth, m_loadHeight));
+            ImGui::Begin("Settings"); // Create a window called
+            if (ImGui::Button("Reset")) {
+                m_renderWindow.getImage().clear();
+            }
 
             ImGui::End();
         }
@@ -152,41 +204,6 @@ void ui::close() {
 
     glfwDestroyWindow(m_window);
     glfwTerminate();
-}
-
-void ui::updateImageTexture() {
-    m_loadWidth = m_image.width();
-    m_loadHeight = m_image.height();
-
-    if (m_renderTexture.size() == 0)
-        m_renderTexture.resize(4 * m_loadWidth * m_loadHeight);
-
-    for (size_t y = 0; y < m_loadHeight; ++y) {
-        for (size_t x = 0; x < m_loadWidth; ++x) {
-            const color &c = m_image(x, y);
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 0] =
-                uint8_t(fabs(c[0] * 255));
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 1] =
-                uint8_t(fabs(c[1] * 255));
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 2] =
-                uint8_t(fabs(c[2] * 255));
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 3] = 255;
-        }
-    }
-    if (m_loadedImage)
-        glDeleteTextures(1, &m_loadTexId);
-
-    glGenTextures(1, &m_loadTexId);
-    glBindTexture(GL_TEXTURE_2D, m_loadTexId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_loadWidth, m_loadHeight, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, m_renderTexture.data());
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    m_loadedImage = true;
 }
 
 } // namespace fg

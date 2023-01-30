@@ -4,9 +4,10 @@
 #define GLFW_INCLUDE_NONE
 
 #include "core/image.hpp"
+#include "ui/render/renderWindow.hpp"
 
-#include "GLFW/glfw3.h"
 #include "imgui.h"
+#include <GLFW/glfw3.h>
 
 namespace fg {
 
@@ -19,20 +20,10 @@ class ui {
     void close();
 
   private:
-    void updateImageTexture();
-
-    image &m_image;
+    renderWindow m_renderWindow;
 
     GLFWwindow *m_window;
-    ImGuiIO m_io;
     ImVec4 m_clearColor;
-
-    int m_loadWidth;
-    int m_loadHeight;
-    unsigned m_loadTexId;
-    std::vector<uint8_t> m_renderTexture;
-
-    bool m_loadedImage;
 };
 
 } // namespace fg

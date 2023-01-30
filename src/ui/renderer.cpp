@@ -2,6 +2,7 @@
 #include "shapes/hittable.hpp"
 #include "shapes/material.hpp"
 
+#include <execution>
 #include <iostream>
 #include <numeric>
 #include <vector>
@@ -9,13 +10,11 @@
 namespace fg {
 
 renderer::renderer(hittableWorld &world, camera &cam, image &im)
-    : m_world(world), m_cam(cam), m_image(im), m_stop(false) {}
+    : m_world(world), m_cam(cam), m_image(im) {}
 
 std::thread renderer::startRendering() {
     return std::thread([this] { render(); });
 }
-
-void renderer::resetRender() { m_stop = true; }
 
 void renderer::render() {
     const int maxDepth = 5;
@@ -26,12 +25,6 @@ void renderer::render() {
     int samplesTaken = 0;
 
     while (true) {
-        if (m_stop) {
-            clearScene();
-            m_stop = false;
-            return;
-        }
-
         std::for_each(
             m_image.verticalPixels().begin(), m_image.verticalPixels().end(),
             [&](int y) {

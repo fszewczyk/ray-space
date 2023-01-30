@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.10)
 
 project(freengine)
 
+message(${CMAKE_C_COMPILER})
+message(${CMAKE_CXX_COMPILER})
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=libc++  -O3")
 
 set(FETCHCONTENT_BASE_DIR ${CMAKE_BINARY_DIR}/_deps)
 
@@ -39,6 +42,7 @@ add_library(
     ui
     src/ui/ui.cpp
     src/ui/renderer.cpp
+    src/ui/render/renderWindow.cpp
     )
 
 

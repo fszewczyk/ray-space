@@ -67,7 +67,7 @@ hittableWorld randomScene() {
 
 int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 400;
+    const int imageWidth = 1000;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
     const int samplesPerPixel = 1;
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     point3 lookat(0, 0, 0);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.3;
+    auto aperture = 0.1;
 
     camera cam(lookfrom, lookat, vup, 20, aspectRatio, aperture, dist_to_focus);
     image im(imageWidth, imageHeight);

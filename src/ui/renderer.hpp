@@ -15,14 +15,11 @@ class renderer {
     renderer(hittableWorld &world, camera &cam, image &im);
 
     std::thread startRendering();
-    void resetRender();
 
   private:
     void render();
     void clearScene();
     color rayColor(const ray &r, int depth);
-
-    bool m_stop;
 
     image &m_image;
     hittableWorld &m_world;
