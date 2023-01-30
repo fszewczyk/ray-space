@@ -8,24 +8,35 @@
 
 #include <thread>
 
-namespace fg {
+namespace shkyera {
 
 class renderer {
   public:
-    renderer(hittableWorld &world, camera &cam, image &im);
+    renderer(hittableWorld &world, std::shared_ptr<camera> cam,
+             std::shared_ptr<image> im);
 
-    std::thread startRendering();
+    void startRendering();
+    void stopRendering();
+
+    std::thread &renderingThread();
+
+    bool renderedImage() const;
 
   private:
     void render();
     void clearScene();
     color rayColor(const ray &r, int depth);
 
-    image &m_image;
+    std::shared_ptr<image> m_image;
+    std::shared_ptr<camera> m_cam;
     hittableWorld &m_world;
-    camera &m_cam;
+
+    bool m_stop;
+    bool m_renderedImage;
+
+    std::thread m_renderingThread;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

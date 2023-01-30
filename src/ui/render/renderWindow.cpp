@@ -7,33 +7,34 @@
 #endif
 #include <glad/glad.h>
 
-namespace fg {
+namespace shkyera {
 
-renderWindow::renderWindow(image &im) : m_image(im) { m_loadedImage = false; }
+renderWindow::renderWindow(std::shared_ptr<image> im) : m_image(im) {
+    m_loadedImage = false;
+}
 
-void renderWindow::render() {
-    updateImageTexture();
+void renderWindow::render(bool sampleTexture) {
+    if (sampleTexture)
+        updateImageTexture();
     {
         ImGui::Begin("Render");
 
-        if (m_loadedImage)
-            ImGui::Image((void *)m_loadTexId,
-                         ImVec2(m_loadWidth, m_loadHeight));
+        ImGui::Image((void *)m_loadTexId, ImVec2(m_loadWidth, m_loadHeight));
 
         ImGui::End();
     }
 }
 
 void renderWindow::updateImageTexture() {
-    m_loadWidth = m_image.width();
-    m_loadHeight = m_image.height();
+    m_loadWidth = m_image->width();
+    m_loadHeight = m_image->height();
 
     if (m_renderTexture.size() == 0)
         m_renderTexture.resize(4 * m_loadWidth * m_loadHeight);
 
     for (size_t y = 0; y < m_loadHeight; ++y) {
         for (size_t x = 0; x < m_loadWidth; ++x) {
-            const color &c = m_image(x, y);
+            const color &c = m_image->at(x, y);
             m_renderTexture[(y * m_loadWidth + x) * 4 + 0] =
                 uint8_t(fabs(c[0] * 255));
             m_renderTexture[(y * m_loadWidth + x) * 4 + 1] =
@@ -59,6 +60,6 @@ void renderWindow::updateImageTexture() {
     m_loadedImage = true;
 }
 
-image &renderWindow::getImage() const { return m_image; }
+std::shared_ptr<image> renderWindow::getImage() const { return m_image; }
 
-} // namespace fg
+} // namespace shkyera

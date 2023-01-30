@@ -2,7 +2,7 @@
 
 #include <numeric>
 
-namespace fg {
+namespace shkyera {
 
 image::image(int width, int height)
     : m_width(width), m_height(height),
@@ -44,5 +44,6 @@ void image::writeColor(std::ostream &out, color pixelColor) const {
 }
 
 color &image::operator()(int x, int y) { return m_data[y][x]; }
+color &image::at(int x, int y) { return m_data[y][x]; }
 
-} // namespace fg
+} // namespace shkyera

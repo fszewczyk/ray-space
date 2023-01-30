@@ -4,7 +4,7 @@
 #include "core/ray.hpp"
 #include "core/utils.hpp"
 
-namespace fg {
+namespace shkyera {
 
 class material;
 
@@ -27,6 +27,6 @@ class hittable {
                      hitData &data) const = 0;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

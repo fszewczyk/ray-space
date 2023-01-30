@@ -3,20 +3,20 @@
 
 #include "core/image.hpp"
 
-namespace fg {
+namespace shkyera {
 
 class renderWindow {
   public:
-    renderWindow(image &im);
+    renderWindow(std::shared_ptr<image> im);
 
-    void render();
+    void render(bool sampleTexture);
 
-    image &getImage() const;
+    std::shared_ptr<image> getImage() const;
 
   private:
     void updateImageTexture();
 
-    image &m_image;
+    std::shared_ptr<image> m_image;
 
     int m_loadWidth;
     int m_loadHeight;
@@ -26,6 +26,6 @@ class renderWindow {
     bool m_loadedImage;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

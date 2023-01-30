@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace fg {
+namespace shkyera {
 
 vec3::vec3() : m_cords{0, 0, 0} {}
 vec3::vec3(double x, double y, double z) : m_cords{x, y, z} {}
@@ -61,4 +61,4 @@ vec3 vec3::sqrt(const vec3 &v) {
     return vec3(std::sqrt(v.x()), std::sqrt(v.y()), std::sqrt(v.z()));
 }
 
-} // namespace fg
+} // namespace shkyera

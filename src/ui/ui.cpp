@@ -14,9 +14,11 @@
 #endif
 #include <GLFW/glfw3.h>
 
-namespace fg {
+namespace shkyera {
 
-ui::ui(image &im) : m_renderWindow(im) {}
+ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
+       std::shared_ptr<camera> cam)
+    : m_renderWindow(im), m_renderer(renderer), m_cameraSettingsWindow(cam) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -39,15 +41,17 @@ void ui::init() { // Setup window
     const char *glsl_version = "#version 150";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
+    glfwWindowHint(GLFW_OPENGL_PROFILE,
+                   GLFW_OPENGL_CORE_PROFILE);            // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Required on Mac
 #else
     // GL 3.0 + GLSL 130
     const char *glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+
-    // only glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // 3.0+ only
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // // 3.2+ only glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    // // 3.0+ only
 #endif
 
     // Create window with graphics context
@@ -90,15 +94,16 @@ void ui::run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to
-        // tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data
-        // to your main application, or clear/overwrite your copy of the mouse
-        // data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input
-        // data to your main application, or clear/overwrite your copy of the
-        // keyboard data. Generally you may always pass all inputs to dear
-        // imgui, and hide them from your application based on those two flags.
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard
+        // flags to tell if dear imgui wants to use your inputs.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input
+        // data to your main application, or clear/overwrite your copy of
+        // the mouse data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard
+        // input data to your main application, or clear/overwrite your copy
+        // of the keyboard data. Generally you may always pass all inputs to
+        // dear imgui, and hide them from your application based on those
+        // two flags.
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -157,7 +162,7 @@ void ui::run() {
                 ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f,
                                             &dock_id_right, &dock_id_left);
 
-                ImGui::DockBuilderDockWindow("Settings", dock_id_left);
+                ImGui::DockBuilderDockWindow("Camera", dock_id_left);
                 ImGui::DockBuilderDockWindow("Render", dock_id_right);
                 ImGui::DockBuilderFinish(dockspace_id);
             }
@@ -165,18 +170,19 @@ void ui::run() {
 
         ImGui::End();
 
-        m_renderWindow.render();
+        bool updatedSettings = false;
+        m_cameraSettingsWindow.render(updatedSettings);
 
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-            ImGui::Begin("Settings"); // Create a window called
-            if (ImGui::Button("Reset")) {
-                m_renderWindow.getImage().clear();
-            }
-
-            ImGui::End();
+        if (updatedSettings) {
+            m_renderer->stopRendering();
+            m_renderer->renderingThread().join();
+            m_renderer->startRendering();
         }
+
+        if (m_renderer->renderedImage())
+            m_renderWindow.render(true);
+        else
+            m_renderWindow.render(false);
 
         // Rendering
         ImGui::Render();
@@ -206,4 +212,4 @@ void ui::close() {
     glfwTerminate();
 }
 
-} // namespace fg
+} // namespace shkyera

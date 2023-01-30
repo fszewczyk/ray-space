@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace fg {
+namespace shkyera {
 
 class image {
   public:
@@ -21,6 +21,7 @@ class image {
     void writeImage(std::ostream &out) const;
 
     color &operator()(int x, int y);
+    color &at(int x, int y);
 
   private:
     void writeColor(std::ostream &out, color pixelColor) const;
@@ -34,6 +35,6 @@ class image {
     std::vector<int> m_horizontalPixels;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

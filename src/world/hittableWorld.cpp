@@ -1,6 +1,6 @@
 #include "world/hittableWorld.hpp"
 
-namespace fg {
+namespace shkyera {
 
 hittableWorld::hittableWorld(shared_ptr<hittable> object) { add(object); }
 
@@ -26,4 +26,4 @@ bool hittableWorld::hit(const ray &r, double minT, double maxT,
     return hitAnything;
 }
 
-} // namespace fg
+} // namespace shkyera

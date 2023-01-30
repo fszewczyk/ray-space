@@ -1,6 +1,6 @@
 #include "world/camera.hpp"
 
-namespace fg {
+namespace shkyera {
 
 camera::camera(point3 lookFrom, point3 lookAt, vec3 up, double verticalFov,
                double aspectRatio, double aperture, double focusDistance) {
@@ -31,4 +31,8 @@ ray camera::getRay(double s, double t) const {
                                       t * m_vertical - m_origin - offset);
 };
 
-} // namespace fg
+point3 camera::getPosition() const { return m_origin; }
+
+void camera::setPosition(point3 p) { m_origin = p; }
+
+} // namespace shkyera

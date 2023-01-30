@@ -9,7 +9,7 @@
 using std::make_shared;
 using std::shared_ptr;
 
-namespace fg {
+namespace shkyera {
 
 class hittableWorld : public hittable {
   public:
@@ -26,6 +26,6 @@ class hittableWorld : public hittable {
     std::vector<shared_ptr<hittable>> m_objects;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

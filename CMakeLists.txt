@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(freengine)
+project(shkyeraEngine)
 
-message(${CMAKE_C_COMPILER})
-message(${CMAKE_CXX_COMPILER})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -43,20 +41,21 @@ add_library(
     src/ui/ui.cpp
     src/ui/renderer.cpp
     src/ui/render/renderWindow.cpp
+    src/ui/settings/cameraSettingsWindow.cpp
     )
 
 
 set(SOURCES src/main.cpp)
 
-add_executable(freengine src/main.cpp)
+add_executable(shkyera src/main.cpp)
 
-target_include_directories(freengine PRIVATE src)
+target_include_directories(shkyera PRIVATE src)
 target_include_directories(core PRIVATE src)
 target_include_directories(shapes PRIVATE src)
 target_include_directories(world PRIVATE src)
 target_include_directories(ui PRIVATE src ${CMAKE_BINARY_DIR}/_deps/imgui-src ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
 
-target_link_libraries(freengine PRIVATE core shapes world ui imgui glfw glad)
+target_link_libraries(shkyera PRIVATE core shapes world ui imgui glfw glad)
 target_link_libraries(ui PRIVATE imgui glfw glad core)
 
 

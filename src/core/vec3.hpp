@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace fg {
+namespace shkyera {
 
 class vec3 {
   public:
@@ -104,6 +104,6 @@ inline vec3 refract(const vec3 &u, const vec3 &normal, double refractionRatio) {
     return outParpendicular + outParallel;
 }
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

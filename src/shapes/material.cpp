@@ -1,6 +1,6 @@
 #include "shapes/material.hpp"
 
-namespace fg {
+namespace shkyera {
 
 lambertian::lambertian(const color &c) : m_albedo(c) {}
 
@@ -55,4 +55,4 @@ double refractor::reflectance(double cosine, double eta) {
     return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
-} // namespace fg
+} // namespace shkyera
