@@ -3,7 +3,7 @@
 
 #include "core/utils.hpp"
 
-namespace fg {
+namespace shkyera {
 
 class camera {
   public:
@@ -11,6 +11,10 @@ class camera {
            double aspectRatio, double aperture, double focusDistance);
 
     ray getRay(double u, double v) const;
+
+    point3 getPosition() const;
+
+    void setPosition(point3 p);
 
   private:
     point3 m_origin;
@@ -21,6 +25,6 @@ class camera {
     double m_lensRadius;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

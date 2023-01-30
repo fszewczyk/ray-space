@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace fg {
+namespace shkyera {
 
 sphere::sphere(point3 center, double radius, shared_ptr<material> mat)
     : m_center(center), m_radius(radius), m_material(mat) {}
@@ -37,4 +37,4 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     return true;
 }
 
-} // namespace fg
+} // namespace shkyera

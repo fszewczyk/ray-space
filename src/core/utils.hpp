@@ -10,7 +10,7 @@ using std::make_shared;
 using std::shared_ptr;
 using std::sqrt;
 
-namespace fg {
+namespace shkyera {
 
 constexpr double INIFINITY = std::numeric_limits<double>::infinity();
 constexpr double PI = 3.1415926535897932385;
@@ -31,7 +31,7 @@ inline double clamp(double x, double min, double max) {
     return x;
 }
 
-} // namespace fg
+} // namespace shkyera
 
 #include "ray.hpp"
 #include "vec3.hpp"

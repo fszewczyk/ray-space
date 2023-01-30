@@ -3,7 +3,7 @@
 
 #include "vec3.hpp"
 
-namespace fg {
+namespace shkyera {
 
 class ray {
   public:
@@ -20,6 +20,6 @@ class ray {
     point3 m_direction;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

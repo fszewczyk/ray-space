@@ -3,7 +3,7 @@
 
 #include "hittable.hpp"
 
-namespace fg {
+namespace shkyera {
 
 class sphere : public hittable {
   public:
@@ -19,6 +19,6 @@ class sphere : public hittable {
     shared_ptr<material> m_material;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

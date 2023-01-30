@@ -4,7 +4,7 @@
 #include "core/utils.hpp"
 #include "shapes/hittable.hpp"
 
-namespace fg {
+namespace shkyera {
 
 class material {
   public:
@@ -48,6 +48,6 @@ class refractor : public material {
     double m_eta;
 };
 
-} // namespace fg
+} // namespace shkyera
 
 #endif

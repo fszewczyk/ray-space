@@ -1,5 +1,9 @@
 build/
+
 .vscode
 .vscode/*.json
-*.ppm
+
+imgui.ini
 .clang-format
+
+*.ppm
