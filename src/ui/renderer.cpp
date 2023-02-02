@@ -55,6 +55,8 @@ void renderer::render() {
             return;
         }
 
+        // Whoever reads this, I'm sorry it's done this way. Nothing else
+        // worked.
         std::vector<std::thread> renderingThreads;
 
         for (int y = 0; y < m_image->height(); ++y) {
