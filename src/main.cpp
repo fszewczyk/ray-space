@@ -36,12 +36,11 @@ int main(int argc, char *argv[]) {
     world.add(make_shared<sphere>(point3(4, -1, 0), 1.0, material4));
 
     point3 lookfrom(6, 2, 8);
-    point3 lookat(1000, 0, -10000);
-    vec3 vup(0, 1, 0);
+    point3 lookat(10000, 10000, 10000);
     auto dist_to_focus = 10.0;
     auto aperture = 0.0;
 
-    auto cam = std::make_shared<camera>(lookfrom, lookat, vup, 40, aspectRatio,
+    auto cam = std::make_shared<camera>(lookfrom, lookat, 40, aspectRatio,
                                         aperture, dist_to_focus);
 
     auto im = std::make_shared<image>(imageWidth, imageHeight);

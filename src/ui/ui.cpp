@@ -18,7 +18,7 @@ namespace shkyera {
 
 ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
        std::shared_ptr<camera> cam)
-    : m_renderWindow(im), m_renderer(renderer), m_camera(cam),
+    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam),
       m_cameraSettingsWindow(cam) {}
 
 void glfw_error_callback(int error, const char *description) {
@@ -179,10 +179,19 @@ void ui::run() {
             newCameraPosition = m_camera->getPosition();
 
         point3 cameraTranslation;
+        std::pair<int, int> mouseMovement;
+
         if (m_renderer->renderedImage())
-            cameraTranslation = m_renderWindow.render(true, updatedSettings);
+            cameraTranslation =
+                m_renderWindow.render(true, updatedSettings, mouseMovement);
         else
-            cameraTranslation = m_renderWindow.render(false, updatedSettings);
+            cameraTranslation =
+                m_renderWindow.render(false, updatedSettings, mouseMovement);
+
+        vec3 newCameraDirection = m_camera->getDirection();
+        newCameraDirection +=
+            vec3(-mouseMovement.first * 0.02, mouseMovement.second * 0.02, 0);
+        newCameraDirection = unitVector(newCameraDirection);
 
         newCameraPosition += cameraTranslation;
 
@@ -190,7 +199,10 @@ void ui::run() {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
 
+            std::cout << newCameraDirection << m_camera->getDirection() << '\n';
+
             m_camera->setPosition(newCameraPosition);
+            m_camera->setDirection(newCameraDirection);
 
             m_renderer->startRendering();
         }

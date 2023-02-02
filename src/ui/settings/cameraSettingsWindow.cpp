@@ -16,8 +16,6 @@ point3 cameraSettingsWindow::render(bool &updated) {
 
     vec3 cameraPosition = m_camera->getPosition();
 
-    std::cout << cameraPosition;
-
     float cameraPositionX = cameraPosition[0];
     float cameraPositionY = cameraPosition[1];
     float cameraPositionZ = cameraPosition[2];
