@@ -13,15 +13,36 @@ renderWindow::renderWindow(std::shared_ptr<image> im) : m_image(im) {
     m_loadedImage = false;
 }
 
-void renderWindow::render(bool sampleTexture) {
+point3 renderWindow::render(bool sampleTexture, bool &updated) {
     if (sampleTexture)
         updateImageTexture();
     {
         ImGui::Begin("Render");
 
+        point3 cameraTranslation;
+
+        if (ImGui::IsWindowFocused()) {
+            if (ImGui::IsKeyPressed('W'))
+                cameraTranslation[2] = -0.8;
+            if (ImGui::IsKeyPressed('S'))
+                cameraTranslation[2] = 0.8;
+            if (ImGui::IsKeyPressed('A'))
+                cameraTranslation[0] = -0.8;
+            if (ImGui::IsKeyPressed('D'))
+                cameraTranslation[0] = 0.8;
+            if (ImGui::IsKeyPressed('Q'))
+                cameraTranslation[1] = -0.8;
+            if (ImGui::IsKeyPressed('E'))
+                cameraTranslation[2] = 0.8;
+        }
+
         ImGui::Image((void *)m_loadTexId, ImVec2(m_loadWidth, m_loadHeight));
 
         ImGui::End();
+
+        updated |= cameraTranslation.lengthSquared() != 0;
+
+        return cameraTranslation;
     }
 }
 

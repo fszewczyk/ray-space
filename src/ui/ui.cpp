@@ -161,10 +161,10 @@ void ui::run() {
                 ImGuiID dock_id_left, dock_id_right, dock_id_top_right,
                     dock_id_bottom_right;
                 ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f,
-                                            &dock_id_right, &dock_id_left);
+                                            &dock_id_left, &dock_id_right);
 
-                ImGui::DockBuilderDockWindow("Camera", dock_id_left);
-                ImGui::DockBuilderDockWindow("Render", dock_id_right);
+                ImGui::DockBuilderDockWindow("Camera", dock_id_right);
+                ImGui::DockBuilderDockWindow("Render", dock_id_left);
                 ImGui::DockBuilderFinish(dockspace_id);
             }
         }
@@ -175,6 +175,17 @@ void ui::run() {
         point3 newCameraPosition =
             m_cameraSettingsWindow.render(updatedSettings);
 
+        if (!updatedSettings)
+            newCameraPosition = m_camera->getPosition();
+
+        point3 cameraTranslation;
+        if (m_renderer->renderedImage())
+            cameraTranslation = m_renderWindow.render(true, updatedSettings);
+        else
+            cameraTranslation = m_renderWindow.render(false, updatedSettings);
+
+        newCameraPosition += cameraTranslation;
+
         if (m_renderer->renderedImage() && updatedSettings) {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
@@ -183,11 +194,6 @@ void ui::run() {
 
             m_renderer->startRendering();
         }
-
-        if (m_renderer->renderedImage())
-            m_renderWindow.render(true);
-        else
-            m_renderWindow.render(false);
 
         ImGui::Render();
 

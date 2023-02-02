@@ -14,11 +14,13 @@ point3 cameraSettingsWindow::render(bool &updated) {
     if (ImGui::Button("Reset"))
         updated = true;
 
-    static vec3 cameraPosition = m_camera->getPosition();
+    vec3 cameraPosition = m_camera->getPosition();
 
-    static float cameraPositionX = cameraPosition[0];
-    static float cameraPositionY = cameraPosition[1];
-    static float cameraPositionZ = cameraPosition[2];
+    std::cout << cameraPosition;
+
+    float cameraPositionX = cameraPosition[0];
+    float cameraPositionY = cameraPosition[1];
+    float cameraPositionZ = cameraPosition[2];
 
     if (ImGui::SliderFloat("Position X", &cameraPositionX, -30.0f, 30.0f,
                            "ratio = %.3f"))

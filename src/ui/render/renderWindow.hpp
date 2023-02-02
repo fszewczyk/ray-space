@@ -9,7 +9,7 @@ class renderWindow {
   public:
     renderWindow(std::shared_ptr<image> im);
 
-    void render(bool sampleTexture);
+    point3 render(bool sampleTexture, bool &updated);
 
     std::shared_ptr<image> getImage() const;
 
