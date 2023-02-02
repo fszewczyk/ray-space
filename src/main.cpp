@@ -16,9 +16,8 @@ using namespace shkyera;
 
 int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 450;
+    const int imageWidth = 560;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
-    const int samplesPerPixel = 1;
 
     hittableWorld world;
     auto material1 = make_shared<refractor>(1.5);
@@ -30,19 +29,19 @@ int main(int argc, char *argv[]) {
     auto ground = make_shared<lambertian>(color(0.9, 0.3, 0.3));
     world.add(make_shared<sphere>(point3(0, -100, 0), 100.5, ground));
 
-    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.3);
-    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+    auto material4 = make_shared<metal>(color(1, 0.6, 1), 0.0);
+    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material4));
 
-    auto material4 = make_shared<metal>(color(0.9, 0.9, 0.9), 0.0);
     world.add(make_shared<sphere>(point3(4, -1, 0), 1.0, material4));
 
-    point3 lookfrom(6, 2, 3);
-    point3 lookat(0, 0, 0);
+    point3 lookfrom(6, 2, 8);
+    point3 lookat(1000, 0, -10000);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = 10.0;
     auto aperture = 0.0;
 
-    auto cam = std::make_shared<camera>(lookfrom, lookat, vup, 30, aspectRatio,
+    auto cam = std::make_shared<camera>(lookfrom, lookat, vup, 40, aspectRatio,
                                         aperture, dist_to_focus);
 
     auto im = std::make_shared<image>(imageWidth, imageHeight);

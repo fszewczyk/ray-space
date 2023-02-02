@@ -18,7 +18,8 @@ namespace shkyera {
 
 ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
        std::shared_ptr<camera> cam)
-    : m_renderWindow(im), m_renderer(renderer), m_cameraSettingsWindow(cam) {}
+    : m_renderWindow(im), m_renderer(renderer), m_camera(cam),
+      m_cameraSettingsWindow(cam) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -171,11 +172,15 @@ void ui::run() {
         ImGui::End();
 
         bool updatedSettings = false;
-        m_cameraSettingsWindow.render(updatedSettings);
+        point3 newCameraPosition =
+            m_cameraSettingsWindow.render(updatedSettings);
 
-        if (updatedSettings) {
+        if (m_renderer->renderedImage() && updatedSettings) {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
+
+            m_camera->setPosition(newCameraPosition);
+
             m_renderer->startRendering();
         }
 
@@ -184,7 +189,6 @@ void ui::run() {
         else
             m_renderWindow.render(false);
 
-        // Rendering
         ImGui::Render();
 
         int display_w, display_h;

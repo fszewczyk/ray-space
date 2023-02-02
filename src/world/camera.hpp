@@ -5,6 +5,13 @@
 
 namespace shkyera {
 
+struct cameraConfig {
+    point3 origin;
+    point3 direction;
+    point3 depthOfField;
+    point3 fov;
+};
+
 class camera {
   public:
     camera(point3 lookFrom, point3 lookAt, vec3 up, double verticalFov,
