@@ -2,25 +2,25 @@
 
 namespace shkyera {
 
-camera::camera(point3 lookFrom, point3 lookAt, vec3 up, double verticalFov,
+camera::camera(point3 lookFrom, vec3 direction, double verticalFov,
                double aspectRatio, double aperture, double focusDistance) {
     auto theta = degreesToRadians(verticalFov);
     auto h = tan(theta / 2);
 
-    auto viewportHeight = 2.0 * h;
-    auto viewportWidth = aspectRatio * viewportHeight;
+    m_viewportHeight = 2.0 * h;
+    m_viewportWidth = aspectRatio * m_viewportHeight;
 
-    m_w = unitVector(lookFrom - lookAt);
-    m_u = unitVector(cross(up, m_w));
+    m_w = unitVector(direction);
+    m_u = unitVector(cross(vec3(0, 1, 0), m_w));
     m_v = cross(m_w, m_u);
 
-    m_origin = lookFrom;
-    m_horizontal = focusDistance * viewportWidth * m_u;
-    m_vertical = focusDistance * viewportHeight * m_v;
-    m_lowerLeftCorner =
-        m_origin - m_horizontal / 2 - m_vertical / 2 - focusDistance * m_w;
+    m_focusDistance = focusDistance;
+    m_horizontal = m_focusDistance * m_viewportWidth * m_u;
+    m_vertical = m_focusDistance * m_viewportHeight * m_v;
 
     m_lensRadius = aperture / 2;
+
+    setPosition(lookFrom);
 }
 
 ray camera::getRay(double s, double t) const {
@@ -33,6 +33,25 @@ ray camera::getRay(double s, double t) const {
 
 point3 camera::getPosition() const { return m_origin; }
 
-void camera::setPosition(point3 p) { m_origin = p; }
+void camera::setPosition(point3 p) {
+    m_origin = p;
 
+    m_lowerLeftCorner =
+        m_origin - m_horizontal / 2 - m_vertical / 2 - m_focusDistance * m_w;
+}
+
+vec3 camera::getDirection() const { return m_w; }
+vec3 camera::getSidewaysDirection() const { return m_u; }
+
+vec3 camera::setDirection(vec3 direction) {
+    m_w = unitVector(direction);
+    m_u = unitVector(cross(vec3(0, 1, 0), m_w));
+    m_v = cross(m_w, m_u);
+
+    m_horizontal = m_focusDistance * m_viewportWidth * m_u;
+    m_vertical = m_focusDistance * m_viewportHeight * m_v;
+
+    m_lowerLeftCorner =
+        m_origin - m_horizontal / 2 - m_vertical / 2 - m_focusDistance * m_w;
+}
 } // namespace shkyera

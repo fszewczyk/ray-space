@@ -9,19 +9,67 @@
 
 namespace shkyera {
 
-renderWindow::renderWindow(std::shared_ptr<image> im) : m_image(im) {
+renderWindow::renderWindow(std::shared_ptr<image> im,
+                           std::shared_ptr<camera> cam)
+    : m_image(im), m_camera(cam), m_leftMouseHold(false) {
     m_loadedImage = false;
 }
 
-void renderWindow::render(bool sampleTexture) {
+point3 renderWindow::render(bool sampleTexture, bool &updated,
+                            std::pair<int, int> &mouseMovement) {
     if (sampleTexture)
         updateImageTexture();
     {
         ImGui::Begin("Render");
 
+        point3 cameraTranslation;
+
+        if (ImGui::IsWindowFocused()) {
+            if (ImGui::IsKeyPressed('W'))
+                cameraTranslation += -0.4 * m_camera->getDirection();
+            if (ImGui::IsKeyPressed('S'))
+                cameraTranslation += 0.4 * m_camera->getDirection();
+            if (ImGui::IsKeyPressed('A'))
+                cameraTranslation += -0.4 * m_camera->getSidewaysDirection();
+            if (ImGui::IsKeyPressed('D'))
+                cameraTranslation += 0.4 * m_camera->getSidewaysDirection();
+            if (ImGui::IsKeyPressed('Q'))
+                cameraTranslation[1] = -0.4;
+            if (ImGui::IsKeyPressed('E'))
+                cameraTranslation[1] = 0.4;
+
+            if (ImGui::IsWindowHovered() &&
+                ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
+                ImVec2 screenPositionAbsolute = ImGui::GetItemRectMin();
+                ImVec2 mousePositionRelative =
+                    ImVec2(mousePositionAbsolute.x - screenPositionAbsolute.x,
+                           mousePositionAbsolute.y - screenPositionAbsolute.y);
+
+                if (m_leftMouseHold) {
+                    mouseMovement.first =
+                        mousePositionRelative.x - m_lastMousePosition.first;
+                    mouseMovement.second =
+                        mousePositionRelative.y - m_lastMousePosition.second;
+                    updated = true;
+                }
+
+                m_lastMousePosition.first = mousePositionRelative.x;
+                m_lastMousePosition.second = mousePositionRelative.y;
+
+                m_leftMouseHold = true;
+            } else {
+                m_leftMouseHold = false;
+            }
+        }
+
         ImGui::Image((void *)m_loadTexId, ImVec2(m_loadWidth, m_loadHeight));
 
         ImGui::End();
+
+        updated |= cameraTranslation.lengthSquared() != 0;
+
+        return cameraTranslation;
     }
 }
 

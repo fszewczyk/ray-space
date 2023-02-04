@@ -18,7 +18,8 @@ namespace shkyera {
 
 ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
        std::shared_ptr<camera> cam)
-    : m_renderWindow(im), m_renderer(renderer), m_cameraSettingsWindow(cam) {}
+    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam),
+      m_cameraSettingsWindow(cam) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -160,10 +161,10 @@ void ui::run() {
                 ImGuiID dock_id_left, dock_id_right, dock_id_top_right,
                     dock_id_bottom_right;
                 ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f,
-                                            &dock_id_right, &dock_id_left);
+                                            &dock_id_left, &dock_id_right);
 
-                ImGui::DockBuilderDockWindow("Camera", dock_id_left);
-                ImGui::DockBuilderDockWindow("Render", dock_id_right);
+                ImGui::DockBuilderDockWindow("Camera", dock_id_right);
+                ImGui::DockBuilderDockWindow("Render", dock_id_left);
                 ImGui::DockBuilderFinish(dockspace_id);
             }
         }
@@ -171,20 +172,39 @@ void ui::run() {
         ImGui::End();
 
         bool updatedSettings = false;
-        m_cameraSettingsWindow.render(updatedSettings);
+        point3 newCameraPosition =
+            m_cameraSettingsWindow.render(updatedSettings);
 
-        if (updatedSettings) {
+        if (!updatedSettings)
+            newCameraPosition = m_camera->getPosition();
+
+        point3 cameraTranslation;
+        std::pair<int, int> mouseMovement;
+
+        if (m_renderer->renderedImage())
+            cameraTranslation =
+                m_renderWindow.render(true, updatedSettings, mouseMovement);
+        else
+            cameraTranslation =
+                m_renderWindow.render(false, updatedSettings, mouseMovement);
+
+        vec3 newCameraDirection = m_camera->getDirection();
+        newCameraDirection +=
+            vec3(-mouseMovement.first * 0.02, mouseMovement.second * 0.02, 0);
+        newCameraDirection = unitVector(newCameraDirection);
+
+        newCameraPosition += cameraTranslation;
+
+        if (m_renderer->renderedImage() && updatedSettings) {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
+
+            m_camera->setPosition(newCameraPosition);
+            m_camera->setDirection(newCameraDirection);
+
             m_renderer->startRendering();
         }
 
-        if (m_renderer->renderedImage())
-            m_renderWindow.render(true);
-        else
-            m_renderWindow.render(false);
-
-        // Rendering
         ImGui::Render();
 
         int display_w, display_h;

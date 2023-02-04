@@ -24,6 +24,7 @@ class renderer {
 
   private:
     void render();
+    void renderRow(int y);
     void clearScene();
     color rayColor(const ray &r, int depth);
 
@@ -33,6 +34,8 @@ class renderer {
 
     bool m_stop;
     bool m_renderedImage;
+
+    unsigned int m_samplesTaken;
 
     std::thread m_renderingThread;
 };

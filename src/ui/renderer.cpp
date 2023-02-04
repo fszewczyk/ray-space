@@ -5,6 +5,7 @@
 #include <execution>
 #include <iostream>
 #include <numeric>
+#include <thread>
 #include <vector>
 
 namespace shkyera {
@@ -24,13 +25,28 @@ void renderer::stopRendering() { m_stop = true; }
 
 std::thread &renderer::renderingThread() { return m_renderingThread; }
 
+void renderer::renderRow(int y) {
+    for (int x = 0; x < m_image->width(); ++x) {
+        auto u = (x + randomDouble()) / (m_image->width() - 1);
+        auto v = ((m_image->height() - y) + randomDouble()) /
+                 (m_image->height() - 1);
+
+        ray r = m_cam->getRay(u, v);
+        color c = rayColor(r, 5);
+
+        m_image->at(x, y) = m_image->at(x, y) * (double(m_samplesTaken) /
+                                                 (m_samplesTaken + 1)) +
+                            (1.0 / (m_samplesTaken + 1)) * c;
+    }
+}
+
 void renderer::render() {
     const int maxDepth = 5;
 
     int imageHeight = m_image->height();
     int imageWidth = m_image->width();
 
-    int samplesTaken = 0;
+    m_samplesTaken = 0;
 
     while (true) {
         if (m_stop) {
@@ -39,27 +55,21 @@ void renderer::render() {
             return;
         }
 
-        std::for_each(
-            m_image->verticalPixels().begin(), m_image->verticalPixels().end(),
-            [&](int y) {
-                std::for_each(
-                    m_image->horizontalPixels().begin(),
-                    m_image->horizontalPixels().end(), [&](int x) {
-                        auto u = (x + randomDouble()) / (imageWidth - 1);
-                        auto v = ((imageHeight - y) + randomDouble()) /
-                                 (imageHeight - 1);
+        // Whoever reads this, I'm sorry it's done this way. Nothing else
+        // worked.
+        std::vector<std::thread> renderingThreads;
 
-                        ray r = m_cam->getRay(u, v);
-                        color c = rayColor(r, maxDepth);
+        for (int y = 0; y < m_image->height(); ++y) {
+            renderingThreads.push_back(
+                std::thread([this, y] { renderRow(y); }));
+        }
 
-                        m_image->at(x, y) =
-                            m_image->at(x, y) *
-                                (double(samplesTaken) / (samplesTaken + 1)) +
-                            (1.0 / (samplesTaken + 1)) * c;
-                    });
-            });
+        for (auto &t : renderingThreads) {
+            t.join();
+        }
+
         m_renderedImage = true;
-        samplesTaken++;
+        m_samplesTaken++;
     }
 }
 
@@ -74,7 +84,7 @@ color renderer::rayColor(const ray &r, int depth) {
         ray scattered;
         color attenuation;
 
-        if (data.material->scatter(r, data, attenuation, scattered))
+        if (data.hitMaterial->scatter(r, data, attenuation, scattered))
             return attenuation * rayColor(scattered, depth - 1);
 
         return color(0, 0, 0);

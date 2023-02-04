@@ -32,7 +32,7 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     data.p = r.at(data.t);
     vec3 outwardNormal = (data.p - m_center) / m_radius;
     data.setFaceNormal(r, outwardNormal);
-    data.material = m_material;
+    data.hitMaterial = m_material;
 
     return true;
 }

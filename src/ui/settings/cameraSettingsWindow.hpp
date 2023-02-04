@@ -9,7 +9,7 @@ class cameraSettingsWindow {
   public:
     cameraSettingsWindow(std::shared_ptr<camera> im);
 
-    void render(bool &updated);
+    point3 render(bool &updated);
 
   private:
     std::shared_ptr<camera> m_camera;

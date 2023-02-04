@@ -24,6 +24,7 @@ class ui {
 
   private:
     std::shared_ptr<renderer> m_renderer;
+    std::shared_ptr<camera> m_camera;
 
     renderWindow m_renderWindow;
     cameraSettingsWindow m_cameraSettingsWindow;
