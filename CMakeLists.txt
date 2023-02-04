@@ -25,15 +25,15 @@ add_library(
 
 add_library(
     shapes
+    src/shapes/hittable.hpp
     src/shapes/sphere.cpp
     src/shapes/material.cpp
-    src/shapes/hittable.hpp
     )
 
 add_library(
     world
-    src/world/hittableWorld.cpp
     src/world/camera.cpp
+    src/world/hittableWorld.cpp
     )
 
 add_library(

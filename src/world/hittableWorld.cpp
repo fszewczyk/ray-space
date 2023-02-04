@@ -9,6 +9,10 @@ void hittableWorld::add(shared_ptr<hittable> object) {
     m_objects.push_back(object);
 }
 
+std::vector<shared_ptr<hittable>> hittableWorld::objects() { return m_objects; }
+
+size_t hittableWorld::size() const { return m_objects.size(); }
+
 bool hittableWorld::hit(const ray &r, double minT, double maxT,
                         hitData &data) const {
     hitData tempData;

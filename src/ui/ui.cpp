@@ -199,8 +199,6 @@ void ui::run() {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
 
-            std::cout << newCameraDirection << m_camera->getDirection() << '\n';
-
             m_camera->setPosition(newCameraPosition);
             m_camera->setDirection(newCameraDirection);
 
