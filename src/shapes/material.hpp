@@ -1,6 +1,7 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+#include "core/texture.hpp"
 #include "core/utils.hpp"
 #include "shapes/hittable.hpp"
 
@@ -15,12 +16,13 @@ class material {
 class lambertian : public material {
   public:
     lambertian(const color &c);
+    lambertian(shared_ptr<texture> c);
 
     virtual bool scatter(const ray &rayIn, const hitData &data,
                          color &attenuation, ray &rayOut) const override;
 
   private:
-    color m_albedo;
+    shared_ptr<texture> m_albedo;
 };
 
 class metal : public material {

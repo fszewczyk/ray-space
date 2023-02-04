@@ -32,9 +32,18 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     data.p = r.at(data.t);
     vec3 outwardNormal = (data.p - m_center) / m_radius;
     data.setFaceNormal(r, outwardNormal);
+    getSphericalUV(outwardNormal, data.u, data.v);
     data.hitMaterial = m_material;
 
     return true;
+}
+
+void sphere::getSphericalUV(const point3 &p, double &u, double &v) {
+    auto theta = acos(-p.y());
+    auto phi = atan2(-p.z(), p.x()) + PI;
+
+    u = phi / (2 * PI);
+    v = theta / PI;
 }
 
 } // namespace shkyera

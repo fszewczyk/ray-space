@@ -13,6 +13,8 @@ struct hitData {
     vec3 normal;
     shared_ptr<material> hitMaterial;
     double t;
+    double u;
+    double v;
     bool frontFace;
 
     inline void setFaceNormal(const ray &r, const vec3 &outwardNormal) {

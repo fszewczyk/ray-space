@@ -2,7 +2,8 @@
 
 namespace shkyera {
 
-lambertian::lambertian(const color &c) : m_albedo(c) {}
+lambertian::lambertian(const color &c) : m_albedo(make_shared<solidColor>(c)) {}
+lambertian::lambertian(shared_ptr<texture> tex) : m_albedo(tex) {}
 
 metal::metal(const color &c, double f)
     : m_albedo(c), m_fuzz(f < 1 ? f : (f > 0 ? f : 0)) {}
@@ -13,7 +14,7 @@ bool lambertian::scatter(const ray &rayIn, const hitData &data,
                          color &attenuation, ray &rayOut) const {
     auto scatterDirection = randomInUnitHemisphere(data.normal);
     rayOut = ray(data.p, scatterDirection);
-    attenuation = m_albedo;
+    attenuation = m_albedo->value(data.u, data.v, data.p);
     return true;
 }
 

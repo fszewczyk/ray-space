@@ -26,8 +26,10 @@ int main(int argc, char *argv[]) {
     auto material2 = make_shared<lambertian>(color(0.4, 0.2, 0.1));
     world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
 
-    auto ground = make_shared<lambertian>(color(0.9, 0.3, 0.3));
-    world.add(make_shared<sphere>(point3(0, -100, 0), 100.5, ground));
+    auto ground =
+        make_shared<checkerTexture>(color(0.9, 0.3, 0.3), color(0.3, 0.9, 0.3));
+    world.add(make_shared<sphere>(point3(0, -100, 0), 100.5,
+                                  make_shared<lambertian>(ground)));
 
     auto material4 = make_shared<metal>(color(1, 0.6, 1), 0.0);
     auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);

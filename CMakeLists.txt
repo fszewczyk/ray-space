@@ -21,6 +21,7 @@ add_library(
     src/core/ray.cpp
     src/core/utils.hpp
     src/core/image.cpp
+    src/core/texture.cpp
     )
 
 add_library(
