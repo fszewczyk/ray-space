@@ -16,7 +16,7 @@ using namespace shkyera;
 
 int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 360;
+    const int imageWidth = 260;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
     hittableWorld world;
@@ -53,11 +53,9 @@ int main(int argc, char *argv[]) {
 
     interface.init();
 
-    while (true) {
+    while (interface.isOpen()) {
         interface.run();
     }
-
-    interface.close();
 
     return 0;
 }

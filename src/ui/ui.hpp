@@ -22,6 +22,8 @@ class ui {
     void run();
     void close();
 
+    bool isOpen() const;
+    
   private:
     std::shared_ptr<renderer> m_renderer;
     std::shared_ptr<camera> m_camera;
@@ -31,6 +33,10 @@ class ui {
 
     GLFWwindow *m_window;
     ImVec4 m_clearColor;
+
+    bool m_open;
+
+    float m_mouseSensitivity;
 };
 
 } // namespace shkyera

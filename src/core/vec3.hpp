@@ -23,6 +23,9 @@ class vec3 {
     vec3 &operator*=(const double k);
     vec3 &operator/=(const double k);
 
+    void rotateAroundY(double angle);
+    void rotateUpAndDown(double angle);
+
     double length() const;
     double lengthSquared() const;
 
