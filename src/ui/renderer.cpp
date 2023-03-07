@@ -52,7 +52,7 @@ void renderer::render() {
         if (m_stop) {
             clearScene();
             m_stop = false;
-            return;
+            break;
         }
 
         // Whoever reads this, I'm sorry it's done this way. Nothing else

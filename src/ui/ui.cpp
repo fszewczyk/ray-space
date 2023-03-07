@@ -198,7 +198,6 @@ void ui::run() {
         if (m_renderer->renderedImage() && updatedSettings) {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
-
             m_camera->setPosition(newCameraPosition);
             m_camera->setDirection(newCameraDirection);
 
