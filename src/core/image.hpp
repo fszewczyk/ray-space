@@ -20,6 +20,8 @@ class image {
     void clear();
     void writeImage(std::ostream &out) const;
 
+    void scaleImage(std::shared_ptr<image> destinationImage);
+
     color &operator()(int x, int y);
     color &at(int x, int y);
 
