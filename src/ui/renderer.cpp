@@ -10,9 +10,10 @@
 
 namespace shkyera {
 
-renderer::renderer(hittableWorld &world, std::shared_ptr<camera> cam,
-                   std::shared_ptr<image> im)
-    : m_world(world), m_cam(cam), m_image(im) {}
+renderer::renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
+    : m_world(world), m_cam(cam), m_image(im) {
+    m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
+}
 
 void renderer::startRendering() {
     m_renderedImage = false;
@@ -26,25 +27,23 @@ void renderer::stopRendering() { m_stop = true; }
 std::thread &renderer::renderingThread() { return m_renderingThread; }
 
 void renderer::renderRow(int y) {
-    for (int x = 0; x < m_image->width(); ++x) {
-        auto u = (x + randomDouble()) / (m_image->width() - 1);
-        auto v = ((m_image->height() - y) + randomDouble()) /
-                 (m_image->height() - 1);
+    for (int x = 0; x < m_imageToDraw->width(); ++x) {
+        auto u = (x + randomDouble()) / (m_imageToDraw->width() - 1);
+        auto v = ((m_imageToDraw->height() - y) + randomDouble()) / (m_imageToDraw->height() - 1);
 
         ray r = m_cam->getRay(u, v);
         color c = rayColor(r, 5);
 
-        m_image->at(x, y) = m_image->at(x, y) * (double(m_samplesTaken) /
-                                                 (m_samplesTaken + 1)) +
-                            (1.0 / (m_samplesTaken + 1)) * c;
+        m_imageToDraw->at(x, y) = m_imageToDraw->at(x, y) * (double(m_samplesTaken) / (m_samplesTaken + 1)) +
+                                  (1.0 / (m_samplesTaken + 1)) * c;
     }
 }
 
 void renderer::render() {
     const int maxDepth = 5;
 
-    int imageHeight = m_image->height();
-    int imageWidth = m_image->width();
+    int imageHeight = m_imageToDraw->height();
+    int imageWidth = m_imageToDraw->width();
 
     m_samplesTaken = 0;
 
@@ -52,21 +51,22 @@ void renderer::render() {
         if (m_stop) {
             clearScene();
             m_stop = false;
-            return;
+            break;
         }
 
         // Whoever reads this, I'm sorry it's done this way. Nothing else
         // worked.
         std::vector<std::thread> renderingThreads;
 
-        for (int y = 0; y < m_image->height(); ++y) {
-            renderingThreads.push_back(
-                std::thread([this, y] { renderRow(y); }));
+        for (int y = 0; y < m_imageToDraw->height(); ++y) {
+            renderingThreads.push_back(std::thread([this, y] { renderRow(y); }));
         }
 
         for (auto &t : renderingThreads) {
             t.join();
         }
+
+        m_imageToDraw->scaleImage(m_image);
 
         m_renderedImage = true;
         m_samplesTaken++;

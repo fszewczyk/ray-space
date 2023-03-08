@@ -43,7 +43,7 @@ void camera::setPosition(point3 p) {
 vec3 camera::getDirection() const { return m_w; }
 vec3 camera::getSidewaysDirection() const { return m_u; }
 
-vec3 camera::setDirection(vec3 direction) {
+void camera::setDirection(vec3 direction) {
     m_w = unitVector(direction);
     m_u = unitVector(cross(vec3(0, 1, 0), m_w));
     m_v = cross(m_w, m_u);

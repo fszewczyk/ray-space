@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <cmath>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -19,7 +20,8 @@ namespace shkyera {
 ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
        std::shared_ptr<camera> cam)
     : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam),
-      m_cameraSettingsWindow(cam) {}
+      m_cameraSettingsWindow(cam), m_mouseSensitivity(0.025) {
+      }
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -60,6 +62,8 @@ void ui::init() { // Setup window
     if (m_window == NULL)
         return;
 
+    m_open = true;
+
     glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1); // Enable vsync
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -87,8 +91,9 @@ void ui::init() { // Setup window
 }
 
 void ui::run() {
+    m_open = !glfwWindowShouldClose(m_window);
     // Main loop
-    if (!glfwWindowShouldClose(m_window)) {
+    if (m_open) {
         glfwPollEvents();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -189,8 +194,9 @@ void ui::run() {
                 m_renderWindow.render(false, updatedSettings, mouseMovement);
 
         vec3 newCameraDirection = m_camera->getDirection();
-        newCameraDirection +=
-            vec3(-mouseMovement.first * 0.02, mouseMovement.second * 0.02, 0);
+
+        newCameraDirection.rotateAroundY(-m_mouseSensitivity * mouseMovement.first);
+        newCameraDirection.rotateUpAndDown(m_mouseSensitivity * mouseMovement.second);
         newCameraDirection = unitVector(newCameraDirection);
 
         newCameraPosition += cameraTranslation;
@@ -223,7 +229,14 @@ void ui::run() {
     }
 }
 
+bool ui::isOpen() const{
+    return m_open;
+}
+
 void ui::close() {
+    m_renderer->stopRendering();
+    m_renderer->renderingThread().join();
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

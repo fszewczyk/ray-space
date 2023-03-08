@@ -42,6 +42,27 @@ vec3 &vec3::operator/=(const double k) {
     return *this;
 }
 
+void vec3::rotateAroundY(double angle){
+    double new_x = m_cords[0] * cos(angle) + m_cords[2] * sin(angle);
+    double new_z = -m_cords[0] * sin(angle) + m_cords[2] * cos(angle);
+
+    m_cords[0] = new_x;
+    m_cords[2] = new_z;
+}
+
+void vec3::rotateUpAndDown(double angle){
+    float baseAngle = atan2(m_cords[0],m_cords[2]);
+    rotateAroundY(baseAngle);
+
+    double new_x = m_cords[0] * cos(angle) - m_cords[1] * sin(angle);
+    double new_y = m_cords[0] * sin(angle) + m_cords[1] * cos(angle);
+
+    m_cords[0] = new_x;
+    m_cords[1] = new_y;
+
+    rotateAroundY(-baseAngle);
+}
+
 double vec3::length() const { return std::sqrt(lengthSquared()); }
 double vec3::lengthSquared() const {
     return m_cords[0] * m_cords[0] + m_cords[1] * m_cords[1] +

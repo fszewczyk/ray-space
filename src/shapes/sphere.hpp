@@ -14,6 +14,8 @@ class sphere : public hittable {
                      hitData &data) const override;
 
   private:
+    static void getSphericalUV(const point3 &p, double &u, double &v);
+
     point3 m_center;
     double m_radius;
     shared_ptr<material> m_material;

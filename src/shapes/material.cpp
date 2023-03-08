@@ -1,32 +1,38 @@
 #include "shapes/material.hpp"
+#include "core/image.hpp"
 
 namespace shkyera {
 
-lambertian::lambertian(const color &c) : m_albedo(c) {}
+lambertian::lambertian(const color &c) : m_albedo(make_shared<solidColor>(c)) {}
+lambertian::lambertian(shared_ptr<texture> tex) : m_albedo(tex) {}
 
-metal::metal(const color &c, double f)
-    : m_albedo(c), m_fuzz(f < 1 ? f : (f > 0 ? f : 0)) {}
+metal::metal(const color &c, double f) : m_albedo(c), m_fuzz(f < 1 ? f : (f > 0 ? f : 0)) {}
 
 refractor::refractor(double eta) : m_eta(eta) {}
 
-bool lambertian::scatter(const ray &rayIn, const hitData &data,
-                         color &attenuation, ray &rayOut) const {
+bool lambertian::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     auto scatterDirection = randomInUnitHemisphere(data.normal);
     rayOut = ray(data.p, scatterDirection);
-    attenuation = m_albedo;
+    attenuation = m_albedo->value(data.u, data.v, data.p);
     return true;
 }
 
-bool metal::scatter(const ray &rayIn, const hitData &data, color &attenuation,
-                    ray &rayOut) const {
+std::shared_ptr<lambertian> lambertian::generateFromImage(const char *filename) {
+    auto im = std::make_shared<image>(filename);
+    auto texture = std::make_shared<imageTexture>(im);
+    auto material = std::make_shared<lambertian>(texture);
+
+    return material;
+}
+
+bool metal::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     vec3 reflected = reflect(unitVector(rayIn.direction()), data.normal);
     rayOut = ray(data.p, reflected + m_fuzz * randomInUnitSphere());
     attenuation = m_albedo;
     return dot(rayOut.direction(), data.normal) > 0;
 }
 
-bool refractor::scatter(const ray &rayIn, const hitData &data,
-                        color &attenuation, ray &rayOut) const {
+bool refractor::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     attenuation = color(1.0, 1.0, 1.0);
     double refractionRatio = data.frontFace ? (1.0 / m_eta) : m_eta;
 
@@ -38,8 +44,7 @@ bool refractor::scatter(const ray &rayIn, const hitData &data,
     bool cannotRefract = refractionRatio * sinTheta > 1.0;
     vec3 direction;
 
-    if (cannotRefract ||
-        reflectance(cosTheta, refractionRatio) > randomDouble())
+    if (cannotRefract || reflectance(cosTheta, refractionRatio) > randomDouble())
         direction = reflect(unitDirection, data.normal);
     else
         direction = refract(unitDirection, data.normal, refractionRatio);

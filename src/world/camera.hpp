@@ -25,7 +25,7 @@ class camera {
 
     vec3 getDirection() const;
     vec3 getSidewaysDirection() const;
-    vec3 setDirection(vec3 direction);
+    void setDirection(vec3 direction);
 
   private:
     point3 m_origin;
