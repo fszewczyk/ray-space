@@ -60,7 +60,7 @@ target_include_directories(ui PRIVATE src  ${CMAKE_BINARY_DIR}/_deps/imgui-src $
 
 target_link_libraries(shkyera PRIVATE core shapes world ui imgui glfw glad)
 target_link_libraries(ui PRIVATE imgui glfw glad core)
-
+target_link_libraries(core PRIVATE stb_image)
 
 
 
