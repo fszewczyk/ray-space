@@ -20,23 +20,13 @@ int main(int argc, char *argv[]) {
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
     hittableWorld world;
-    auto material1 = make_shared<refractor>(1.5);
-    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
 
-    auto material2 = make_shared<lambertian>(color(0.4, 0.2, 0.1));
-    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
-
-    auto ground = make_shared<checkerTexture>(color(0.9, 0.3, 0.3), color(0.3, 0.9, 0.3));
-    world.add(make_shared<sphere>(point3(0, -100, 0), 100.5, make_shared<lambertian>(ground)));
-
-    auto material4 = make_shared<metal>(color(1, 0.6, 1), 0.0);
-    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
-    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material4));
-
-    world.add(make_shared<sphere>(point3(4, -1, 0), 1.0, material4));
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, lambertian::generateFromImage("resources/textures/earth.jpg")));
+    world.add(make_shared<sphere>(point3(1, 1, 0), 1.0, lambertian::generateFromImage("resources/textures/moon.jpg")));
+    world.add(make_shared<sphere>(point3(-2, 1, 0), 1.0, lambertian::generateFromImage("resources/textures/mars.jpg")));
 
     point3 lookfrom(6, 2, 8);
-    point3 lookat(10000, 10000, 10000);
+    point3 lookat(100, 100, 100);
     auto dist_to_focus = 10.0;
     auto aperture = 0.0;
 

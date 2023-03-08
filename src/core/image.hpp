@@ -9,10 +9,16 @@ namespace shkyera {
 
 class image {
   public:
+    image();
     image(int width, int height);
+    image(const char *filename);
+
+    ~image() = default;
 
     int width() const;
     int height() const;
+
+    bool isEmpty() const;
 
     std::vector<int> &verticalPixels();
     std::vector<int> &horizontalPixels();
@@ -24,6 +30,8 @@ class image {
 
     color &operator()(int x, int y);
     color &at(int x, int y);
+
+    static constexpr int TEXTURE_BYTES_PER_PIXEL = 3;
 
   private:
     void writeColor(std::ostream &out, color pixelColor) const;

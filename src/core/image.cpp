@@ -8,11 +8,58 @@
 
 namespace shkyera {
 
+image::image() : m_width(0), m_height(0) {}
+
 image::image(int width, int height)
     : m_width(width), m_height(height), m_data(height, std::vector<color>(width)), m_verticalPixels(height),
       m_horizontalPixels(width) {
     std::iota(m_verticalPixels.begin(), m_verticalPixels.end(), 0);
     std::iota(m_horizontalPixels.begin(), m_horizontalPixels.end(), 0);
+}
+
+image::image(const char *filename) {
+    int bytesPerPixel = 3;
+    uint8_t *raw_data = stbi_load(filename, &m_width, &m_height, &bytesPerPixel, bytesPerPixel);
+
+    if (!raw_data) {
+        std::cerr << "\033[0;31mCould not load texture from file '" << filename << "'\033[0m" << std::endl;
+        m_width = 0;
+        m_height = 0;
+        return;
+    }
+
+    if (bytesPerPixel != TEXTURE_BYTES_PER_PIXEL) {
+        std::cerr << "\033[0;31mInvalid bit-depth of the texture '" << filename << "'\033[0m" << std::endl;
+        m_width = 0;
+        m_height = 0;
+
+        delete raw_data;
+        return;
+    }
+
+    m_verticalPixels.resize(height());
+    m_horizontalPixels.resize(width());
+
+    m_data.resize(height());
+
+    for (int y = 0; y < height(); ++y) {
+        std::vector<color> row(width());
+
+        for (int x = 0; x < width(); ++x) {
+            color pixel;
+            uint8_t *pixelOffset = raw_data + (x + y * width()) * bytesPerPixel;
+
+            for (int channel = 0; channel < bytesPerPixel; ++channel) {
+                pixel[channel] = static_cast<double>(pixelOffset[channel]);
+            }
+
+            row[x] = pixel;
+        }
+
+        m_data[y] = row;
+    }
+
+    delete raw_data;
 }
 
 void image::writeImage(std::ostream &out) const {
@@ -57,6 +104,7 @@ void image::scaleImage(std::shared_ptr<image> destinationImage) {
 
 int image::width() const { return m_width; }
 int image::height() const { return m_height; }
+bool image::isEmpty() const { return m_width == 0 || m_height == 0; }
 
 void image::clear() { std::fill(m_data.begin(), m_data.end(), std::vector<color>(m_width, color(0, 0, 0))); }
 
