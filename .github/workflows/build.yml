@@ -13,14 +13,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest]
             
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     
-    - name: Dependencies
-      run: sudo apt-get install xorg-dev
+    - name: Dependencies on Ubuntu
+      if: startsWith(matrix.os, 'ubuntu')
+      run: sudo apt-get update 
+           sudo apt-get install xorg-dev
+     
+#     - name: Dependencies on MacOS
+#       if: startsWith(matrix.os, 'macos')
+#       run: brew install cmake
       
     - name: Build
       run: ./build.sh
