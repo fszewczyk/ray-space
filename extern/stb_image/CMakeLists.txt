@@ -3,7 +3,7 @@ set(STB_IMAGE_SOURCE
 	src/stb_image_write.h
 )
 
-add_library(stb_image STATIC 
+add_library(stb_image SHARED 
 	${STB_IMAGE_SOURCE}
 )
 
