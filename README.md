@@ -1,6 +1,6 @@
 <div align="center">
  
-<h1>Shkyera Engine</h1>
+<h1>SHKYERA Engine</h1>
 
 <div>
   
