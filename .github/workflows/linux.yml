@@ -31,8 +31,7 @@ jobs:
     
     - name: Dependencies on Ubuntu
       if: startsWith(matrix.conf.os, 'ubuntu')
-      run: sudo apt-get update 
-           sudo apt-get install xorg-dev clang
+      run: sudo apt-get update && sudo apt-get install xorg-dev
       
     - name: Build
       env:
