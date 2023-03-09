@@ -19,7 +19,7 @@ jobs:
             os: ubuntu-latest,
             compiler: "g++"
           },{
-            name: "Ubuntu g++",
+            name: "Ubuntu clang++",
             os: ubuntu-latest,
             compiler: "clang++"
           }
@@ -32,7 +32,7 @@ jobs:
     - name: Dependencies on Ubuntu
       if: startsWith(matrix.os, 'ubuntu')
       run: sudo apt-get update 
-           sudo apt-get install xorg-dev
+           sudo apt-get install xorg-dev clang
       
     - name: Build
       env:
