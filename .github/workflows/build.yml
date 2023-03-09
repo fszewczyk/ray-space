@@ -1,4 +1,4 @@
-name: Build
+name: MacOS
 
 on:
   push:
@@ -14,7 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        compiler: [g++]
             
     steps:
     - name: Checkout
@@ -26,6 +25,4 @@ jobs:
            sudo apt-get install xorg-dev
       
     - name: Build
-      env:
-        CC: ${{ matrix.compiler }}
       run: ./build.sh
