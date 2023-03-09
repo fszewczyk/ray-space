@@ -13,11 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
             
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    
+    - name: Dependencies
+      run: sudo apt-get install libxrandr-dev
       
     - name: Build
       run: ./build.sh
