@@ -14,6 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
+        compiler: [g++]
             
     steps:
     - name: Checkout
@@ -23,10 +24,8 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: sudo apt-get update 
            sudo apt-get install xorg-dev
-     
-#     - name: Dependencies on MacOS
-#       if: startsWith(matrix.os, 'macos')
-#       run: brew install cmake
       
     - name: Build
+      env:
+        CC: ${{ matrix.compiler }}
       run: ./build.sh
