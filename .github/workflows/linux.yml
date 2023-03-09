@@ -13,17 +13,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        conf: [
-          {
+        conf:
+          - {
             name: "Ubuntu g++",
             os: ubuntu-latest,
             compiler: "g++"
-          },{
+          }
+          - {
             name: "Ubuntu clang++",
             os: ubuntu-latest,
             compiler: "clang++"
           }
-        ]
             
     steps:
     - name: Checkout
@@ -36,5 +36,5 @@ jobs:
       
     - name: Build
       env:
-        CC: ${{matrix.conf.compiler}}
+        CXX: ${{matrix.conf.compiler}}
       run: ./build.sh
