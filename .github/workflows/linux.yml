@@ -1,4 +1,4 @@
-name: MacOS
+name: Linux
 
 on:
   push:
@@ -8,12 +8,22 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} ${{ matrix.compiler }} - Build and test
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.conf.name }} - Build
+    runs-on: ${{ matrix.conf.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        conf: [
+          {
+            name: "Ubuntu g++",
+            os: ubuntu-latest,
+            compiler: "g++"
+          },{
+            name: "Ubuntu g++",
+            os: ubuntu-latest,
+            compiler: "clang++"
+          }
+        ]
             
     steps:
     - name: Checkout
@@ -25,4 +35,6 @@ jobs:
            sudo apt-get install xorg-dev
       
     - name: Build
+      env:
+        CC: ${{matrix.conf.compiler}}
       run: ./build.sh
