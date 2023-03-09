@@ -1,4 +1,4 @@
-[![LICENSE](https://img.shields.io/badge/license-BEERWARE-orange)](LICENSE)
+![BuildStatus](https://github.com/fszewczyk/shkyera-engine/actions/workflows/build.yml/badge.svg) [![LICENSE](https://img.shields.io/badge/license-Beerware-yellow)](LICENSE) 
 
 # Shkyera Engine
 
