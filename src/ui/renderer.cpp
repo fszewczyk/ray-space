@@ -10,6 +10,12 @@
 
 namespace shkyera {
 
+renderer::renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im, color backgroundColor)
+    : m_world(world), m_cam(cam), m_image(im) {
+    m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
+    m_backgroundColor = backgroundColor;
+}
+
 renderer::renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
     : m_world(world), m_cam(cam), m_image(im) {
     m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
@@ -32,10 +38,12 @@ void renderer::renderRow(int y) {
         auto v = ((m_imageToDraw->height() - y) + randomDouble()) / (m_imageToDraw->height() - 1);
 
         ray r = m_cam->getRay(u, v);
-        color c = rayColor(r, 5);
+        color c = rayColor(r, MAXIMUM_RAY_DEPTH);
 
-        m_imageToDraw->at(x, y) = m_imageToDraw->at(x, y) * (double(m_samplesTaken) / (m_samplesTaken + 1)) +
-                                  (1.0 / (m_samplesTaken + 1)) * c;
+        color result = m_imageToDraw->at(x, y) * (double(m_samplesTaken) / (m_samplesTaken + 1)) +
+                       (1.0 / (m_samplesTaken + 1)) * c;
+
+        m_imageToDraw->at(x, y) = clamp(result, 0, 1);
     }
 }
 
@@ -80,20 +88,24 @@ color renderer::rayColor(const ray &r, int depth) {
         return color(0, 0, 0);
 
     hitData data;
-    if (m_world.hit(r, 0.001, INFINITY, data)) {
-        ray scattered;
-        color attenuation;
 
-        if (data.hitMaterial->scatter(r, data, attenuation, scattered))
-            return attenuation * rayColor(scattered, depth - 1);
-
-        return color(0, 0, 0);
+    if (!m_world.hit(r, 0.001, INFINITY, data)) {
+        return m_backgroundColor;
     }
 
-    vec3 unitDirection = unitVector(r.direction());
-    auto t = 0.5 * (unitDirection.y() + 1.0);
+    bool initialHit = depth == MAXIMUM_RAY_DEPTH;
 
-    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+    ray scattered;
+    color attenuation;
+    color emittedLight = data.hitMaterial->emit(data.u, data.v, data.p, initialHit);
+
+    if (!data.hitMaterial->scatter(r, data, attenuation, scattered)) {
+        return emittedLight;
+    }
+
+    color result = emittedLight + attenuation * rayColor(scattered, depth - 1);
+
+    return result;
 }
 
 } // namespace shkyera

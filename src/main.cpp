@@ -1,5 +1,7 @@
 #include "core/image.hpp"
+#include "core/ray.hpp"
 #include "core/utils.hpp"
+#include "core/vec3.hpp"
 #include "shapes/material.hpp"
 #include "shapes/sphere.hpp"
 #include "ui/renderer.hpp"
@@ -16,14 +18,18 @@ using namespace shkyera;
 
 int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 600;
+    const int imageWidth = 800;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
     hittableWorld world;
 
-    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, lambertian::generateFromImage("resources/textures/earth.jpg")));
-    world.add(make_shared<sphere>(point3(1, 1, 0), 1.0, lambertian::generateFromImage("resources/textures/moon.jpg")));
-    world.add(make_shared<sphere>(point3(-2, 1, 0), 1.0, lambertian::generateFromImage("resources/textures/mars.jpg")));
+    auto earthMaterial = lambertian::generateFromImage("resources/textures/earthday.jpg");
+    auto marsMaterial = lambertian::generateFromImage("resources/textures/mars.jpg");
+    auto sunMaterial = diffuseLight::generateFromImage("resources/textures/sun.jpg", color(10, 10, 10));
+
+    world.add(make_shared<sphere>(point3(-8, 0, 0.2), 2, earthMaterial));
+    world.add(make_shared<sphere>(point3(0, 0, -17.5), 10.0, sunMaterial));
+    world.add(make_shared<sphere>(point3(0, 0, 3), 1.0, marsMaterial));
 
     point3 lookfrom(6, 2, 8);
     point3 lookat(100, 100, 100);
@@ -34,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     auto im = std::make_shared<image>(imageWidth, imageHeight);
 
-    auto r = std::make_shared<renderer>(world, cam, im);
+    auto r = std::make_shared<renderer>(world, cam, im, color(0, 0, 0));
     r->startRendering();
 
     ui interface(im, r, cam);

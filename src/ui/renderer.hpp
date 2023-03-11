@@ -12,6 +12,7 @@ namespace shkyera {
 
 class renderer {
   public:
+    renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im, color background);
     renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im);
 
     void startRendering();
@@ -21,7 +22,8 @@ class renderer {
 
     bool renderedImage() const;
 
-    static constexpr float SCALING_FACTOR = 2.5;
+    static constexpr float SCALING_FACTOR = 1;
+    static constexpr int MAXIMUM_RAY_DEPTH = 3;
 
   private:
     void render();
@@ -30,6 +32,8 @@ class renderer {
 
     void clearScene();
     color rayColor(const ray &r, int depth);
+
+    color m_backgroundColor;
 
     std::shared_ptr<image> m_image;
     std::unique_ptr<image> m_imageToDraw;

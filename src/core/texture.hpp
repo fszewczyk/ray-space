@@ -2,7 +2,8 @@
 #define TEXTURE_H
 
 #include "core/image.hpp"
-#include "core/utils.hpp"
+#include "core/ray.hpp"
+#include "core/vec3.hpp"
 
 namespace shkyera {
 

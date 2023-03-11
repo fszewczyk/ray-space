@@ -10,6 +10,19 @@ metal::metal(const color &c, double f) : m_albedo(c), m_fuzz(f < 1 ? f : (f > 0 
 
 refractor::refractor(double eta) : m_eta(eta) {}
 
+diffuseLight::diffuseLight(shared_ptr<texture> text, color lightColor)
+    : m_lightColor(make_shared<solidColor>(lightColor)) {
+    m_textureToDisplay = text;
+}
+
+diffuseLight::diffuseLight(color even, color odd, color lightColor)
+    : m_textureToDisplay(make_shared<checkerTexture>(even, odd)), m_lightColor(make_shared<solidColor>(lightColor)) {}
+
+diffuseLight::diffuseLight(color displayColor, color lightColor)
+    : m_textureToDisplay(make_shared<solidColor>(displayColor)), m_lightColor(make_shared<solidColor>(lightColor)) {}
+
+color material::emit(double u, double v, const point3 &p, bool firstHit) const { return color(0, 0, 0); }
+
 bool lambertian::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     auto scatterDirection = randomInUnitHemisphere(data.normal);
     rayOut = ray(data.p, scatterDirection);
@@ -58,6 +71,25 @@ double refractor::reflectance(double cosine, double eta) {
     auto r0 = (1 - eta) / (1 + eta);
     r0 = r0 * r0;
     return r0 + (1 - r0) * pow((1 - cosine), 5);
+}
+
+std::shared_ptr<diffuseLight> diffuseLight::generateFromImage(const char *filename, color c) {
+    auto im = std::make_shared<image>(filename);
+    auto texture = std::make_shared<imageTexture>(im);
+    auto material = std::make_shared<diffuseLight>(texture, c);
+
+    return material;
+}
+
+bool diffuseLight::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
+    return false;
+}
+
+color diffuseLight::emit(double u, double v, const point3 &p, bool firstHit) const {
+    if (firstHit)
+        return m_textureToDisplay->value(u, v, p);
+    else
+        return m_lightColor->value(u, v, p);
 }
 
 } // namespace shkyera

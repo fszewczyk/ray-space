@@ -1,7 +1,9 @@
 #ifndef HITTABLE_WORLD_H
 #define HITTABLE_WORLD_H
 
+#include "core/ray.hpp"
 #include "core/utils.hpp"
+#include "core/vec3.hpp"
 #include "shapes/hittable.hpp"
 
 #include <memory>
@@ -23,8 +25,7 @@ class hittableWorld : public hittable {
     std::vector<shared_ptr<hittable>> objects();
     size_t size() const;
 
-    virtual bool hit(const ray &r, double minT, double maxT,
-                     hitData &data) const override;
+    virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const override;
 
   private:
     std::vector<shared_ptr<hittable>> m_objects;

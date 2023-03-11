@@ -3,6 +3,7 @@
 
 #include "core/ray.hpp"
 #include "core/utils.hpp"
+#include "core/vec3.hpp"
 
 namespace shkyera {
 
@@ -25,8 +26,7 @@ struct hitData {
 
 class hittable {
   public:
-    virtual bool hit(const ray &r, double minT, double maxT,
-                     hitData &data) const = 0;
+    virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const = 0;
 };
 
 } // namespace shkyera

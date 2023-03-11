@@ -1,7 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "core/ray.hpp"
 #include "core/utils.hpp"
+#include "core/vec3.hpp"
 
 namespace shkyera {
 
@@ -15,8 +17,8 @@ struct cameraConfig {
 
 class camera {
   public:
-    camera(point3 lookFrom, vec3 direction, double verticalFov,
-           double aspectRatio, double aperture, double focusDistance);
+    camera(point3 lookFrom, vec3 direction, double verticalFov, double aspectRatio, double aperture,
+           double focusDistance);
 
     ray getRay(double u, double v) const;
 

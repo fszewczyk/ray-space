@@ -19,13 +19,9 @@ inline double degreesToRadians(double degrees) { return degrees * PI / 180.0; }
 
 inline double randomDouble() { return rand() / (RAND_MAX + 1.0); }
 
-inline double randomDouble(double min, double max) {
-    return min + (max - min) * randomDouble();
-}
+inline double randomDouble(double min, double max) { return min + (max - min) * randomDouble(); }
 
-inline int randomInt(int min, int max) {
-    return static_cast<int>(randomDouble(min, max + 1));
-}
+inline int randomInt(int min, int max) { return static_cast<int>(randomDouble(min, max + 1)); }
 
 inline double clamp(double x, double min, double max) {
     if (x < min)
@@ -36,8 +32,5 @@ inline double clamp(double x, double min, double max) {
 }
 
 } // namespace shkyera
-
-#include "ray.hpp"
-#include "vec3.hpp"
 
 #endif

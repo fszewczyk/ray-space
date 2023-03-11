@@ -1,14 +1,16 @@
 #include "ui.hpp"
+#include "core/ray.hpp"
 #include "core/utils.hpp"
+#include "core/vec3.hpp"
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <cmath>
 #include <glad/glad.h>
 #include <imgui_internal.h>
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <cmath>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -17,11 +19,9 @@
 
 namespace shkyera {
 
-ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
-       std::shared_ptr<camera> cam)
-    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam),
-      m_cameraSettingsWindow(cam), m_mouseSensitivity(0.025) {
-      }
+ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<camera> cam)
+    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_cameraSettingsWindow(cam),
+      m_mouseSensitivity(0.025) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -73,9 +73,8 @@ void ui::init() { // Setup window
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
-    io.ConfigFlags |=
-        ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -124,11 +123,10 @@ void ui::run() {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-        ImGuiWindowFlags window_flags =
-            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                                        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                                        ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
+                                        ImGuiWindowFlags_NoBackground;
 
         bool open = true;
         ImGui::Begin("Shkyera Engine", &open, window_flags);
@@ -150,23 +148,19 @@ void ui::run() {
         if (io.ConfigFlags) {
             ImGuiID dockspace_id = ImGui::GetID("Shkyera Engine");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
-                             ImGuiDockNodeFlags_PassthruCentralNode |
-                                 ImGuiDockNodeFlags_NoWindowMenuButton);
+                             ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton);
 
             static auto firstTime = true;
             if (firstTime) {
                 firstTime = false;
 
                 ImGui::DockBuilderRemoveNode(dockspace_id);
-                ImGui::DockBuilderAddNode(
-                    dockspace_id, ImGuiDockNodeFlags_PassthruCentralNode |
-                                      ImGuiDockNodeFlags_DockSpace);
+                ImGui::DockBuilderAddNode(dockspace_id,
+                                          ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_DockSpace);
                 ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
-                ImGuiID dock_id_left, dock_id_right, dock_id_top_right,
-                    dock_id_bottom_right;
-                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f,
-                                            &dock_id_left, &dock_id_right);
+                ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right;
+                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f, &dock_id_left, &dock_id_right);
 
                 ImGui::DockBuilderDockWindow("Camera", dock_id_right);
                 ImGui::DockBuilderDockWindow("Render", dock_id_left);
@@ -177,8 +171,7 @@ void ui::run() {
         ImGui::End();
 
         bool updatedSettings = false;
-        point3 newCameraPosition =
-            m_cameraSettingsWindow.render(updatedSettings);
+        point3 newCameraPosition = m_cameraSettingsWindow.render(updatedSettings);
 
         if (!updatedSettings)
             newCameraPosition = m_camera->getPosition();
@@ -187,11 +180,9 @@ void ui::run() {
         std::pair<int, int> mouseMovement;
 
         if (m_renderer->renderedImage())
-            cameraTranslation =
-                m_renderWindow.render(true, updatedSettings, mouseMovement);
+            cameraTranslation = m_renderWindow.render(true, updatedSettings, mouseMovement);
         else
-            cameraTranslation =
-                m_renderWindow.render(false, updatedSettings, mouseMovement);
+            cameraTranslation = m_renderWindow.render(false, updatedSettings, mouseMovement);
 
         vec3 newCameraDirection = m_camera->getDirection();
 
@@ -217,9 +208,8 @@ void ui::run() {
 
         glfwGetFramebufferSize(m_window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(m_clearColor.x * m_clearColor.w,
-                     m_clearColor.y * m_clearColor.w,
-                     m_clearColor.z * m_clearColor.w, m_clearColor.w);
+        glClearColor(m_clearColor.x * m_clearColor.w, m_clearColor.y * m_clearColor.w, m_clearColor.z * m_clearColor.w,
+                     m_clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -229,9 +219,7 @@ void ui::run() {
     }
 }
 
-bool ui::isOpen() const{
-    return m_open;
-}
+bool ui::isOpen() const { return m_open; }
 
 void ui::close() {
     m_renderer->stopRendering();
