@@ -25,5 +25,11 @@ done
 shift "$(($OPTIND -1))"
 
 if [ "$RUN" == "true" ]; then
-  source ./run.sh
+  NO_COLOR='\033[0m'
+  LIGHT_GREEN='\033[1;32m'
+
+  echo -e "${LIGHT_GREEN}Running Shkyera Engine${NO_COLOR}"
+
+  ./build/bin/shkyera
+
 fi
