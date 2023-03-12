@@ -87,6 +87,54 @@ void ui::init() { // Setup window
     m_clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     glfwInit();
+
+    NORMAL_FONT = io.Fonts->AddFontFromFileTTF("resources/fonts/OpenSansRegular.ttf", 18);
+    BOLD_FONT = io.Fonts->AddFontFromFileTTF("resources/fonts/OpenSansBold.ttf", 18);
+}
+
+void ui::style() {
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.WindowMinSize = ImVec2(160, 20);
+    style.FramePadding = ImVec2(4, 2);
+    style.ItemSpacing = ImVec2(6, 2);
+    style.ItemInnerSpacing = ImVec2(6, 4);
+    style.Alpha = 0.95f;
+    style.WindowRounding = 4.0f;
+    style.FrameRounding = 2.0f;
+    style.IndentSpacing = 6.0f;
+    style.ItemInnerSpacing = ImVec2(2, 4);
+    style.ColumnsMinSpacing = 50.0f;
+    style.GrabMinSize = 14.0f;
+    style.GrabRounding = 16.0f;
+    style.ScrollbarSize = 12.0f;
+    style.ScrollbarRounding = 16.0f;
+
+    ImVec4 BACKGROUND_COLOR(0.08f, 0.1f, 0.12f, 1.0f);
+    ImVec4 TEXT_COLOR(0.86f, 0.93f, 0.89f, 0.78f);
+    ImVec4 DISABLED_TEXT_COLOR(0.86f, 0.93f, 0.89f, 0.28f);
+    ImVec4 ACCENT_COLOR(0.2f, 0.6f, 0.9f, 0.6f);
+    ImVec4 STRONG_ACCENT_COLOR(0.2f, 0.6f, 0.9f, 1.0f);
+
+    ImVec4 GREY(0.7f, 0.7f, 0.7f, 1.0f);
+    ImVec4 LIGHT_GREY(0.8f, 0.8f, 0.8f, 1.0f);
+    ImVec4 BLACK(0.0f, 0.0f, 0.0f, 0.0f);
+
+    style.Colors[ImGuiCol_Text] = TEXT_COLOR;
+    style.Colors[ImGuiCol_TextDisabled] = DISABLED_TEXT_COLOR;
+    style.Colors[ImGuiCol_WindowBg] = BACKGROUND_COLOR;
+    style.Colors[ImGuiCol_BorderShadow] = BLACK;
+    style.Colors[ImGuiCol_FrameBg] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_TitleBg] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_ScrollbarBg] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_FrameBgHovered] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_FrameBgActive] = STRONG_ACCENT_COLOR;
+    style.Colors[ImGuiCol_TitleBgCollapsed] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_TitleBgActive] = STRONG_ACCENT_COLOR;
+    style.Colors[ImGuiCol_SliderGrab] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_SliderGrabActive] = STRONG_ACCENT_COLOR;
+    style.Colors[ImGuiCol_Separator] = GREY;
+    style.Colors[ImGuiCol_SeparatorHovered] = LIGHT_GREY;
+    style.Colors[ImGuiCol_SeparatorActive] = LIGHT_GREY;
 }
 
 void ui::run() {
@@ -111,6 +159,7 @@ void ui::run() {
         // two flags.
 
         // Start the Dear ImGui frame
+        style();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -164,6 +213,7 @@ void ui::run() {
 
                 ImGui::DockBuilderDockWindow("Camera", dock_id_right);
                 ImGui::DockBuilderDockWindow("Render", dock_id_left);
+
                 ImGui::DockBuilderFinish(dockspace_id);
             }
         }

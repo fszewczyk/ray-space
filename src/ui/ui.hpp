@@ -15,16 +15,20 @@ namespace shkyera {
 
 class ui {
   public:
-    ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer,
-       std::shared_ptr<camera> cam);
+    ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<camera> cam);
 
     void init();
     void run();
     void close();
 
     bool isOpen() const;
-    
+
+    inline static ImFont *NORMAL_FONT;
+    inline static ImFont *BOLD_FONT;
+
   private:
+    void style();
+
     std::shared_ptr<renderer> m_renderer;
     std::shared_ptr<camera> m_camera;
 
