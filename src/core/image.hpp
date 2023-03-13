@@ -35,6 +35,13 @@ class image {
 
     static constexpr int TEXTURE_BYTES_PER_PIXEL = 3;
 
+    static std::shared_ptr<image> EARTH_DAY_TEXTURE;
+    static std::shared_ptr<image> EARTH_NIGHT_TEXTURE;
+    static std::shared_ptr<image> MARS_TEXTURE;
+    static std::shared_ptr<image> SUN_TEXTURE;
+    static std::shared_ptr<image> MOON_TEXTURE;
+    static std::shared_ptr<image> STARS_TEXTURE;
+
   private:
     void writeColor(std::ostream &out, color pixelColor) const;
 

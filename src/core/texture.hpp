@@ -20,6 +20,8 @@ class solidColor : public texture {
 
     virtual color value(double u, double v, const point3 &p) const override;
 
+    void setColor(color c);
+
   private:
     color m_color;
 };

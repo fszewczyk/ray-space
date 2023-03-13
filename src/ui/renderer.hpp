@@ -12,8 +12,9 @@ namespace shkyera {
 
 class renderer {
   public:
-    renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im, color background);
-    renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im);
+    renderer(std::shared_ptr<hittableWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
+             color background);
+    renderer(std::shared_ptr<hittableWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im);
 
     void startRendering();
     void stopRendering();
@@ -38,7 +39,7 @@ class renderer {
     std::shared_ptr<image> m_image;
     std::unique_ptr<image> m_imageToDraw;
     std::shared_ptr<camera> m_cam;
-    hittableWorld &m_world;
+    std::shared_ptr<hittableWorld> m_world;
 
     bool m_stop;
     bool m_renderedImage;

@@ -21,17 +21,15 @@ int main(int argc, char *argv[]) {
     const int imageWidth = 600;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
-    hittableWorld world;
+    auto world = make_shared<hittableWorld>();
 
-    auto earthMaterial = lambertian::generateFromImage("resources/textures/earthday.jpg");
-    auto marsMaterial = lambertian::generateFromImage("resources/textures/mars.jpg");
-    auto sunMaterial = diffuseLight::generateFromImage("resources/textures/sun.jpg", color(10, 10, 10));
-    auto starsMaterial = diffuseLight::generateFromImage("resources/textures/stars.jpg", color(0.15, 0.15, 0.15));
+    auto earthMaterial = lambertian::generateFromImage(image::EARTH_DAY_TEXTURE);
+    auto marsMaterial = lambertian::generateFromImage(image::MARS_TEXTURE);
+    auto sunMaterial = diffuseLight::generateFromImage(image::SUN_TEXTURE, color(10, 10, 10));
 
-    world.add(make_shared<sphere>(point3(-8, 0, 0.2), 2, earthMaterial));
-    world.add(make_shared<sphere>(point3(0, 0, -17.5), 10.0, sunMaterial));
-    world.add(make_shared<sphere>(point3(0, 0, 3), 1.0, marsMaterial));
-    world.add(make_shared<sphere>(point3(0, 0, 0), 100000.0, starsMaterial));
+    world->add(make_shared<sphere>(point3(-8, 0, 0.2), 2, earthMaterial));
+    world->add(make_shared<sphere>(point3(0, 0, -17.5), 10.0, sunMaterial));
+    world->add(make_shared<sphere>(point3(0, 0, 3), 1.0, marsMaterial));
 
     point3 lookfrom(6, 2, 8);
     point3 lookat(100, 100, 100);
@@ -45,7 +43,7 @@ int main(int argc, char *argv[]) {
     auto r = std::make_shared<renderer>(world, cam, im, color(0, 0, 0));
     r->startRendering();
 
-    ui interface(im, r, cam);
+    ui interface(im, r, world, cam);
 
     interface.init();
 

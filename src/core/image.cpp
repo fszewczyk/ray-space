@@ -123,4 +123,11 @@ void image::writeColor(std::ostream &out, color pixelColor) const {
 color &image::operator()(int x, int y) { return m_data[y][x]; }
 color &image::at(int x, int y) { return m_data[y][x]; }
 
+std::shared_ptr<image> image::EARTH_DAY_TEXTURE = std::make_shared<image>("resources/textures/earthday.jpg");
+std::shared_ptr<image> image::EARTH_NIGHT_TEXTURE = std::make_shared<image>("resources/textures/earthnight.jpg");
+std::shared_ptr<image> image::MARS_TEXTURE = std::make_shared<image>("resources/textures/mars.jpg");
+std::shared_ptr<image> image::SUN_TEXTURE = std::make_shared<image>("resources/textures/sun.jpg");
+std::shared_ptr<image> image::MOON_TEXTURE = std::make_shared<image>("resources/textures/moon.jpg");
+std::shared_ptr<image> image::STARS_TEXTURE = std::make_shared<image>("resources/textures/stars.jpg");
+
 } // namespace shkyera

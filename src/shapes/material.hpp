@@ -20,7 +20,7 @@ class lambertian : public material {
     lambertian(const color &c);
     lambertian(shared_ptr<texture> c);
 
-    static std::shared_ptr<lambertian> generateFromImage(const char *filename);
+    static std::shared_ptr<lambertian> generateFromImage(std::shared_ptr<image> im);
 
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const override;
 
@@ -57,14 +57,14 @@ class diffuseLight : public material {
     diffuseLight(color even, color odd, color lightColor);
     diffuseLight(color displayColor, color lightColor);
 
-    static std::shared_ptr<diffuseLight> generateFromImage(const char *filename, color c);
+    static std::shared_ptr<diffuseLight> generateFromImage(std::shared_ptr<image> im, color c);
 
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const override;
     virtual color emit(double u, double v, const point3 &p, bool firstHit) const override;
 
   private:
     shared_ptr<texture> m_textureToDisplay;
-    shared_ptr<texture> m_lightColor;
+    shared_ptr<solidColor> m_lightColor;
 };
 
 } // namespace shkyera

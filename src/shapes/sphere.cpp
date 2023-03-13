@@ -38,6 +38,8 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     return true;
 }
 
+void sphere::setMaterial(shared_ptr<material> material) { m_material = material; }
+
 void sphere::getSphericalUV(const point3 &p, double &u, double &v) {
     auto theta = acos(-p.y());
     auto phi = atan2(-p.z(), p.x()) + PI;

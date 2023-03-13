@@ -19,9 +19,10 @@
 
 namespace shkyera {
 
-ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<camera> cam)
-    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_cameraSettingsWindow(cam),
-      m_mouseSensitivity(0.025) {}
+ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<hittableWorld> world,
+       std::shared_ptr<camera> cam)
+    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_world(world), m_cameraSettingsWindow(cam),
+      m_worldSettingsWindow(world), m_mouseSensitivity(MOUSE_SENSITIVITY) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -146,19 +147,6 @@ void ui::run() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard
-        // flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input
-        // data to your main application, or clear/overwrite your copy of
-        // the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard
-        // input data to your main application, or clear/overwrite your copy
-        // of the keyboard data. Generally you may always pass all inputs to
-        // dear imgui, and hide them from your application based on those
-        // two flags.
-
-        // Start the Dear ImGui frame
         style();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -210,9 +198,12 @@ void ui::run() {
 
                 ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right;
                 ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f, &dock_id_left, &dock_id_right);
+                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.30f, &dock_id_top_right,
+                                            &dock_id_bottom_right);
 
-                ImGui::DockBuilderDockWindow("Camera", dock_id_right);
                 ImGui::DockBuilderDockWindow("Render", dock_id_left);
+                ImGui::DockBuilderDockWindow("Camera", dock_id_top_right);
+                ImGui::DockBuilderDockWindow("World", dock_id_bottom_right);
 
                 ImGui::DockBuilderFinish(dockspace_id);
             }
@@ -222,6 +213,7 @@ void ui::run() {
 
         bool updatedSettings = false;
         point3 newCameraPosition = m_cameraSettingsWindow.render(updatedSettings);
+        worldSettings newWorldSettings = m_worldSettingsWindow.render(updatedSettings);
 
         if (!updatedSettings)
             newCameraPosition = m_camera->getPosition();
@@ -248,6 +240,8 @@ void ui::run() {
 
             m_camera->setPosition(newCameraPosition);
             m_camera->setDirection(newCameraDirection);
+
+            m_world->setAmbientLightColor(newWorldSettings.ambientColor);
 
             m_renderer->startRendering();
         }

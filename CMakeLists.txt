@@ -43,6 +43,7 @@ add_library(
     src/ui/renderer.cpp
     src/ui/render/renderWindow.cpp
     src/ui/settings/cameraSettingsWindow.cpp
+    src/ui/settings/worldSettingsWindow.cpp
     )
 
 

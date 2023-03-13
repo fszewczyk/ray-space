@@ -4,7 +4,7 @@
 #include "core/ray.hpp"
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
-#include "shapes/hittable.hpp"
+#include "shapes/sphere.hpp"
 
 #include <memory>
 #include <vector>
@@ -16,19 +16,25 @@ namespace shkyera {
 
 class hittableWorld : public hittable {
   public:
-    hittableWorld() = default;
-    hittableWorld(shared_ptr<hittable> object);
+    hittableWorld();
 
     void clear();
     void add(shared_ptr<hittable> object);
 
     std::vector<shared_ptr<hittable>> objects();
+    std::shared_ptr<sphere> getUniverse();
     size_t size() const;
 
     virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const override;
 
+    void setAmbientLightColor(color c);
+    color getAmbientLightColor();
+
   private:
     std::vector<shared_ptr<hittable>> m_objects;
+    std::shared_ptr<sphere> m_universe;
+
+    color m_ambientLightColor;
 };
 
 } // namespace shkyera

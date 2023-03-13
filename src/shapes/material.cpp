@@ -30,8 +30,7 @@ bool lambertian::scatter(const ray &rayIn, const hitData &data, color &attenuati
     return true;
 }
 
-std::shared_ptr<lambertian> lambertian::generateFromImage(const char *filename) {
-    auto im = std::make_shared<image>(filename);
+std::shared_ptr<lambertian> lambertian::generateFromImage(std::shared_ptr<image> im) {
     auto texture = std::make_shared<imageTexture>(im);
     auto material = std::make_shared<lambertian>(texture);
 
@@ -73,8 +72,7 @@ double refractor::reflectance(double cosine, double eta) {
     return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
-std::shared_ptr<diffuseLight> diffuseLight::generateFromImage(const char *filename, color c) {
-    auto im = std::make_shared<image>(filename);
+std::shared_ptr<diffuseLight> diffuseLight::generateFromImage(std::shared_ptr<image> im, color c) {
     auto texture = std::make_shared<imageTexture>(im);
     auto material = std::make_shared<diffuseLight>(texture, c);
 
