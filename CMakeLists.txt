@@ -33,7 +33,7 @@ add_library(
 add_library(
     world
     src/world/camera.cpp
-    src/world/hittableWorld.cpp
+    src/world/visibleWorld.cpp
     )
 
 add_library(

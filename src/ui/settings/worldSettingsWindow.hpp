@@ -1,7 +1,7 @@
 #ifndef WORLD_SETTINGS_WINDOW_H
 #define WORLD_SETTINGS_WINDOW_H
 
-#include "world/hittableWorld.hpp"
+#include "world/visibleWorld.hpp"
 
 namespace shkyera {
 
@@ -11,14 +11,14 @@ struct worldSettings {
 
 class worldSettingsWindow {
   public:
-    worldSettingsWindow(std::shared_ptr<hittableWorld> world);
+    worldSettingsWindow(std::shared_ptr<visibleWorld> world);
 
     worldSettings render(bool &updated);
 
   private:
     void objectSettings();
 
-    std::shared_ptr<hittableWorld> m_world;
+    std::shared_ptr<visibleWorld> m_world;
 };
 
 } // namespace shkyera

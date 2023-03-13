@@ -19,7 +19,7 @@
 
 namespace shkyera {
 
-ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<hittableWorld> world,
+ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<visibleWorld> world,
        std::shared_ptr<camera> cam)
     : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_world(world), m_cameraSettingsWindow(cam),
       m_worldSettingsWindow(world), m_mouseSensitivity(MOUSE_SENSITIVITY) {}

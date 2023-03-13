@@ -1,17 +1,17 @@
-#include "world/hittableWorld.hpp"
 #include "core/image.hpp"
 #include "shapes/material.hpp"
+#include "world/visibleWorld.hpp"
 
 namespace shkyera {
 
-hittableWorld::hittableWorld() : m_ambientLightColor(0.15, 0.15, 0.15) {
+visibleWorld::visibleWorld() : m_ambientLightColor(0.15, 0.15, 0.15) {
     auto starsMaterial = diffuseLight::generateFromImage(image::STARS_TEXTURE, m_ambientLightColor);
     m_universe = make_shared<sphere>(point3(0, 0, 0), 100000.0, starsMaterial);
     add(m_universe);
 }
 
-void hittableWorld::clear() { m_objects.clear(); }
-void hittableWorld::add(shared_ptr<sphere> object) {
+void visibleWorld::clear() { m_objects.clear(); }
+void visibleWorld::add(shared_ptr<sphere> object) {
     std::string name = object->getName();
 
     bool uniqueName = true;
@@ -36,12 +36,12 @@ void hittableWorld::add(shared_ptr<sphere> object) {
     m_objects.push_back(object);
 }
 
-std::vector<shared_ptr<sphere>> hittableWorld::getObjects() { return m_objects; }
-std::shared_ptr<sphere> hittableWorld::getUniverse() { return m_universe; }
+std::vector<shared_ptr<sphere>> visibleWorld::getObjects() { return m_objects; }
+std::shared_ptr<sphere> visibleWorld::getUniverse() { return m_universe; }
 
-size_t hittableWorld::size() const { return m_objects.size(); }
+size_t visibleWorld::size() const { return m_objects.size(); }
 
-bool hittableWorld::hit(const ray &r, double minT, double maxT, hitData &data) const {
+bool visibleWorld::hit(const ray &r, double minT, double maxT, hitData &data) const {
     hitData tempData;
     bool hitAnything = false;
     auto closestObject = maxT;
@@ -57,13 +57,13 @@ bool hittableWorld::hit(const ray &r, double minT, double maxT, hitData &data) c
     return hitAnything;
 }
 
-void hittableWorld::setAmbientLightColor(color c) {
+void visibleWorld::setAmbientLightColor(color c) {
     m_ambientLightColor = c;
 
     auto newAmbientLightMaterial = diffuseLight::generateFromImage(image::STARS_TEXTURE, m_ambientLightColor);
     m_universe->setMaterial(newAmbientLightMaterial);
 }
 
-color hittableWorld::getAmbientLightColor() { return m_ambientLightColor; }
+color visibleWorld::getAmbientLightColor() { return m_ambientLightColor; }
 
 } // namespace shkyera

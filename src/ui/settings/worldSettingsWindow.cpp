@@ -5,7 +5,7 @@
 
 namespace shkyera {
 
-worldSettingsWindow::worldSettingsWindow(std::shared_ptr<hittableWorld> cam) : m_world(cam) {}
+worldSettingsWindow::worldSettingsWindow(std::shared_ptr<visibleWorld> cam) : m_world(cam) {}
 
 worldSettings worldSettingsWindow::render(bool &updated) {
     worldSettings settings;

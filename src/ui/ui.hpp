@@ -16,7 +16,7 @@ namespace shkyera {
 
 class ui {
   public:
-    ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<hittableWorld> world,
+    ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<visibleWorld> world,
        std::shared_ptr<camera> cam);
 
     void init();
@@ -34,7 +34,7 @@ class ui {
 
     std::shared_ptr<renderer> m_renderer;
     std::shared_ptr<camera> m_camera;
-    std::shared_ptr<hittableWorld> m_world;
+    std::shared_ptr<visibleWorld> m_world;
 
     renderWindow m_renderWindow;
     cameraSettingsWindow m_cameraSettingsWindow;

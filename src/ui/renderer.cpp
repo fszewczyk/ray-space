@@ -10,14 +10,14 @@
 
 namespace shkyera {
 
-renderer::renderer(std::shared_ptr<hittableWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
+renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
                    color backgroundColor)
     : m_world(world), m_cam(cam), m_image(im) {
     m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
     m_backgroundColor = backgroundColor;
 }
 
-renderer::renderer(std::shared_ptr<hittableWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
+renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
     : m_world(world), m_cam(cam), m_image(im) {
     m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
 }

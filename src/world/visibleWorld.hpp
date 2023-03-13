@@ -14,9 +14,9 @@ using std::shared_ptr;
 
 namespace shkyera {
 
-class hittableWorld {
+class visibleWorld {
   public:
-    hittableWorld();
+    visibleWorld();
 
     void clear();
     void add(shared_ptr<sphere> object);

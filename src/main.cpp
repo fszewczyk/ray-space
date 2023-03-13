@@ -7,7 +7,7 @@
 #include "ui/renderer.hpp"
 #include "ui/ui.hpp"
 #include "world/camera.hpp"
-#include "world/hittableWorld.hpp"
+#include "world/visibleWorld.hpp"
 
 #include <iostream>
 #include <numeric>
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     const int imageWidth = 650;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
-    auto world = make_shared<hittableWorld>();
+    auto world = make_shared<visibleWorld>();
 
     auto earthMaterial = lambertian::generateFromImage(image::EARTH_DAY_TEXTURE);
     auto marsMaterial = lambertian::generateFromImage(image::MARS_TEXTURE);
