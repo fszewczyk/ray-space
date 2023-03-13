@@ -41,10 +41,10 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     return true;
 }
 
-shared_ptr<material> sphere::getMaterial() { return m_material; }
+shared_ptr<material> sphere::getMaterial() const { return m_material; }
 void sphere::setMaterial(shared_ptr<material> material) { m_material = material; }
 
-std::string sphere::getName() { return m_name; }
+std::string sphere::getName() const { return m_name; }
 void sphere::setName(std::string name) { m_name = name; }
 
 void sphere::getSphericalUV(const point3 &p, double &u, double &v) {

@@ -14,18 +14,18 @@ using std::shared_ptr;
 
 namespace shkyera {
 
-class hittableWorld : public hittable {
+class hittableWorld {
   public:
     hittableWorld();
 
     void clear();
     void add(shared_ptr<hittable> object);
 
-    std::vector<shared_ptr<hittable>> objects();
+    std::vector<shared_ptr<hittable>> getObjects();
     std::shared_ptr<sphere> getUniverse();
     size_t size() const;
 
-    virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const override;
+    bool hit(const ray &r, double minT, double maxT, hitData &data) const;
 
     void setAmbientLightColor(color c);
     color getAmbientLightColor();

@@ -16,6 +16,8 @@ class worldSettingsWindow {
     worldSettings render(bool &updated);
 
   private:
+    void objectSettings();
+
     std::shared_ptr<hittableWorld> m_world;
 };
 

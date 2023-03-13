@@ -12,11 +12,11 @@ class sphere : public hittable {
 
     virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const override;
 
-    shared_ptr<material> getMaterial();
-    void setMaterial(shared_ptr<material> material);
+    virtual std::string getName() const override;
+    virtual void setName(std::string name) override;
 
-    std::string getName();
-    void setName(std::string name);
+    virtual shared_ptr<material> getMaterial() const override;
+    virtual void setMaterial(shared_ptr<material> material) override;
 
   private:
     static void getSphericalUV(const point3 &p, double &u, double &v);

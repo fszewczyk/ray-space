@@ -27,6 +27,12 @@ struct hitData {
 class hittable {
   public:
     virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const = 0;
+
+    virtual std::string getName() const = 0;
+    virtual void setName(std::string name) = 0;
+
+    virtual shared_ptr<material> getMaterial() const = 0;
+    virtual void setMaterial(shared_ptr<material> material) = 0;
 };
 
 } // namespace shkyera
