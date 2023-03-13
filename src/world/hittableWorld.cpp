@@ -11,7 +11,7 @@ hittableWorld::hittableWorld() : m_ambientLightColor(0.15, 0.15, 0.15) {
 }
 
 void hittableWorld::clear() { m_objects.clear(); }
-void hittableWorld::add(shared_ptr<hittable> object) {
+void hittableWorld::add(shared_ptr<sphere> object) {
     std::string name = object->getName();
 
     bool uniqueName = true;
@@ -36,7 +36,7 @@ void hittableWorld::add(shared_ptr<hittable> object) {
     m_objects.push_back(object);
 }
 
-std::vector<shared_ptr<hittable>> hittableWorld::getObjects() { return m_objects; }
+std::vector<shared_ptr<sphere>> hittableWorld::getObjects() { return m_objects; }
 std::shared_ptr<sphere> hittableWorld::getUniverse() { return m_universe; }
 
 size_t hittableWorld::size() const { return m_objects.size(); }

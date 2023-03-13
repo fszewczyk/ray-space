@@ -1,22 +1,39 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "shapes/hittable.hpp"
+#include "shapes/material.hpp"
 
 namespace shkyera {
 
-class sphere : public hittable {
+class material;
+
+typedef struct hitData {
+    point3 p;
+    vec3 normal;
+    shared_ptr<material> hitMaterial;
+    double t;
+    double u;
+    double v;
+    bool frontFace;
+
+    inline void setFaceNormal(const ray &r, const vec3 &outwardNormal) {
+        frontFace = dot(r.direction(), outwardNormal) < 0;
+        normal = frontFace ? outwardNormal : -outwardNormal;
+    }
+} hitData;
+
+class sphere {
   public:
     sphere(point3 center, double radius, shared_ptr<material> mat);
     sphere(point3 center, double radius, shared_ptr<material> mat, std::string name);
 
-    virtual bool hit(const ray &r, double minT, double maxT, hitData &data) const override;
+    bool hit(const ray &r, double minT, double maxT, hitData &data) const;
 
-    virtual std::string getName() const override;
-    virtual void setName(std::string name) override;
+    std::string getName() const;
+    void setName(std::string name);
 
-    virtual shared_ptr<material> getMaterial() const override;
-    virtual void setMaterial(shared_ptr<material> material) override;
+    shared_ptr<material> getMaterial() const;
+    void setMaterial(shared_ptr<material> material);
 
   private:
     static void getSphericalUV(const point3 &p, double &u, double &v);

@@ -19,9 +19,9 @@ class hittableWorld {
     hittableWorld();
 
     void clear();
-    void add(shared_ptr<hittable> object);
+    void add(shared_ptr<sphere> object);
 
-    std::vector<shared_ptr<hittable>> getObjects();
+    std::vector<shared_ptr<sphere>> getObjects();
     std::shared_ptr<sphere> getUniverse();
     size_t size() const;
 
@@ -31,7 +31,7 @@ class hittableWorld {
     color getAmbientLightColor();
 
   private:
-    std::vector<shared_ptr<hittable>> m_objects;
+    std::vector<shared_ptr<sphere>> m_objects;
     std::shared_ptr<sphere> m_universe;
 
     color m_ambientLightColor;

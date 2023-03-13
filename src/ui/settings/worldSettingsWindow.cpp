@@ -17,7 +17,9 @@ worldSettings worldSettingsWindow::render(bool &updated) {
 
     ImGui::Begin("World");
     ImGui::ColorEdit3("Ambient Light", ambientLightColorComponents);
-    ImGui::Separator();
+
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
     for (auto object : m_world->getObjects()) {
         if (object == m_world->getUniverse())
             continue;

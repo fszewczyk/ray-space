@@ -1,6 +1,6 @@
 #include "ui/renderer.hpp"
-#include "shapes/hittable.hpp"
 #include "shapes/material.hpp"
+#include "shapes/sphere.hpp"
 
 #include <execution>
 #include <iostream>

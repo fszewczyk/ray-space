@@ -5,9 +5,11 @@
 #include "core/texture.hpp"
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
-#include "shapes/hittable.hpp"
+#include "shapes/sphere.hpp"
 
 namespace shkyera {
+
+typedef struct hitData hitData;
 
 class material {
   public:
