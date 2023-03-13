@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e 
 
-mkdir build -p
+mkdir -p build 
 cd build
 cmake ..
 make
