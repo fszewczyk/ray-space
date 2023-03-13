@@ -47,7 +47,7 @@ using point3 = vec3;
 using color = vec3;
 
 inline std::ostream &operator<<(std::ostream &out, const vec3 &v) {
-    return out << v.x() << ' ' << v.y() << ' ' << v.z() << "\n";
+    return out << v.x() << ' ' << v.y() << ' ' << v.z() << std::endl;
 }
 
 inline bool operator==(const vec3 &u, const vec3 &v) { return u[0] == v[0] && u[1] == v[1] && u[2] == v[2]; }

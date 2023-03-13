@@ -196,9 +196,10 @@ void ui::run() {
                                           ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_DockSpace);
                 ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
-                ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right;
+                ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right, dock_id_top_left,
+                    dock_id_bottom_left;
                 ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f, &dock_id_left, &dock_id_right);
-                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.30f, &dock_id_top_right,
+                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.35f, &dock_id_top_right,
                                             &dock_id_bottom_right);
 
                 ImGui::DockBuilderDockWindow("Render", dock_id_left);
@@ -212,11 +213,8 @@ void ui::run() {
         ImGui::End();
 
         bool updatedSettings = false;
-        point3 newCameraPosition = m_cameraSettingsWindow.render(updatedSettings);
+        cameraSettings newCameraSettings = m_cameraSettingsWindow.render(updatedSettings);
         worldSettings newWorldSettings = m_worldSettingsWindow.render(updatedSettings);
-
-        if (!updatedSettings)
-            newCameraPosition = m_camera->getPosition();
 
         point3 cameraTranslation;
         std::pair<int, int> mouseMovement;
@@ -226,20 +224,17 @@ void ui::run() {
         else
             cameraTranslation = m_renderWindow.render(false, updatedSettings, mouseMovement);
 
-        vec3 newCameraDirection = m_camera->getDirection();
+        newCameraSettings.direction.rotateAroundY(-m_mouseSensitivity * mouseMovement.first);
+        newCameraSettings.direction.rotateUpAndDown(m_mouseSensitivity * mouseMovement.second);
+        newCameraSettings.direction = unitVector(newCameraSettings.direction);
 
-        newCameraDirection.rotateAroundY(-m_mouseSensitivity * mouseMovement.first);
-        newCameraDirection.rotateUpAndDown(m_mouseSensitivity * mouseMovement.second);
-        newCameraDirection = unitVector(newCameraDirection);
-
-        newCameraPosition += cameraTranslation;
+        newCameraSettings.origin += cameraTranslation;
 
         if (m_renderer->renderedImage() && updatedSettings) {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
 
-            m_camera->setPosition(newCameraPosition);
-            m_camera->setDirection(newCameraDirection);
+            m_camera->setSettings(newCameraSettings);
 
             m_world->setAmbientLightColor(newWorldSettings.ambientColor);
 

@@ -23,7 +23,7 @@ class renderer {
 
     bool renderedImage() const;
 
-    static constexpr float SCALING_FACTOR = 2;
+    static constexpr float SCALING_FACTOR = 2.5;
     static constexpr int MAXIMUM_RAY_DEPTH = 3;
 
   private:
