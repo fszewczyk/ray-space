@@ -27,9 +27,9 @@ int main(int argc, char *argv[]) {
     auto marsMaterial = lambertian::generateFromImage(image::MARS_TEXTURE);
     auto sunMaterial = diffuseLight::generateFromImage(image::SUN_TEXTURE, color(10, 10, 10));
 
-    world->add(make_shared<sphere>(point3(-8, 0, 0.2), 2, earthMaterial));
-    world->add(make_shared<sphere>(point3(0, 0, -17.5), 10.0, sunMaterial));
-    world->add(make_shared<sphere>(point3(0, 0, 3), 1.0, marsMaterial));
+    world->add(make_shared<sphere>(point3(-8, 0, 0.2), 2, earthMaterial, "Earth"));
+    world->add(make_shared<sphere>(point3(0, 0, -17.5), 10.0, sunMaterial, "Sun"));
+    world->add(make_shared<sphere>(point3(0, 0, 3), 1.0, marsMaterial, "Mars"));
 
     point3 lookfrom(6, 2, 8);
     point3 lookat(100, 100, 100);
