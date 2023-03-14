@@ -235,8 +235,7 @@ void ui::run() {
             m_renderer->renderingThread().join();
 
             m_camera->setSettings(newCameraSettings);
-
-            m_world->setAmbientLightColor(newWorldSettings.ambientColor);
+            m_world->setSettings(newWorldSettings);
 
             m_renderer->startRendering();
         }

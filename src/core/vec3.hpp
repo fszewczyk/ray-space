@@ -50,7 +50,11 @@ inline std::ostream &operator<<(std::ostream &out, const vec3 &v) {
     return out << v.x() << ' ' << v.y() << ' ' << v.z() << std::endl;
 }
 
-inline bool operator==(const vec3 &u, const vec3 &v) { return u[0] == v[0] && u[1] == v[1] && u[2] == v[2]; }
+inline bool operator==(const vec3 &u, const vec3 &v) {
+    return std::abs(u[0] - v[0]) < std::numeric_limits<float>::epsilon() &&
+           std::abs(u[1] - v[1]) < std::numeric_limits<float>::epsilon() &&
+           std::abs(u[2] - v[2]) < std::numeric_limits<float>::epsilon();
+}
 
 inline bool operator!=(const vec3 &u, const vec3 &v) { return !(u == v); }
 

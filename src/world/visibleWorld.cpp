@@ -1,6 +1,6 @@
+#include "world/visibleWorld.hpp"
 #include "core/image.hpp"
 #include "shapes/material.hpp"
-#include "world/visibleWorld.hpp"
 
 namespace shkyera {
 
@@ -38,6 +38,7 @@ void visibleWorld::add(shared_ptr<sphere> object) {
 
 std::vector<shared_ptr<sphere>> visibleWorld::getObjects() { return m_objects; }
 std::shared_ptr<sphere> visibleWorld::getUniverse() { return m_universe; }
+std::shared_ptr<sphere> visibleWorld::getObjectByIndex(size_t i) { return m_objects[i + 1]; }
 
 size_t visibleWorld::size() const { return m_objects.size(); }
 
@@ -55,6 +56,15 @@ bool visibleWorld::hit(const ray &r, double minT, double maxT, hitData &data) co
     }
 
     return hitAnything;
+}
+
+void visibleWorld::setSettings(worldSettings &settings) {
+    setAmbientLightColor(settings.ambientColor);
+
+    for (size_t i = 0; i < settings.planets.size(); ++i) {
+        if (settings.updatedPlanets[i])
+            getObjectByIndex(i)->setSettings(settings.planets[i]);
+    }
 }
 
 void visibleWorld::setAmbientLightColor(color c) {

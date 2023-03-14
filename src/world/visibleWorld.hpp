@@ -14,6 +14,12 @@ using std::shared_ptr;
 
 namespace shkyera {
 
+struct worldSettings {
+    color ambientColor;
+    std::vector<planetSettings> planets;
+    std::vector<bool> updatedPlanets;
+};
+
 class visibleWorld {
   public:
     visibleWorld();
@@ -23,9 +29,12 @@ class visibleWorld {
 
     std::vector<shared_ptr<sphere>> getObjects();
     std::shared_ptr<sphere> getUniverse();
+    std::shared_ptr<sphere> getObjectByIndex(size_t i);
     size_t size() const;
 
     bool hit(const ray &r, double minT, double maxT, hitData &data) const;
+
+    void setSettings(worldSettings &settings);
 
     void setAmbientLightColor(color c);
     color getAmbientLightColor();

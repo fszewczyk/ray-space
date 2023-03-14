@@ -47,6 +47,23 @@ void sphere::setMaterial(shared_ptr<material> material) { m_material = material;
 std::string sphere::getName() const { return m_name; }
 void sphere::setName(std::string name) { m_name = name; }
 
+planetSettings sphere::getSettings() const {
+    planetSettings settings;
+
+    settings.remove = false;
+    settings.origin = m_center;
+    settings.radius = m_radius;
+    settings.mat = m_material;
+    settings.name = m_name;
+
+    return settings;
+}
+
+void sphere::setSettings(planetSettings &settings) {
+    m_center = settings.origin;
+    m_radius = settings.radius;
+}
+
 void sphere::getSphericalUV(const point3 &p, double &u, double &v) {
     auto theta = acos(-p.y());
     auto phi = atan2(-p.z(), p.x()) + PI;

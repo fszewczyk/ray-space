@@ -11,6 +11,8 @@ namespace shkyera {
 
 typedef struct hitData hitData;
 
+enum MATERIAL_TYPE { LAMBERTIAN, METAL, REFRACTOR, DIFFUSE_LIGHT };
+
 class material {
   public:
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const = 0;

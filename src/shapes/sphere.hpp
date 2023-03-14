@@ -7,7 +7,7 @@ namespace shkyera {
 
 class material;
 
-typedef struct hitData {
+struct hitData {
     point3 p;
     vec3 normal;
     shared_ptr<material> hitMaterial;
@@ -20,7 +20,21 @@ typedef struct hitData {
         frontFace = dot(r.direction(), outwardNormal) < 0;
         normal = frontFace ? outwardNormal : -outwardNormal;
     }
-} hitData;
+};
+
+struct planetSettings {
+    bool remove;
+
+    point3 origin;
+    double radius;
+    shared_ptr<material> mat;
+    std::string name;
+
+    bool operator==(const planetSettings &a) {
+        return a.origin == origin && std::abs(a.radius - radius) < std::numeric_limits<float>::epsilon() &&
+               a.remove == remove && a.mat == mat;
+    }
+};
 
 class sphere {
   public:
@@ -34,6 +48,9 @@ class sphere {
 
     shared_ptr<material> getMaterial() const;
     void setMaterial(shared_ptr<material> material);
+
+    planetSettings getSettings() const;
+    void setSettings(planetSettings &settings);
 
   private:
     static void getSphericalUV(const point3 &p, double &u, double &v);
