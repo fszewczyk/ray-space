@@ -15,6 +15,7 @@ set(IMGUI_SOURCE
     ${CMAKE_BINARY_DIR}/_deps/imgui-src/imgui_widgets.cpp
     ${CMAKE_BINARY_DIR}/_deps/imgui-src/backends/imgui_impl_glfw.cpp
     ${CMAKE_BINARY_DIR}/_deps/imgui-src/backends/imgui_impl_opengl3.cpp
+    ${CMAKE_BINARY_DIR}/_deps/imgui-src/misc/cpp/imgui_stdlib.cpp
 )
 
 add_library(imgui STATIC

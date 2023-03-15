@@ -52,6 +52,8 @@ class sphere {
     planetSettings getSettings() const;
     void setSettings(planetSettings &settings);
 
+    static constexpr size_t MAX_NAME_LENGTH = 30;
+
   private:
     static void getSphericalUV(const point3 &p, double &u, double &v);
 

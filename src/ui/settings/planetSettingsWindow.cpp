@@ -2,6 +2,7 @@
 #include "ui/ui.hpp"
 
 #include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 namespace shkyera {
 
@@ -15,20 +16,19 @@ planetSettings planetSettingsWindow::render(bool &updated) {
     float positionZ = settings.origin[2];
 
     float radius = settings.radius;
-    std::string name = settings.name;
 
-    if (ImGui::CollapsingHeader(name.c_str())) {
+    if (ImGui::CollapsingHeader(settings.name.c_str())) {
         ImGui::PushFont(ui::BOLD_FONT);
         ImGui::Text("Position");
         ImGui::PopFont();
-        ImGui::SliderFloat(("X##" + name).c_str(), &positionX, -30.0f, 30.0f, "%.2f");
-        ImGui::SliderFloat(("Y##" + name).c_str(), &positionY, -30.0f, 30.0f, "%.2f");
-        ImGui::SliderFloat(("Z##" + name).c_str(), &positionZ, -30.0f, 30.0f, "%.2f");
+        ImGui::SliderFloat(("X##" + settings.name).c_str(), &positionX, -30.0f, 30.0f, "%.2f");
+        ImGui::SliderFloat(("Y##" + settings.name).c_str(), &positionY, -30.0f, 30.0f, "%.2f");
+        ImGui::SliderFloat(("Z##" + settings.name).c_str(), &positionZ, -30.0f, 30.0f, "%.2f");
 
         ImGui::PushFont(ui::BOLD_FONT);
         ImGui::Text("Visual");
         ImGui::PopFont();
-        ImGui::SliderFloat(("Radius##" + name).c_str(), &radius, 0.1f, 20.0f, "%.2f");
+        ImGui::SliderFloat(("Radius##" + settings.name).c_str(), &radius, 0.1f, 20.0f, "%.2f");
 
         settings.mat = renderMaterialSettings();
 
@@ -39,7 +39,6 @@ planetSettings planetSettingsWindow::render(bool &updated) {
     settings.origin[1] = positionY;
     settings.origin[2] = positionZ;
     settings.radius = radius;
-    settings.name = name;
 
     if (!(settings == m_planet->getSettings())) {
         updated = true;

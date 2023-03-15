@@ -62,6 +62,8 @@ planetSettings sphere::getSettings() const {
 void sphere::setSettings(planetSettings &settings) {
     m_center = settings.origin;
     m_radius = settings.radius;
+
+    m_name = settings.name;
 }
 
 void sphere::getSphericalUV(const point3 &p, double &u, double &v) {
