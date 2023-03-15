@@ -14,6 +14,8 @@ class planetSettingsWindow {
 
   private:
     std::shared_ptr<material> renderMaterialSettings();
+    IMAGE_TEXTURE_TYPE imageTextureButton(std::shared_ptr<image> im, IMAGE_TEXTURE_TYPE buttonTextureType,
+                                          IMAGE_TEXTURE_TYPE currentChosenTextureType);
 
     std::shared_ptr<sphere> m_planet;
 };

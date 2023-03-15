@@ -25,6 +25,7 @@ class lambertian : public material {
     lambertian(shared_ptr<texture> c);
 
     static std::shared_ptr<lambertian> generateFromImage(std::shared_ptr<image> im);
+    static std::shared_ptr<lambertian> generateFromImageTextureType(int imageTextureType);
 
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const override;
 

@@ -62,7 +62,7 @@ planetSettings sphere::getSettings() const {
 void sphere::setSettings(planetSettings &settings) {
     m_center = settings.origin;
     m_radius = settings.radius;
-
+    m_material = settings.mat;
     m_name = settings.name;
 }
 

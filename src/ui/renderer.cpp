@@ -12,7 +12,7 @@ namespace shkyera {
 
 renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
                    color backgroundColor)
-    : m_world(world), m_cam(cam), m_image(im) {
+    : m_world(world), m_cam(cam), m_image(im), m_stop(false) {
     m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
     m_backgroundColor = backgroundColor;
 }
@@ -66,7 +66,6 @@ void renderer::render() {
         // Whoever reads this, I'm sorry it's done this way. Nothing else
         // worked.
         std::vector<std::thread> renderingThreads;
-
         for (int y = 0; y < m_imageToDraw->height(); ++y) {
             renderingThreads.push_back(std::thread([this, y] { renderRow(y); }));
         }

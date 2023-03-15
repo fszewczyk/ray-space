@@ -1,8 +1,6 @@
 #ifndef UI_H
 #define UI_H
 
-#define GLFW_INCLUDE_NONE
-
 #include "core/image.hpp"
 #include "ui/render/renderWindow.hpp"
 #include "ui/renderer.hpp"

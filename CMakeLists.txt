@@ -54,14 +54,14 @@ set(SOURCES src/main.cpp)
 add_executable(shkyera src/main.cpp)
 
 target_include_directories(shkyera PRIVATE src)
-target_include_directories(core PRIVATE src)
+target_include_directories(core PRIVATE src ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
 target_include_directories(shapes PRIVATE src)
 target_include_directories(world PRIVATE src)
 target_include_directories(ui PRIVATE src  ${CMAKE_BINARY_DIR}/_deps/imgui-src ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
 
 target_link_libraries(shkyera PRIVATE core shapes world ui imgui glfw glad)
 target_link_libraries(ui PRIVATE imgui glfw glad core)
-target_link_libraries(core PRIVATE stb_image)
+target_link_libraries(core PRIVATE stb_image glfw glad)
 
 
 

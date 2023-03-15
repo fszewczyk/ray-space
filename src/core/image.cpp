@@ -3,6 +3,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define GL_SILENCE_DEPRECATION
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+#include <GLES2/gl2.h>
+#endif
+#include <glad/glad.h>
+
 #include <cmath>
 #include <numeric>
 
@@ -72,9 +78,14 @@ void image::writeImage(std::ostream &out) const {
     }
 }
 
-void image::scaleImage(std::shared_ptr<image> destinationImage) {
+void image::scaleImage(std::shared_ptr<image> destinationImage, bool uniformScaling) {
     float scaleHorizontal = static_cast<float>(width()) / destinationImage->width();
     float scaleVertical = static_cast<float>(height()) / destinationImage->height();
+
+    if (uniformScaling) {
+        scaleVertical = std::min(scaleHorizontal, scaleVertical);
+        scaleHorizontal = std::min(scaleHorizontal, scaleVertical);
+    }
 
     for (int y = 0; y < destinationImage->height(); ++y) {
         for (int x = 0; x < destinationImage->width(); ++x) {
@@ -101,6 +112,39 @@ void image::scaleImage(std::shared_ptr<image> destinationImage) {
         }
     }
 }
+
+void image::updateTextureId() {
+    std::vector<uint8_t> data(4 * width() * height());
+
+    for (size_t y = 0; y < height(); ++y) {
+        for (size_t x = 0; x < width(); ++x) {
+            const color &c = at(x, y);
+            data[(y * width() + x) * 4 + 0] = uint8_t(fabs(c[0]));
+            data[(y * width() + x) * 4 + 1] = uint8_t(fabs(c[1]));
+            data[(y * width() + x) * 4 + 2] = uint8_t(fabs(c[2]));
+            data[(y * width() + x) * 4 + 3] = 255;
+        }
+    }
+
+    unsigned textureId = m_textureId;
+
+    if (m_assignedTextureId)
+        glDeleteTextures(1, &textureId);
+
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    m_assignedTextureId = true;
+    m_textureId = textureId;
+}
+
+uint64_t image::getTextureId() const { return m_textureId; }
 
 int image::width() const { return m_width; }
 int image::height() const { return m_height; }
@@ -129,5 +173,16 @@ std::shared_ptr<image> image::MARS_TEXTURE = std::make_shared<image>("resources/
 std::shared_ptr<image> image::SUN_TEXTURE = std::make_shared<image>("resources/textures/sun.jpg");
 std::shared_ptr<image> image::MOON_TEXTURE = std::make_shared<image>("resources/textures/moon.jpg");
 std::shared_ptr<image> image::STARS_TEXTURE = std::make_shared<image>("resources/textures/stars.jpg");
+std::shared_ptr<image> image::CERES_TEXTURE = std::make_shared<image>("resources/textures/ceres.jpg");
+std::shared_ptr<image> image::CLOUDY_VENUS_TEXTURE = std::make_shared<image>("resources/textures/cloudyvenus.jpg");
+std::shared_ptr<image> image::ERIS_TEXTURE = std::make_shared<image>("resources/textures/eris.jpg");
+std::shared_ptr<image> image::HAUMEA_TEXTURE = std::make_shared<image>("resources/textures/haumea.jpg");
+std::shared_ptr<image> image::JUPITER_TEXTURE = std::make_shared<image>("resources/textures/jupiter.jpg");
+std::shared_ptr<image> image::MAKE_TEXTURE = std::make_shared<image>("resources/textures/makemake.jpg");
+std::shared_ptr<image> image::MERCURY_TEXTURE = std::make_shared<image>("resources/textures/mercury.jpg");
+std::shared_ptr<image> image::NEPTUNE_TEXTURE = std::make_shared<image>("resources/textures/neptune.jpg");
+std::shared_ptr<image> image::SATURN_TEXTURE = std::make_shared<image>("resources/textures/saturn.jpg");
+std::shared_ptr<image> image::URANUS_TEXTURE = std::make_shared<image>("resources/textures/uranus.jpg");
+std::shared_ptr<image> image::VENUS_TEXTURE = std::make_shared<image>("resources/textures/venus.jpg");
 
 } // namespace shkyera

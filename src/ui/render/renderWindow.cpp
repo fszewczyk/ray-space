@@ -9,14 +9,12 @@
 
 namespace shkyera {
 
-renderWindow::renderWindow(std::shared_ptr<image> im,
-                           std::shared_ptr<camera> cam)
+renderWindow::renderWindow(std::shared_ptr<image> im, std::shared_ptr<camera> cam)
     : m_image(im), m_camera(cam), m_leftMouseHold(false) {
     m_loadedImage = false;
 }
 
-point3 renderWindow::render(bool sampleTexture, bool &updated,
-                            std::pair<int, int> &mouseMovement) {
+point3 renderWindow::render(bool sampleTexture, bool &updated, std::pair<int, int> &mouseMovement) {
     if (sampleTexture)
         updateImageTexture();
     {
@@ -38,19 +36,15 @@ point3 renderWindow::render(bool sampleTexture, bool &updated,
             if (ImGui::IsKeyPressed('E'))
                 cameraTranslation[1] = 0.4;
 
-            if (ImGui::IsWindowHovered() &&
-                ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+            if (ImGui::IsWindowHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
                 ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
                 ImVec2 screenPositionAbsolute = ImGui::GetItemRectMin();
-                ImVec2 mousePositionRelative =
-                    ImVec2(mousePositionAbsolute.x - screenPositionAbsolute.x,
-                           mousePositionAbsolute.y - screenPositionAbsolute.y);
+                ImVec2 mousePositionRelative = ImVec2(mousePositionAbsolute.x - screenPositionAbsolute.x,
+                                                      mousePositionAbsolute.y - screenPositionAbsolute.y);
 
                 if (m_leftMouseHold) {
-                    mouseMovement.first =
-                        mousePositionRelative.x - m_lastMousePosition.first;
-                    mouseMovement.second =
-                        mousePositionRelative.y - m_lastMousePosition.second;
+                    mouseMovement.first = mousePositionRelative.x - m_lastMousePosition.first;
+                    mouseMovement.second = mousePositionRelative.y - m_lastMousePosition.second;
                     updated = true;
                 }
 
@@ -63,7 +57,7 @@ point3 renderWindow::render(bool sampleTexture, bool &updated,
             }
         }
 
-        ImGui::Image((void *)m_loadTexId, ImVec2(m_loadWidth, m_loadHeight));
+        ImGui::Image((ImTextureID)m_loadTexId, ImVec2(m_loadWidth, m_loadHeight));
 
         ImGui::End();
 
@@ -83,29 +77,29 @@ void renderWindow::updateImageTexture() {
     for (size_t y = 0; y < m_loadHeight; ++y) {
         for (size_t x = 0; x < m_loadWidth; ++x) {
             const color &c = m_image->at(x, y);
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 0] =
-                uint8_t(fabs(c[0] * 255));
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 1] =
-                uint8_t(fabs(c[1] * 255));
-            m_renderTexture[(y * m_loadWidth + x) * 4 + 2] =
-                uint8_t(fabs(c[2] * 255));
+            m_renderTexture[(y * m_loadWidth + x) * 4 + 0] = uint8_t(fabs(c[0] * 255));
+            m_renderTexture[(y * m_loadWidth + x) * 4 + 1] = uint8_t(fabs(c[1] * 255));
+            m_renderTexture[(y * m_loadWidth + x) * 4 + 2] = uint8_t(fabs(c[2] * 255));
             m_renderTexture[(y * m_loadWidth + x) * 4 + 3] = 255;
         }
     }
-    if (m_loadedImage)
-        glDeleteTextures(1, &m_loadTexId);
+    unsigned textureId = m_loadTexId;
 
-    glGenTextures(1, &m_loadTexId);
-    glBindTexture(GL_TEXTURE_2D, m_loadTexId);
+    if (m_loadedImage)
+        glDeleteTextures(1, &textureId);
+
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_loadWidth, m_loadHeight, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, m_renderTexture.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_loadWidth, m_loadHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 m_renderTexture.data());
     glGenerateMipmap(GL_TEXTURE_2D);
 
     m_loadedImage = true;
+    m_loadTexId = textureId;
 }
 
 std::shared_ptr<image> renderWindow::getImage() const { return m_image; }

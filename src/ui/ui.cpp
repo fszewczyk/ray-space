@@ -1,8 +1,10 @@
 #include "ui.hpp"
+#include "core/image.hpp"
 #include "core/ray.hpp"
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
 
+#include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <cmath>
@@ -11,11 +13,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#define GL_SILENCE_DEPRECATION
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-#include <GLES2/gl2.h>
-#endif
-#include <GLFW/glfw3.h>
 
 namespace shkyera {
 
@@ -91,6 +88,40 @@ void ui::init() { // Setup window
 
     NORMAL_FONT = io.Fonts->AddFontFromFileTTF("resources/fonts/OpenSansRegular.ttf", 18);
     BOLD_FONT = io.Fonts->AddFontFromFileTTF("resources/fonts/OpenSansBold.ttf", 18);
+
+    image::EARTH_DAY_TEXTURE->scaleImage(image::ICON_EARTH_DAY_TEXTURE, true);
+    image::EARTH_NIGHT_TEXTURE->scaleImage(image::ICON_EARTH_NIGHT_TEXTURE, true);
+    image::MARS_TEXTURE->scaleImage(image::ICON_MARS_TEXTURE, true);
+    image::SUN_TEXTURE->scaleImage(image::ICON_SUN_TEXTURE, true);
+    image::MOON_TEXTURE->scaleImage(image::ICON_MOON_TEXTURE, true);
+    image::CERES_TEXTURE->scaleImage(image::ICON_CERES_TEXTURE, true);
+    image::CLOUDY_VENUS_TEXTURE->scaleImage(image::ICON_CLOUDY_VENUS_TEXTURE, true);
+    image::ERIS_TEXTURE->scaleImage(image::ICON_ERIS_TEXTURE, true);
+    image::HAUMEA_TEXTURE->scaleImage(image::ICON_HAUMEA_TEXTURE, true);
+    image::JUPITER_TEXTURE->scaleImage(image::ICON_JUPITER_TEXTURE, true);
+    image::MAKE_TEXTURE->scaleImage(image::ICON_MAKE_TEXTURE, true);
+    image::MERCURY_TEXTURE->scaleImage(image::ICON_MERCURY_TEXTURE, true);
+    image::NEPTUNE_TEXTURE->scaleImage(image::ICON_NEPTUNE_TEXTURE, true);
+    image::SATURN_TEXTURE->scaleImage(image::ICON_SATURN_TEXTURE, true);
+    image::URANUS_TEXTURE->scaleImage(image::ICON_URANUS_TEXTURE, true);
+    image::VENUS_TEXTURE->scaleImage(image::ICON_VENUS_TEXTURE, true);
+
+    image::ICON_EARTH_DAY_TEXTURE->updateTextureId();
+    image::ICON_EARTH_NIGHT_TEXTURE->updateTextureId();
+    image::ICON_MARS_TEXTURE->updateTextureId();
+    image::ICON_SUN_TEXTURE->updateTextureId();
+    image::ICON_MOON_TEXTURE->updateTextureId();
+    image::ICON_CERES_TEXTURE->updateTextureId();
+    image::ICON_CLOUDY_VENUS_TEXTURE->updateTextureId();
+    image::ICON_ERIS_TEXTURE->updateTextureId();
+    image::ICON_HAUMEA_TEXTURE->updateTextureId();
+    image::ICON_JUPITER_TEXTURE->updateTextureId();
+    image::ICON_MAKE_TEXTURE->updateTextureId();
+    image::ICON_MERCURY_TEXTURE->updateTextureId();
+    image::ICON_NEPTUNE_TEXTURE->updateTextureId();
+    image::ICON_SATURN_TEXTURE->updateTextureId();
+    image::ICON_URANUS_TEXTURE->updateTextureId();
+    image::ICON_VENUS_TEXTURE->updateTextureId();
 }
 
 void ui::style() {

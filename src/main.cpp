@@ -18,7 +18,7 @@ using namespace shkyera;
 
 int main(int argc, char *argv[]) {
     const auto aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 650;
+    const int imageWidth = 600;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
     auto world = make_shared<visibleWorld>();

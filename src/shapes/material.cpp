@@ -37,6 +37,63 @@ std::shared_ptr<lambertian> lambertian::generateFromImage(std::shared_ptr<image>
     return material;
 }
 
+std::shared_ptr<lambertian> lambertian::generateFromImageTextureType(int imageTextureType) {
+    switch (imageTextureType) {
+    case EARTH_DAY:
+        return generateFromImage(image::EARTH_DAY_TEXTURE);
+        break;
+    case EARTH_NIGHT:
+        return generateFromImage(image::EARTH_NIGHT_TEXTURE);
+        break;
+    case MARS:
+        return generateFromImage(image::MARS_TEXTURE);
+        break;
+    case SUN:
+        return generateFromImage(image::SUN_TEXTURE);
+        break;
+    case MOON:
+        return generateFromImage(image::MOON_TEXTURE);
+        break;
+    case CERES:
+        return generateFromImage(image::CERES_TEXTURE);
+        break;
+    case CLOUDY_VENUS:
+        return generateFromImage(image::CLOUDY_VENUS_TEXTURE);
+        break;
+    case ERIS:
+        return generateFromImage(image::ERIS_TEXTURE);
+        break;
+    case HAUMEA:
+        return generateFromImage(image::HAUMEA_TEXTURE);
+        break;
+    case JUPITER:
+        return generateFromImage(image::JUPITER_TEXTURE);
+        break;
+    case MAKE:
+        return generateFromImage(image::MAKE_TEXTURE);
+        break;
+    case MERCURY:
+        return generateFromImage(image::MERCURY_TEXTURE);
+        break;
+    case NEPTUNE:
+        return generateFromImage(image::NEPTUNE_TEXTURE);
+        break;
+    case SATURN:
+        return generateFromImage(image::SATURN_TEXTURE);
+        break;
+    case URANUS:
+        return generateFromImage(image::URANUS_TEXTURE);
+        break;
+    case VENUS:
+        return generateFromImage(image::VENUS_TEXTURE);
+        break;
+    case NONE:
+    default:
+        return std::make_shared<lambertian>(color(1, 1, 1));
+        break;
+    }
+}
+
 bool metal::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     vec3 reflected = reflect(unitVector(rayIn.direction()), data.normal);
     rayOut = ray(data.p, reflected + m_fuzz * randomInUnitSphere());
