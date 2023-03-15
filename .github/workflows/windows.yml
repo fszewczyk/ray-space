@@ -19,5 +19,5 @@ jobs:
           cd build
           cmake ..
     - name: Build
-      run: cmake --build build --parallel
+      run: make
    
