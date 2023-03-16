@@ -6,14 +6,12 @@
 namespace shkyera {
 
 worldSettingsWindow::worldSettingsWindow(std::shared_ptr<visibleWorld> world) : m_world(world) {
-    for (auto planet : world->getObjects()) {
-        if (planet == world->getUniverse())
-            continue;
-        m_planetSettingsWindows.push_back(planetSettingsWindow(planet));
-    }
+    updatePlanetSettingsWindows();
 }
 
 worldSettings worldSettingsWindow::render(bool &updated) {
+    updatePlanetSettingsWindows();
+
     worldSettings settings;
     settings.planets.resize(m_world->getObjects().size());
     settings.updatedPlanets.resize(m_world->getObjects().size());
@@ -55,16 +53,13 @@ worldSettings worldSettingsWindow::render(bool &updated) {
         ImGui::SameLine();
         if (ImGui::Button("Accept")) {
             auto planet = make_shared<sphere>(
-                point3(0, 0, 0), 1,
+                point3(randomDouble(-2, 2), randomDouble(-2, 2), randomDouble(-2, 2)), randomDouble(0.5, 3),
                 make_shared<lambertian>(color(randomDouble(0, 1), randomDouble(0, 1), randomDouble(0, 1))), planetName);
+            settings.planets.push_back(planet->getSettings());
+            settings.updatedPlanets.push_back(true);
 
-            m_world->add(planet);
-            m_planetSettingsWindows.clear();
-            for (auto planet : m_world->getObjects()) {
-                if (planet == m_world->getUniverse())
-                    continue;
-                m_planetSettingsWindows.push_back(planetSettingsWindow(planet));
-            }
+            updated = true;
+
             ImGui::CloseCurrentPopup();
         }
 
@@ -83,6 +78,18 @@ worldSettings worldSettingsWindow::render(bool &updated) {
     settings.ambientColor = newAmbientLightColor;
 
     return settings;
+}
+
+void worldSettingsWindow::updatePlanetSettingsWindows() {
+    if (m_planetSettingsWindows.size() == m_world->getObjects().size() - 1)
+        return;
+
+    m_planetSettingsWindows.clear();
+    for (auto planet : m_world->getObjects()) {
+        if (planet == m_world->getUniverse())
+            continue;
+        m_planetSettingsWindows.push_back(planetSettingsWindow(planet));
+    }
 }
 
 } // namespace shkyera

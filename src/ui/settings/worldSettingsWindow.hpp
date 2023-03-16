@@ -19,6 +19,7 @@ class worldSettingsWindow {
 
   private:
     void objectSettings();
+    void updatePlanetSettingsWindows();
 
     std::shared_ptr<visibleWorld> m_world;
     std::vector<planetSettingsWindow> m_planetSettingsWindows;

@@ -34,7 +34,16 @@ planetSettings planetSettingsWindow::render(bool &updated) {
         ImGui::SameLine();
         ImGui::SliderFloat(("Radius##" + settings.name).c_str(), &radius, 0.1f, 20.0f, "%.2f");
 
-        // ImGui::Dummy(ImVec2(0.0f, 5.0f));
+        ImGui::Dummy(ImVec2(0.0f, 5.0f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(82, 3, 23)));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(166, 15, 53)));
+
+        if (ImGui::Button("Remove", ImVec2(0.96 * ImGui::GetWindowWidth() - 100, 0.0f))) {
+            settings.remove = true;
+        }
+
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor();
 
         ImGui::Dummy(ImVec2(0.0f, 5.0f));
     }

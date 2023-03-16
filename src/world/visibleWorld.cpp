@@ -16,6 +16,7 @@ void visibleWorld::add(shared_ptr<sphere> object) {
 
     bool uniqueName = true;
     int count = 0;
+
     do {
         uniqueName = true;
         for (auto existingObject : m_objects) {
@@ -62,8 +63,17 @@ void visibleWorld::setSettings(worldSettings &settings) {
     setAmbientLightColor(settings.ambientColor);
 
     for (size_t i = 0; i < settings.planets.size(); ++i) {
-        if (settings.updatedPlanets[i])
-            getObjectByIndex(i)->setSettings(settings.planets[i]);
+        if (settings.updatedPlanets[i]) {
+            if (settings.planets[i].remove) {
+                m_objects.erase(m_objects.begin() + i + 1);
+            } else if (i < m_objects.size() - 1) {
+                getObjectByIndex(i)->setSettings(settings.planets[i]);
+            } else {
+                auto planet = make_shared<sphere>(settings.planets[i].origin, settings.planets[i].radius,
+                                                  settings.planets[i].mat, settings.planets[i].name);
+                add(planet);
+            }
+        }
     }
 }
 
