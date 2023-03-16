@@ -23,6 +23,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
+    - name: Set up Visual Studio
+      run: |
+        "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --channelId VisualStudio.16.Release --productId Microsoft.VisualStudio.Product.Enterprise -q --includeRecommended --add "Microsoft.VisualStudio.Component.VC.ATL" --add "Microsoft.VisualStudio.Component.VC.ATLMFC" --add "Microsoft.VisualStudio.Component.VC.v141.x86.x64" --add "Microsoft.VisualStudio.Component.VC.140" --add "Microsoft.VisualStudio.Component.WinXP" --add "Microsoft.VisualStudio.Component.VC.v141.ATL" --add "Microsoft.VisualStudio.Component.VC.v141.MFC"
+      
     - name: Build
       run: |
         mkdir build
