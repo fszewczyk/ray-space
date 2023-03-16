@@ -19,6 +19,7 @@ planetSettings planetSettingsWindow::render(bool &updated) {
     float radius = settings.radius;
 
     if (ImGui::CollapsingHeader(settings.name.c_str())) {
+        ImGui::PushItemWidth(-100);
         ImGui::PushFont(ui::BOLD_FONT);
         ImGui::Text("Position");
         ImGui::PopFont();
@@ -29,12 +30,11 @@ planetSettings planetSettingsWindow::render(bool &updated) {
         ImGui::PushFont(ui::BOLD_FONT);
         ImGui::Text("Visual");
         ImGui::PopFont();
-
+        settings.mat = renderMaterialSettings();
+        ImGui::SameLine();
         ImGui::SliderFloat(("Radius##" + settings.name).c_str(), &radius, 0.1f, 20.0f, "%.2f");
 
-        ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-        settings.mat = renderMaterialSettings();
+        // ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
         ImGui::Dummy(ImVec2(0.0f, 5.0f));
     }
