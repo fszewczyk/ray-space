@@ -13,6 +13,8 @@ class vec3 {
     vec3();
     vec3(double x, double y, double z);
 
+    float *getCords();
+
     double x() const;
     double y() const;
     double z() const;
@@ -45,8 +47,16 @@ using point3 = vec3;
 using color = vec3;
 
 inline std::ostream &operator<<(std::ostream &out, const vec3 &v) {
-    return out << v.x() << ' ' << v.y() << ' ' << v.z() << "\n";
+    return out << v.x() << ' ' << v.y() << ' ' << v.z() << std::endl;
 }
+
+inline bool operator==(const vec3 &u, const vec3 &v) {
+    return std::abs(u[0] - v[0]) < std::numeric_limits<float>::epsilon() &&
+           std::abs(u[1] - v[1]) < std::numeric_limits<float>::epsilon() &&
+           std::abs(u[2] - v[2]) < std::numeric_limits<float>::epsilon();
+}
+
+inline bool operator!=(const vec3 &u, const vec3 &v) { return !(u == v); }
 
 inline vec3 operator+(const vec3 &u, const vec3 &v) { return vec3(u.x() + v.x(), u.y() + v.y(), u.z() + v.z()); }
 

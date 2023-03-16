@@ -5,14 +5,19 @@
 #include "core/texture.hpp"
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
-#include "shapes/hittable.hpp"
+#include "shapes/sphere.hpp"
 
 namespace shkyera {
+
+typedef struct hitData hitData;
+
+enum MATERIAL_TYPE { LAMBERTIAN, METAL, REFRACTOR, DIFFUSE_LIGHT };
 
 class material {
   public:
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const = 0;
     virtual color emit(double u, double v, const point3 &p, bool firstHit) const;
+    virtual std::shared_ptr<solidColor> getLightMaterial() const;
 };
 
 class lambertian : public material {
@@ -20,7 +25,8 @@ class lambertian : public material {
     lambertian(const color &c);
     lambertian(shared_ptr<texture> c);
 
-    static std::shared_ptr<lambertian> generateFromImage(const char *filename);
+    static std::shared_ptr<lambertian> generateFromImage(std::shared_ptr<image> im);
+    static std::shared_ptr<lambertian> generateFromImageTextureType(int imageTextureType);
 
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const override;
 
@@ -57,14 +63,17 @@ class diffuseLight : public material {
     diffuseLight(color even, color odd, color lightColor);
     diffuseLight(color displayColor, color lightColor);
 
-    static std::shared_ptr<diffuseLight> generateFromImage(const char *filename, color c);
+    static std::shared_ptr<diffuseLight> generateFromImage(std::shared_ptr<image> im, color c);
+    static std::shared_ptr<diffuseLight> generateFromImageTextureType(IMAGE_TEXTURE_TYPE imageTextureType, color c);
 
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const override;
     virtual color emit(double u, double v, const point3 &p, bool firstHit) const override;
 
+    virtual std::shared_ptr<solidColor> getLightMaterial() const override;
+
   private:
     shared_ptr<texture> m_textureToDisplay;
-    shared_ptr<texture> m_lightColor;
+    shared_ptr<solidColor> m_lightColor;
 };
 
 } // namespace shkyera

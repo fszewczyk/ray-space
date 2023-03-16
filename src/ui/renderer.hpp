@@ -4,7 +4,7 @@
 #include "core/image.hpp"
 #include "core/utils.hpp"
 #include "world/camera.hpp"
-#include "world/hittableWorld.hpp"
+#include "world/visibleWorld.hpp"
 
 #include <thread>
 
@@ -12,8 +12,9 @@ namespace shkyera {
 
 class renderer {
   public:
-    renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im, color background);
-    renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im);
+    renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
+             color background);
+    renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im);
 
     void startRendering();
     void stopRendering();
@@ -22,7 +23,7 @@ class renderer {
 
     bool renderedImage() const;
 
-    static constexpr float SCALING_FACTOR = 2;
+    static constexpr float SCALING_FACTOR = 2.5;
     static constexpr int MAXIMUM_RAY_DEPTH = 3;
 
   private:
@@ -38,7 +39,7 @@ class renderer {
     std::shared_ptr<image> m_image;
     std::unique_ptr<image> m_imageToDraw;
     std::shared_ptr<camera> m_cam;
-    hittableWorld &m_world;
+    std::shared_ptr<visibleWorld> m_world;
 
     bool m_stop;
     bool m_renderedImage;

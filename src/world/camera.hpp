@@ -7,12 +7,17 @@
 
 namespace shkyera {
 
-struct cameraConfig {
+struct cameraSettings {
     point3 origin;
     point3 direction;
     double depthOfField;
-    double fov;
+    double fieldOfView;
     double focusDistance;
+
+    bool operator==(const cameraSettings &a) {
+        return a.origin == origin && a.direction == direction && a.depthOfField == depthOfField &&
+               a.fieldOfView == fieldOfView && a.focusDistance == focusDistance;
+    }
 };
 
 class camera {
@@ -29,6 +34,9 @@ class camera {
     vec3 getSidewaysDirection() const;
     void setDirection(vec3 direction);
 
+    cameraSettings getSettings() const;
+    void setSettings(const cameraSettings config);
+
   private:
     point3 m_origin;
     point3 m_lowerLeftCorner;
@@ -41,6 +49,9 @@ class camera {
 
     double m_viewportHeight;
     double m_viewportWidth;
+
+    double m_fieldOfView;
+    double m_aspectRatio;
 };
 
 } // namespace shkyera

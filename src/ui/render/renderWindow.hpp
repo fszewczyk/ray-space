@@ -10,8 +10,7 @@ class renderWindow {
   public:
     renderWindow(std::shared_ptr<image> im, std::shared_ptr<camera> cam);
 
-    point3 render(bool sampleTexture, bool &updated,
-                  std::pair<int, int> &mouseMovement);
+    point3 render(bool sampleTexture, bool &updated, std::pair<int, int> &mouseMovement);
 
     std::shared_ptr<image> getImage() const;
 
@@ -23,7 +22,7 @@ class renderWindow {
 
     int m_loadWidth;
     int m_loadHeight;
-    unsigned m_loadTexId;
+    uint64_t m_loadTexId;
     std::vector<uint8_t> m_renderTexture;
 
     bool m_loadedImage;

@@ -1,8 +1,10 @@
 #include "ui.hpp"
+#include "core/image.hpp"
 #include "core/ray.hpp"
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
 
+#include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <cmath>
@@ -11,17 +13,13 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#define GL_SILENCE_DEPRECATION
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-#include <GLES2/gl2.h>
-#endif
-#include <GLFW/glfw3.h>
 
 namespace shkyera {
 
-ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<camera> cam)
-    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_cameraSettingsWindow(cam),
-      m_mouseSensitivity(0.025) {}
+ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<visibleWorld> world,
+       std::shared_ptr<camera> cam)
+    : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_world(world), m_cameraSettingsWindow(cam),
+      m_worldSettingsWindow(world), m_mouseSensitivity(MOUSE_SENSITIVITY) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -90,6 +88,40 @@ void ui::init() { // Setup window
 
     NORMAL_FONT = io.Fonts->AddFontFromFileTTF("resources/fonts/OpenSansRegular.ttf", 18);
     BOLD_FONT = io.Fonts->AddFontFromFileTTF("resources/fonts/OpenSansBold.ttf", 18);
+
+    image::EARTH_DAY_TEXTURE->scaleImage(image::ICON_EARTH_DAY_TEXTURE, true);
+    image::EARTH_NIGHT_TEXTURE->scaleImage(image::ICON_EARTH_NIGHT_TEXTURE, true);
+    image::MARS_TEXTURE->scaleImage(image::ICON_MARS_TEXTURE, true);
+    image::SUN_TEXTURE->scaleImage(image::ICON_SUN_TEXTURE, true);
+    image::MOON_TEXTURE->scaleImage(image::ICON_MOON_TEXTURE, true);
+    image::CERES_TEXTURE->scaleImage(image::ICON_CERES_TEXTURE, true);
+    image::CLOUDY_VENUS_TEXTURE->scaleImage(image::ICON_CLOUDY_VENUS_TEXTURE, true);
+    image::ERIS_TEXTURE->scaleImage(image::ICON_ERIS_TEXTURE, true);
+    image::HAUMEA_TEXTURE->scaleImage(image::ICON_HAUMEA_TEXTURE, true);
+    image::JUPITER_TEXTURE->scaleImage(image::ICON_JUPITER_TEXTURE, true);
+    image::MAKE_TEXTURE->scaleImage(image::ICON_MAKE_TEXTURE, true);
+    image::MERCURY_TEXTURE->scaleImage(image::ICON_MERCURY_TEXTURE, true);
+    image::NEPTUNE_TEXTURE->scaleImage(image::ICON_NEPTUNE_TEXTURE, true);
+    image::SATURN_TEXTURE->scaleImage(image::ICON_SATURN_TEXTURE, true);
+    image::URANUS_TEXTURE->scaleImage(image::ICON_URANUS_TEXTURE, true);
+    image::VENUS_TEXTURE->scaleImage(image::ICON_VENUS_TEXTURE, true);
+
+    image::ICON_EARTH_DAY_TEXTURE->updateTextureId();
+    image::ICON_EARTH_NIGHT_TEXTURE->updateTextureId();
+    image::ICON_MARS_TEXTURE->updateTextureId();
+    image::ICON_SUN_TEXTURE->updateTextureId();
+    image::ICON_MOON_TEXTURE->updateTextureId();
+    image::ICON_CERES_TEXTURE->updateTextureId();
+    image::ICON_CLOUDY_VENUS_TEXTURE->updateTextureId();
+    image::ICON_ERIS_TEXTURE->updateTextureId();
+    image::ICON_HAUMEA_TEXTURE->updateTextureId();
+    image::ICON_JUPITER_TEXTURE->updateTextureId();
+    image::ICON_MAKE_TEXTURE->updateTextureId();
+    image::ICON_MERCURY_TEXTURE->updateTextureId();
+    image::ICON_NEPTUNE_TEXTURE->updateTextureId();
+    image::ICON_SATURN_TEXTURE->updateTextureId();
+    image::ICON_URANUS_TEXTURE->updateTextureId();
+    image::ICON_VENUS_TEXTURE->updateTextureId();
 }
 
 void ui::style() {
@@ -146,19 +178,6 @@ void ui::run() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard
-        // flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input
-        // data to your main application, or clear/overwrite your copy of
-        // the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard
-        // input data to your main application, or clear/overwrite your copy
-        // of the keyboard data. Generally you may always pass all inputs to
-        // dear imgui, and hide them from your application based on those
-        // two flags.
-
-        // Start the Dear ImGui frame
         style();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -208,11 +227,15 @@ void ui::run() {
                                           ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_DockSpace);
                 ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
-                ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right;
+                ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right, dock_id_top_left,
+                    dock_id_bottom_left;
                 ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f, &dock_id_left, &dock_id_right);
+                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.35f, &dock_id_top_right,
+                                            &dock_id_bottom_right);
 
-                ImGui::DockBuilderDockWindow("Camera", dock_id_right);
                 ImGui::DockBuilderDockWindow("Render", dock_id_left);
+                ImGui::DockBuilderDockWindow("Camera", dock_id_top_right);
+                ImGui::DockBuilderDockWindow("World", dock_id_bottom_right);
 
                 ImGui::DockBuilderFinish(dockspace_id);
             }
@@ -221,10 +244,8 @@ void ui::run() {
         ImGui::End();
 
         bool updatedSettings = false;
-        point3 newCameraPosition = m_cameraSettingsWindow.render(updatedSettings);
-
-        if (!updatedSettings)
-            newCameraPosition = m_camera->getPosition();
+        cameraSettings newCameraSettings = m_cameraSettingsWindow.render(updatedSettings);
+        worldSettings newWorldSettings = m_worldSettingsWindow.render(updatedSettings);
 
         point3 cameraTranslation;
         std::pair<int, int> mouseMovement;
@@ -234,20 +255,18 @@ void ui::run() {
         else
             cameraTranslation = m_renderWindow.render(false, updatedSettings, mouseMovement);
 
-        vec3 newCameraDirection = m_camera->getDirection();
+        newCameraSettings.direction.rotateAroundY(-m_mouseSensitivity * mouseMovement.first);
+        newCameraSettings.direction.rotateUpAndDown(m_mouseSensitivity * mouseMovement.second);
+        newCameraSettings.direction = unitVector(newCameraSettings.direction);
 
-        newCameraDirection.rotateAroundY(-m_mouseSensitivity * mouseMovement.first);
-        newCameraDirection.rotateUpAndDown(m_mouseSensitivity * mouseMovement.second);
-        newCameraDirection = unitVector(newCameraDirection);
-
-        newCameraPosition += cameraTranslation;
+        newCameraSettings.origin += cameraTranslation;
 
         if (m_renderer->renderedImage() && updatedSettings) {
             m_renderer->stopRendering();
             m_renderer->renderingThread().join();
 
-            m_camera->setPosition(newCameraPosition);
-            m_camera->setDirection(newCameraDirection);
+            m_camera->setSettings(newCameraSettings);
+            m_world->setSettings(newWorldSettings);
 
             m_renderer->startRendering();
         }

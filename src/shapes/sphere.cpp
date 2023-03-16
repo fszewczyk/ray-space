@@ -5,7 +5,10 @@
 namespace shkyera {
 
 sphere::sphere(point3 center, double radius, shared_ptr<material> mat)
-    : m_center(center), m_radius(radius), m_material(mat) {}
+    : m_center(center), m_radius(radius), m_material(mat), m_name("Planet") {}
+
+sphere::sphere(point3 center, double radius, shared_ptr<material> mat, std::string name)
+    : m_center(center), m_radius(radius), m_material(mat), m_name(name) {}
 
 bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     vec3 displacement = r.origin() - m_center;
@@ -36,6 +39,31 @@ bool sphere::hit(const ray &r, double minT, double maxT, hitData &data) const {
     data.hitMaterial = m_material;
 
     return true;
+}
+
+shared_ptr<material> sphere::getMaterial() const { return m_material; }
+void sphere::setMaterial(shared_ptr<material> material) { m_material = material; }
+
+std::string sphere::getName() const { return m_name; }
+void sphere::setName(std::string name) { m_name = name; }
+
+planetSettings sphere::getSettings() const {
+    planetSettings settings;
+
+    settings.remove = false;
+    settings.origin = m_center;
+    settings.radius = m_radius;
+    settings.mat = m_material;
+    settings.name = m_name;
+
+    return settings;
+}
+
+void sphere::setSettings(planetSettings &settings) {
+    m_center = settings.origin;
+    m_radius = settings.radius;
+    m_material = settings.mat;
+    m_name = settings.name;
 }
 
 void sphere::getSphericalUV(const point3 &p, double &u, double &v) {

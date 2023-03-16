@@ -7,6 +7,8 @@
 
 namespace shkyera {
 
+enum TEXTURE_TYPE { SOLID_COLOR, IMAGE };
+
 class texture {
   public:
     virtual color value(double u, double v, const point3 &p) const = 0;
@@ -19,6 +21,9 @@ class solidColor : public texture {
     solidColor(double r, double g, double b);
 
     virtual color value(double u, double v, const point3 &p) const override;
+
+    color getColor() const;
+    void setColor(color c);
 
   private:
     color m_color;

@@ -1,6 +1,6 @@
 #include "ui/renderer.hpp"
-#include "shapes/hittable.hpp"
 #include "shapes/material.hpp"
+#include "shapes/sphere.hpp"
 
 #include <execution>
 #include <iostream>
@@ -10,13 +10,14 @@
 
 namespace shkyera {
 
-renderer::renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im, color backgroundColor)
-    : m_world(world), m_cam(cam), m_image(im) {
+renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
+                   color backgroundColor)
+    : m_world(world), m_cam(cam), m_image(im), m_stop(false) {
     m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
     m_backgroundColor = backgroundColor;
 }
 
-renderer::renderer(hittableWorld &world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
+renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
     : m_world(world), m_cam(cam), m_image(im) {
     m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
 }
@@ -65,7 +66,6 @@ void renderer::render() {
         // Whoever reads this, I'm sorry it's done this way. Nothing else
         // worked.
         std::vector<std::thread> renderingThreads;
-
         for (int y = 0; y < m_imageToDraw->height(); ++y) {
             renderingThreads.push_back(std::thread([this, y] { renderRow(y); }));
         }
@@ -89,7 +89,7 @@ color renderer::rayColor(const ray &r, int depth) {
 
     hitData data;
 
-    if (!m_world.hit(r, 0.001, INFINITY, data)) {
+    if (!m_world->hit(r, 0.001, INFINITY, data)) {
         return m_backgroundColor;
     }
 
