@@ -35,7 +35,7 @@ cameraSettings cameraSettingsWindow::render(bool &updated) {
     ImGui::PopFont();
     ImGui::SliderFloat("Depth of Field", &depthOfField, 0.0f, 1.0f, "%.2f");
     ImGui::SliderFloat("Field of View", &fieldOfView, 10.0f, 140.0f, "%.2f");
-    ImGui::SliderFloat("Focus Distance", &focusDistance, 0.0f, 30.0f, "%.2f");
+    ImGui::SliderFloat("Focus Distance", &focusDistance, 0.5f, 30.0f, "%.2f");
 
     ImGui::End();
 
