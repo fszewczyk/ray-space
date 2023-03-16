@@ -15,7 +15,7 @@ jobs:
       matrix:
         conf:
           - {
-            name: "Ubuntu g++",
+            name: "Windows Latest",
             os: windows-latest,
           }
             
