@@ -1,8 +1,9 @@
 #include "ui/settings/planetSettingsWindow.hpp"
-#include "ui/ui.hpp"
-
 #include "imgui.h"
 #include "misc/cpp/imgui_stdlib.h"
+#include "ui/ui.hpp"
+
+#include <typeinfo>
 
 namespace shkyera {
 
@@ -28,7 +29,10 @@ planetSettings planetSettingsWindow::render(bool &updated) {
         ImGui::PushFont(ui::BOLD_FONT);
         ImGui::Text("Visual");
         ImGui::PopFont();
+
         ImGui::SliderFloat(("Radius##" + settings.name).c_str(), &radius, 0.1f, 20.0f, "%.2f");
+
+        ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
         settings.mat = renderMaterialSettings();
 
@@ -54,18 +58,25 @@ std::shared_ptr<material> planetSettingsWindow::renderMaterialSettings() {
     static const char *currentTextureType = textureTypes[1];
 
     static float solidColorComponents[3] = {0.5, 0.1, 0.8};
-    static bool useSolidColor;
+    static float lightColorComponents[3] = {0.85, 0.75, 0.5};
+    static bool useSolidColor = false;
+
     IMAGE_TEXTURE_TYPE chosenTexture = NONE;
+
+    std::shared_ptr<solidColor> planetLightColor = m_planet->getMaterial()->getLightMaterial();
+    static bool isLight = planetLightColor != nullptr;
+    static float lightIntensity = 5;
 
     if (ImGui::Button(("Choose Texture##" + m_planet->getName()).c_str())) {
         ImGui::OpenPopup((m_planet->getName() + " Texture").c_str());
         useSolidColor = false;
     }
-    if (ImGui::BeginPopupModal((m_planet->getName() + " Texture").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 
+    ImGui::PushFont(ui::BOLD_FONT);
+    if (ImGui::BeginPopupModal((m_planet->getName() + " Texture").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::ColorEdit3(("##MaterialSolidColor" + m_planet->getName()).c_str(), solidColorComponents);
         ImGui::SameLine();
-        if (ImGui::Button("Apply")) {
+        if (ImGui::Button("Set Color")) {
             useSolidColor = true;
             ImGui::CloseCurrentPopup();
         }
@@ -90,16 +101,38 @@ std::shared_ptr<material> planetSettingsWindow::renderMaterialSettings() {
         chosenTexture = imageTextureButton(image::ICON_URANUS_TEXTURE, URANUS, chosenTexture);
         chosenTexture = imageTextureButton(image::ICON_VENUS_TEXTURE, VENUS, chosenTexture);
         /* clang-format on */
+        ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+        ImGui::Text("Emit Light");
+        ImGui::SameLine();
+        ImGui::Checkbox(("##EmitLight" + m_planet->getName()).c_str(), &isLight);
+        ImGui::Dummy(ImVec2(0.0f, 2.0f));
+        ImGui::ColorEdit3(("##LightSolidColor" + m_planet->getName()).c_str(), lightColorComponents);
+        ImGui::Dummy(ImVec2(0.0f, 2.0f));
+        ImGui::Text("Intensity");
+        ImGui::SameLine();
+        ImGui::SliderFloat(("##" + m_planet->getName()).c_str(), &lightIntensity, 1, 50, "%.1f");
 
         ImGui::EndPopup();
     }
+    ImGui::PopFont();
 
-    if (useSolidColor) {
+    if (useSolidColor && isLight) {
+        mat = std::make_shared<diffuseLight>(
+            color(solidColorComponents[0], solidColorComponents[1], solidColorComponents[2]),
+            color(lightColorComponents[0], lightColorComponents[1], lightColorComponents[2]) * lightIntensity);
+        useSolidColor = false;
+    } else if (useSolidColor && !isLight) {
         mat = std::make_shared<lambertian>(
             color(solidColorComponents[0], solidColorComponents[1], solidColorComponents[2]));
         useSolidColor = false;
-    } else if (chosenTexture != NONE)
+    } else if (chosenTexture != NONE && isLight) {
+        mat = diffuseLight::generateFromImageTextureType(
+            chosenTexture,
+            color(lightColorComponents[0], lightColorComponents[1], lightColorComponents[2]) * lightIntensity);
+    } else if (chosenTexture != NONE && !isLight) {
         mat = lambertian::generateFromImageTextureType(chosenTexture);
+    }
 
     return mat;
 }

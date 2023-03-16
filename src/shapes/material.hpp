@@ -17,6 +17,7 @@ class material {
   public:
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const = 0;
     virtual color emit(double u, double v, const point3 &p, bool firstHit) const;
+    virtual std::shared_ptr<solidColor> getLightMaterial() const;
 };
 
 class lambertian : public material {
@@ -63,9 +64,12 @@ class diffuseLight : public material {
     diffuseLight(color displayColor, color lightColor);
 
     static std::shared_ptr<diffuseLight> generateFromImage(std::shared_ptr<image> im, color c);
+    static std::shared_ptr<diffuseLight> generateFromImageTextureType(IMAGE_TEXTURE_TYPE imageTextureType, color c);
 
     virtual bool scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const override;
     virtual color emit(double u, double v, const point3 &p, bool firstHit) const override;
+
+    virtual std::shared_ptr<solidColor> getLightMaterial() const override;
 
   private:
     shared_ptr<texture> m_textureToDisplay;

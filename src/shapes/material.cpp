@@ -23,6 +23,8 @@ diffuseLight::diffuseLight(color displayColor, color lightColor)
 
 color material::emit(double u, double v, const point3 &p, bool firstHit) const { return color(0, 0, 0); }
 
+std::shared_ptr<solidColor> material::getLightMaterial() const { return nullptr; }
+
 bool lambertian::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     auto scatterDirection = randomInUnitHemisphere(data.normal);
     rayOut = ray(data.p, scatterDirection);
@@ -136,6 +138,63 @@ std::shared_ptr<diffuseLight> diffuseLight::generateFromImage(std::shared_ptr<im
     return material;
 }
 
+std::shared_ptr<diffuseLight> diffuseLight::generateFromImageTextureType(IMAGE_TEXTURE_TYPE imageTextureType, color c) {
+    switch (imageTextureType) {
+    case EARTH_DAY:
+        return generateFromImage(image::EARTH_DAY_TEXTURE, c);
+        break;
+    case EARTH_NIGHT:
+        return generateFromImage(image::EARTH_NIGHT_TEXTURE, c);
+        break;
+    case MARS:
+        return generateFromImage(image::MARS_TEXTURE, c);
+        break;
+    case SUN:
+        return generateFromImage(image::SUN_TEXTURE, c);
+        break;
+    case MOON:
+        return generateFromImage(image::MOON_TEXTURE, c);
+        break;
+    case CERES:
+        return generateFromImage(image::CERES_TEXTURE, c);
+        break;
+    case CLOUDY_VENUS:
+        return generateFromImage(image::CLOUDY_VENUS_TEXTURE, c);
+        break;
+    case ERIS:
+        return generateFromImage(image::ERIS_TEXTURE, c);
+        break;
+    case HAUMEA:
+        return generateFromImage(image::HAUMEA_TEXTURE, c);
+        break;
+    case JUPITER:
+        return generateFromImage(image::JUPITER_TEXTURE, c);
+        break;
+    case MAKE:
+        return generateFromImage(image::MAKE_TEXTURE, c);
+        break;
+    case MERCURY:
+        return generateFromImage(image::MERCURY_TEXTURE, c);
+        break;
+    case NEPTUNE:
+        return generateFromImage(image::NEPTUNE_TEXTURE, c);
+        break;
+    case SATURN:
+        return generateFromImage(image::SATURN_TEXTURE, c);
+        break;
+    case URANUS:
+        return generateFromImage(image::URANUS_TEXTURE, c);
+        break;
+    case VENUS:
+        return generateFromImage(image::VENUS_TEXTURE, c);
+        break;
+    case NONE:
+    default:
+        return std::make_shared<diffuseLight>(color(1, 1, 1), c);
+        break;
+    }
+}
+
 bool diffuseLight::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     return false;
 }
@@ -146,5 +205,7 @@ color diffuseLight::emit(double u, double v, const point3 &p, bool firstHit) con
     else
         return m_lightColor->value(u, v, p);
 }
+
+std::shared_ptr<solidColor> diffuseLight::getLightMaterial() const { return m_lightColor; }
 
 } // namespace shkyera

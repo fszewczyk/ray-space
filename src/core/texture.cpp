@@ -7,6 +7,8 @@ solidColor::solidColor(double r, double g, double b) : m_color(color(r, g, b)) {
 
 color solidColor::value(double u, double v, const point3 &p) const { return m_color; }
 
+color solidColor::getColor() const { return m_color; }
+
 void solidColor::setColor(color c) { m_color = c; }
 
 checkerTexture::checkerTexture(color even, color odd) : checkerTexture(even, odd, 10) {}

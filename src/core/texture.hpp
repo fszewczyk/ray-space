@@ -22,6 +22,7 @@ class solidColor : public texture {
 
     virtual color value(double u, double v, const point3 &p) const override;
 
+    color getColor() const;
     void setColor(color c);
 
   private:
