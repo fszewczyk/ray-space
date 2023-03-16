@@ -12,6 +12,11 @@ class worldSettingsWindow {
 
     worldSettings render(bool &updated);
 
+    static constexpr int N_PLANET_NAMES = 12;
+    inline static std::string PLANET_NAMES[N_PLANET_NAMES] = {
+        "Mermaidus",  "Dragonos", "Husarun",  "Twardowski's Moon", "Hohous", "Pieroger",
+        "Copernicus", "Piast",    "Ponchkus", "Wawelus",           "Slavin", "Walesa"};
+
   private:
     void objectSettings();
 
