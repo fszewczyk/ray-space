@@ -12,6 +12,7 @@ enum TEXTURE_TYPE { SOLID_COLOR, IMAGE };
 class texture {
   public:
     virtual color value(double u, double v, const point3 &p) const = 0;
+    virtual color getColor() const;
 };
 
 class solidColor : public texture {
@@ -22,7 +23,7 @@ class solidColor : public texture {
 
     virtual color value(double u, double v, const point3 &p) const override;
 
-    color getColor() const;
+    virtual color getColor() const override;
     void setColor(color c);
 
   private:
@@ -38,6 +39,7 @@ class checkerTexture : public texture {
     checkerTexture(shared_ptr<texture> even, shared_ptr<texture> odd, double grain);
 
     virtual color value(double u, double v, const point3 &p) const override;
+    virtual color getColor() const override;
 
   private:
     shared_ptr<texture> m_even;
@@ -54,6 +56,7 @@ class imageTexture : public texture {
     ~imageTexture() = default;
 
     virtual color value(double u, double v, const point3 &p) const override;
+    virtual color getColor() const override;
 
   private:
     std::shared_ptr<image> m_image;

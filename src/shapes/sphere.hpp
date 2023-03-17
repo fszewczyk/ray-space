@@ -46,6 +46,9 @@ class sphere {
     std::string getName() const;
     void setName(std::string name);
 
+    point3 getOrigin() const;
+    void setOrigin(point3 p);
+
     shared_ptr<material> getMaterial() const;
     void setMaterial(shared_ptr<material> material);
 

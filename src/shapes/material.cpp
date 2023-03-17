@@ -25,12 +25,16 @@ color material::emit(double u, double v, const point3 &p, bool firstHit) const {
 
 std::shared_ptr<solidColor> material::getLightMaterial() const { return nullptr; }
 
+color material::getVisibleColor() const { return color(0.2, 0.8, 0.4); }
+
 bool lambertian::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     auto scatterDirection = randomInUnitHemisphere(data.normal);
     rayOut = ray(data.p, scatterDirection);
     attenuation = m_albedo->value(data.u, data.v, data.p);
     return true;
 }
+
+color lambertian::getVisibleColor() const { return m_albedo->getColor(); }
 
 std::shared_ptr<lambertian> lambertian::generateFromImage(std::shared_ptr<image> im) {
     auto texture = std::make_shared<imageTexture>(im);
@@ -102,6 +106,8 @@ bool metal::scatter(const ray &rayIn, const hitData &data, color &attenuation, r
     attenuation = m_albedo;
     return dot(rayOut.direction(), data.normal) > 0;
 }
+
+color metal::getVisibleColor() const { return m_albedo; }
 
 bool refractor::scatter(const ray &rayIn, const hitData &data, color &attenuation, ray &rayOut) const {
     attenuation = color(1.0, 1.0, 1.0);
@@ -207,5 +213,7 @@ color diffuseLight::emit(double u, double v, const point3 &p, bool firstHit) con
 }
 
 std::shared_ptr<solidColor> diffuseLight::getLightMaterial() const { return m_lightColor; }
+
+color diffuseLight::getVisibleColor() const { return m_textureToDisplay->getColor(); }
 
 } // namespace shkyera

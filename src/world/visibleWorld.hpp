@@ -5,6 +5,7 @@
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
 #include "shapes/sphere.hpp"
+#include "world/camera.hpp"
 
 #include <memory>
 #include <vector>
@@ -18,6 +19,11 @@ struct worldSettings {
     color ambientColor;
     std::vector<planetSettings> planets;
     std::vector<bool> updatedPlanets;
+};
+
+struct systemSettings {
+    worldSettings world;
+    cameraSettings cam;
 };
 
 class visibleWorld {

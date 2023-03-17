@@ -4,6 +4,7 @@
 #include "core/utils.hpp"
 #include "core/vec3.hpp"
 
+#include "implot.h"
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -69,6 +70,7 @@ void ui::init() { // Setup window
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
@@ -126,13 +128,13 @@ void ui::init() { // Setup window
 
 void ui::style() {
     ImGuiStyle &style = ImGui::GetStyle();
-    style.WindowMinSize = ImVec2(160, 20);
+    style.WindowMinSize = ImVec2(320, 320);
     style.FramePadding = ImVec2(4, 2);
     style.ItemSpacing = ImVec2(6, 2);
     style.ItemInnerSpacing = ImVec2(6, 4);
     style.Alpha = 0.95f;
-    style.WindowRounding = 4.0f;
-    style.FrameRounding = 2.0f;
+    style.WindowRounding = 8.0f;
+    style.FrameRounding = 8.0f;
     style.IndentSpacing = 6.0f;
     style.ItemInnerSpacing = ImVec2(2, 4);
     style.ColumnsMinSpacing = 50.0f;
@@ -156,17 +158,22 @@ void ui::style() {
     style.Colors[ImGuiCol_WindowBg] = BACKGROUND_COLOR;
     style.Colors[ImGuiCol_BorderShadow] = BLACK;
     style.Colors[ImGuiCol_FrameBg] = ACCENT_COLOR;
-    style.Colors[ImGuiCol_TitleBg] = ACCENT_COLOR;
     style.Colors[ImGuiCol_ScrollbarBg] = ACCENT_COLOR;
     style.Colors[ImGuiCol_FrameBgHovered] = ACCENT_COLOR;
     style.Colors[ImGuiCol_FrameBgActive] = STRONG_ACCENT_COLOR;
-    style.Colors[ImGuiCol_TitleBgCollapsed] = ACCENT_COLOR;
+    style.Colors[ImGuiCol_TitleBgCollapsed] = BACKGROUND_COLOR;
+    style.Colors[ImGuiCol_TitleBg] = ACCENT_COLOR;
     style.Colors[ImGuiCol_TitleBgActive] = STRONG_ACCENT_COLOR;
     style.Colors[ImGuiCol_SliderGrab] = ACCENT_COLOR;
     style.Colors[ImGuiCol_SliderGrabActive] = STRONG_ACCENT_COLOR;
     style.Colors[ImGuiCol_Separator] = GREY;
     style.Colors[ImGuiCol_SeparatorHovered] = LIGHT_GREY;
     style.Colors[ImGuiCol_SeparatorActive] = LIGHT_GREY;
+
+    ImPlotStyle &plotStyle = ImPlot::GetStyle();
+    plotStyle.Colors[ImPlotCol_FrameBg] = BACKGROUND_COLOR;
+    plotStyle.Colors[ImPlotCol_PlotBg] = BACKGROUND_COLOR;
+    plotStyle.Colors[ImPlotCol_PlotBorder] = BACKGROUND_COLOR;
 }
 
 void ui::run() {
@@ -235,7 +242,11 @@ void ui::run() {
                 ImGui::DockBuilderSplitNode(dock_id_left, ImGuiDir_Up, 0.5f, &dock_id_top_left, &dock_id_bottom_left);
 
                 ImGui::DockBuilderDockWindow("Render", dock_id_top_left);
-                ImGui::DockBuilderDockWindow("Planetary System", dock_id_bottom_left);
+
+                ImGui::DockBuilderDockWindow("Top view", dock_id_bottom_left);
+                ImGui::DockBuilderDockWindow("Front view", dock_id_bottom_left);
+                ImGui::DockBuilderDockWindow("Side view", dock_id_bottom_left);
+
                 ImGui::DockBuilderDockWindow("Camera", dock_id_top_right);
                 ImGui::DockBuilderDockWindow("World", dock_id_bottom_right);
 
@@ -300,6 +311,7 @@ void ui::close() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    ImPlot::DestroyContext();
 
     glfwDestroyWindow(m_window);
     glfwTerminate();

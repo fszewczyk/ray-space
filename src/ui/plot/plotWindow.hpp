@@ -1,15 +1,11 @@
 #ifndef PLOT_WINDOW_H
 #define PLOT_WINDOW_H
 
+#include "ui/plot/plotViewTab.hpp"
 #include "world/camera.hpp"
 #include "world/visibleWorld.hpp"
 
 namespace shkyera {
-
-struct systemSettings {
-    worldSettings world;
-    cameraSettings cam;
-};
 
 class plotWindow {
   public:
@@ -18,8 +14,9 @@ class plotWindow {
     systemSettings render(bool &updated);
 
   private:
-    std::shared_ptr<visibleWorld> m_world;
-    std::shared_ptr<camera> m_camera;
+    plotViewTab m_topViewTab;
+    plotViewTab m_sideViewTab;
+    plotViewTab m_frontViewTab;
 };
 
 } // namespace shkyera
