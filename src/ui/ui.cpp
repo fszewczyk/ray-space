@@ -19,7 +19,7 @@ namespace shkyera {
 ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<visibleWorld> world,
        std::shared_ptr<camera> cam)
     : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_world(world), m_cameraSettingsWindow(cam),
-      m_worldSettingsWindow(world), m_mouseSensitivity(MOUSE_SENSITIVITY) {}
+      m_worldSettingsWindow(world), m_plotWindow(world, cam), m_mouseSensitivity(MOUSE_SENSITIVITY) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -56,7 +56,7 @@ void ui::init() { // Setup window
 #endif
 
     // Create window with graphics context
-    m_window = glfwCreateWindow(1280, 720, "SHKYERA Engine", NULL, NULL);
+    m_window = glfwCreateWindow(1000, 800, "SHKYERA Engine", NULL, NULL);
     if (m_window == NULL)
         return;
 
@@ -229,11 +229,13 @@ void ui::run() {
 
                 ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right, dock_id_top_left,
                     dock_id_bottom_left;
-                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.70f, &dock_id_left, &dock_id_right);
-                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.35f, &dock_id_top_right,
+                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.65f, &dock_id_left, &dock_id_right);
+                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.3f, &dock_id_top_right,
                                             &dock_id_bottom_right);
+                ImGui::DockBuilderSplitNode(dock_id_left, ImGuiDir_Up, 0.5f, &dock_id_top_left, &dock_id_bottom_left);
 
-                ImGui::DockBuilderDockWindow("Render", dock_id_left);
+                ImGui::DockBuilderDockWindow("Render", dock_id_top_left);
+                ImGui::DockBuilderDockWindow("Planetary System", dock_id_bottom_left);
                 ImGui::DockBuilderDockWindow("Camera", dock_id_top_right);
                 ImGui::DockBuilderDockWindow("World", dock_id_bottom_right);
 
@@ -246,6 +248,7 @@ void ui::run() {
         bool updatedSettings = false;
         cameraSettings newCameraSettings = m_cameraSettingsWindow.render(updatedSettings);
         worldSettings newWorldSettings = m_worldSettingsWindow.render(updatedSettings);
+        systemSettings newSystemSettings = m_plotWindow.render(updatedSettings);
 
         point3 cameraTranslation;
         std::pair<int, int> mouseMovement;

@@ -27,17 +27,18 @@ class visibleWorld {
     void clear();
     void add(shared_ptr<sphere> object);
 
-    std::vector<shared_ptr<sphere>> getObjects();
-    std::shared_ptr<sphere> getUniverse();
-    std::shared_ptr<sphere> getObjectByIndex(size_t i);
+    std::vector<shared_ptr<sphere>> getObjects() const;
+    std::shared_ptr<sphere> getUniverse() const;
+    std::shared_ptr<sphere> getObjectByIndex(size_t i) const;
     size_t size() const;
 
     bool hit(const ray &r, double minT, double maxT, hitData &data) const;
 
+    worldSettings getSettings() const;
     void setSettings(worldSettings &settings);
 
+    color getAmbientLightColor() const;
     void setAmbientLightColor(color c);
-    color getAmbientLightColor();
 
   private:
     std::vector<shared_ptr<sphere>> m_objects;

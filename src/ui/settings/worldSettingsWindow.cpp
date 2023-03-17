@@ -12,14 +12,11 @@ worldSettingsWindow::worldSettingsWindow(std::shared_ptr<visibleWorld> world) : 
 worldSettings worldSettingsWindow::render(bool &updated) {
     updatePlanetSettingsWindows();
 
-    worldSettings settings;
-    settings.planets.resize(m_world->getObjects().size());
-    settings.updatedPlanets.resize(m_world->getObjects().size());
+    worldSettings settings = m_world->getSettings();
 
-    color ambientLightColor = m_world->getAmbientLightColor();
-    float ambientLightColorComponents[3] = {static_cast<float>(ambientLightColor[0]),
-                                            static_cast<float>(ambientLightColor[1]),
-                                            static_cast<float>(ambientLightColor[2])};
+    float ambientLightColorComponents[3] = {static_cast<float>(settings.ambientColor[0]),
+                                            static_cast<float>(settings.ambientColor[1]),
+                                            static_cast<float>(settings.ambientColor[2])};
 
     ImGui::Begin("World");
     ImGui::ColorEdit3("Ambient Light", ambientLightColorComponents);
@@ -71,7 +68,7 @@ worldSettings worldSettingsWindow::render(bool &updated) {
     color newAmbientLightColor(ambientLightColorComponents[0], ambientLightColorComponents[1],
                                ambientLightColorComponents[2]);
 
-    if (ambientLightColor != newAmbientLightColor) {
+    if (settings.ambientColor != newAmbientLightColor) {
         updated = true;
     }
 

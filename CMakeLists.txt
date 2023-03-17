@@ -42,6 +42,7 @@ add_library(
     src/ui/ui.cpp
     src/ui/renderer.cpp
     src/ui/render/renderWindow.cpp
+    src/ui/plot/plotWindow.cpp
     src/ui/settings/cameraSettingsWindow.cpp
     src/ui/settings/worldSettingsWindow.cpp
     src/ui/settings/planetSettingsWindow.cpp

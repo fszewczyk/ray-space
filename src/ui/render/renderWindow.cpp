@@ -57,7 +57,27 @@ point3 renderWindow::render(bool sampleTexture, bool &updated, std::pair<int, in
             }
         }
 
-        ImGui::Image((ImTextureID)m_loadTexId, ImVec2(m_loadWidth, m_loadHeight));
+        float renderAspectRatio = static_cast<float>(m_loadWidth) / m_loadHeight;
+
+        float windowWidth = ImGui::GetWindowWidth() - 30;
+        float windowHeight = ImGui::GetWindowHeight() - 40;
+        float windowAspectRatio = windowWidth / windowHeight;
+
+        float displayWidth = windowWidth;
+        float displayHeight = windowHeight;
+
+        if (renderAspectRatio > windowAspectRatio)
+            displayHeight = displayWidth / renderAspectRatio;
+
+        displayWidth = displayHeight * renderAspectRatio;
+
+        float offsetWidth = (windowWidth - displayWidth) / 2;
+        float offsetHeight = (windowHeight - displayHeight) / 2;
+
+        ImGui::Dummy(ImVec2(0, offsetHeight));
+        ImGui::Dummy(ImVec2(offsetWidth, 0));
+        ImGui::SameLine();
+        ImGui::Image((ImTextureID)m_loadTexId, ImVec2(displayWidth, displayHeight));
 
         ImGui::End();
 
