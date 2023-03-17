@@ -21,6 +21,29 @@ systemSettings plotViewTab::render(bool &updated) {
         ImPlot::SetupAxes(0, 0, ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks,
                           ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks);
 
+        cameraSettings settings = m_camera->getSettings();
+
+        float x;
+        float y;
+        switch (m_plane) {
+        case XZ:
+            x = -settings.origin[0];
+            y = settings.origin[2];
+            break;
+        case XY:
+            x = settings.origin[0];
+            y = settings.origin[1];
+            break;
+        case YZ:
+        default:
+            x = settings.origin[2];
+            y = settings.origin[1];
+            break;
+        }
+
+        ImPlot::SetNextMarkerStyle(ImPlotMarker_Diamond, 8, ImVec4(0.3, 0.3, 0.3, 1), -1.0f, ImVec4(0.2, 0.2, 0.2, 1));
+        ImPlot::PlotScatter("Camera", &x, &y, 1);
+
         auto objects = m_world->getObjects();
 
         switch (m_plane) {
@@ -44,6 +67,43 @@ systemSettings plotViewTab::render(bool &updated) {
                       });
             break;
         }
+
+        auto legendObjects = objects;
+
+        std::sort(legendObjects.begin(), legendObjects.end(),
+                  [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
+                      return a->getName() < b->getName();
+                  });
+
+        // Ensures legend to be sorted by order. I apologize to anybody that sees this, I did not have a better idea.
+        if (objects.size() > 1) {
+            planetSettings settingsPlanet = objects[1]->getSettings();
+            float x;
+            float y;
+            switch (m_plane) {
+            case XZ:
+                x = -settingsPlanet.origin[0];
+                y = settingsPlanet.origin[2];
+                break;
+            case XY:
+                x = settingsPlanet.origin[0];
+                y = settingsPlanet.origin[1];
+                break;
+            case YZ:
+            default:
+                x = settingsPlanet.origin[2];
+                y = settingsPlanet.origin[1];
+                break;
+            }
+            for (auto object : legendObjects) {
+                if (object == m_world->getUniverse())
+                    continue;
+
+                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 0);
+                ImPlot::PlotScatter(object->getName().c_str(), &x, &y, 1);
+            }
+        }
+
         for (auto object : objects) {
             if (object == m_world->getUniverse())
                 continue;
