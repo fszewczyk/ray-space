@@ -23,6 +23,8 @@ systemSettings plotViewTab::render(bool &updated) {
 
         labelAxes();
         plotDummyPoints();
+
+        // Plotting camera twice is necessary for dragging
         settingsCamera = plotCamera();
         settingsWorld = plotPlanets();
         settingsCamera = plotCamera();
