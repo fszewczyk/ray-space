@@ -49,6 +49,9 @@ class sphere {
     point3 getOrigin() const;
     void setOrigin(point3 p);
 
+    double getRadius() const;
+    void setRadius(double radius);
+
     shared_ptr<material> getMaterial() const;
     void setMaterial(shared_ptr<material> material);
 

@@ -44,6 +44,7 @@ worldSettings worldSettingsWindow::render(bool &updated) {
 
     if (ImGui::BeginPopupModal("Add New Object", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::InputText("Name", planetName, IM_ARRAYSIZE(planetName));
+        ImGui::Dummy(ImVec2(0.0f, 5.0f));
         if (ImGui::Button("Cancel")) {
             ImGui::CloseCurrentPopup();
         }

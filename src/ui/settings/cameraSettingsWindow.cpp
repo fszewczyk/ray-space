@@ -13,7 +13,7 @@ cameraSettings cameraSettingsWindow::render(bool &updated) {
 
     cameraSettings settings = m_camera->getSettings();
 
-    float positionX = settings.origin[0];
+    float positionX = -settings.origin[0];
     float positionY = settings.origin[1];
     float positionZ = settings.origin[2];
 
@@ -39,7 +39,7 @@ cameraSettings cameraSettingsWindow::render(bool &updated) {
 
     ImGui::End();
 
-    settings.origin[0] = positionX;
+    settings.origin[0] = -positionX;
     settings.origin[1] = positionY;
     settings.origin[2] = positionZ;
 

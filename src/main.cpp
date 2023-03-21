@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
     world->add(make_shared<sphere>(point3(0, 0, -17.5), 10.0, sunMaterial, "Sun"));
     world->add(make_shared<sphere>(point3(0, 0, 3), 1.0, marsMaterial, "Mars"));
 
-    point3 lookfrom(6, 2, 8);
-    point3 lookat(100, 20, 100);
+    point3 lookfrom(-26, 2, -18);
+    point3 lookat(-100, 20, -100);
     auto dist_to_focus = 10.0;
     auto aperture = 0.0;
 

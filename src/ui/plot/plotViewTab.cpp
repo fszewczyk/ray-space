@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <functional>
 
 #include "imgui.h"
 #include "implot.h"
@@ -18,141 +19,175 @@ systemSettings plotViewTab::render(bool &updated) {
     if (ImPlot::BeginPlot(("##" + std::to_string(m_plane)).c_str(),
                           ImVec2(ImGui::GetWindowWidth() - 10, ImGui::GetWindowHeight() - 40),
                           ImPlotFlags_Equal | ImPlotFlags_NoTitle | ImPlotFlags_NoMouseText)) {
-        ImPlot::SetupAxes(0, 0, ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks,
-                          ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks);
 
-        cameraSettings settings = m_camera->getSettings();
-
-        float x;
-        float y;
-        switch (m_plane) {
-        case XZ:
-            x = -settings.origin[0];
-            y = settings.origin[2];
-            break;
-        case XY:
-            x = settings.origin[0];
-            y = settings.origin[1];
-            break;
-        case YZ:
-        default:
-            x = settings.origin[2];
-            y = settings.origin[1];
-            break;
-        }
-
-        ImPlot::SetNextMarkerStyle(ImPlotMarker_Diamond, 8, ImVec4(0.3, 0.3, 0.3, 1), -1.0f, ImVec4(0.2, 0.2, 0.2, 1));
-        ImPlot::PlotScatter("Camera", &x, &y, 1);
-
-        auto objects = m_world->getObjects();
-
-        switch (m_plane) {
-        case XZ:
-            std::sort(objects.begin(), objects.end(),
-                      [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
-                          return a->getOrigin()[1] < b->getOrigin()[1];
-                      });
-            break;
-        case XY:
-            std::sort(objects.begin(), objects.end(),
-                      [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
-                          return a->getOrigin()[2] < b->getOrigin()[2];
-                      });
-            break;
-        case YZ:
-        default:
-            std::sort(objects.begin(), objects.end(),
-                      [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
-                          return a->getOrigin()[0] < b->getOrigin()[0];
-                      });
-            break;
-        }
-
-        auto legendObjects = objects;
-
-        std::sort(legendObjects.begin(), legendObjects.end(),
-                  [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
-                      return a->getName() < b->getName();
-                  });
-
-        // Ensures legend to be sorted by order. I apologize to anybody that sees this, I did not have a better idea.
-        if (objects.size() > 1) {
-            planetSettings settingsPlanet = objects[1]->getSettings();
-            float x;
-            float y;
-            switch (m_plane) {
-            case XZ:
-                x = -settingsPlanet.origin[0];
-                y = settingsPlanet.origin[2];
-                break;
-            case XY:
-                x = settingsPlanet.origin[0];
-                y = settingsPlanet.origin[1];
-                break;
-            case YZ:
-            default:
-                x = settingsPlanet.origin[2];
-                y = settingsPlanet.origin[1];
-                break;
-            }
-            for (auto object : legendObjects) {
-                if (object == m_world->getUniverse())
-                    continue;
-
-                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 0);
-                ImPlot::PlotScatter(object->getName().c_str(), &x, &y, 1);
-            }
-        }
-
-        for (auto object : objects) {
-            if (object == m_world->getUniverse())
-                continue;
-
-            planetSettings settingsPlanet = object->getSettings();
-
-            float x;
-            float y;
-            switch (m_plane) {
-            case XZ:
-                x = -settingsPlanet.origin[0];
-                y = settingsPlanet.origin[2];
-                break;
-            case XY:
-                x = settingsPlanet.origin[0];
-                y = settingsPlanet.origin[1];
-                break;
-            case YZ:
-            default:
-                x = settingsPlanet.origin[2];
-                y = settingsPlanet.origin[1];
-                break;
-            }
-
-            float lx = x - settingsPlanet.radius - 5;
-            float ly = y - settingsPlanet.radius - 5;
-            float tx = x + settingsPlanet.radius + 5;
-            float ty = y + settingsPlanet.radius + 5;
-
-            float xBorders[4] = {lx, lx, tx, tx};
-            float yBorders[4] = {ly, ty, ly, ty};
-
-            color objectColor = object->getMaterial()->getVisibleColor();
-
-            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle,
-                                       settingsPlanet.radius / ImPlot::GetPlotLimits().X.Size() *
-                                           (0.95 * ImGui::GetWindowWidth()),
-                                       ImVec4(objectColor[0], objectColor[1], objectColor[2], 1), -1.0,
-                                       ImVec4(objectColor[0], objectColor[1], objectColor[2], 1));
-            ImPlot::PlotScatter(settingsPlanet.name.c_str(), &x, &y, 1);
-
-            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 0);
-            ImPlot::PlotScatter(settingsPlanet.name.c_str(), xBorders, yBorders, 4);
-        }
+        labelAxes();
+        plotDummyPoints();
+        plotPlanets();
+        plotCamera();
 
         ImPlot::EndPlot();
     }
 
     return settingsPlot;
+}
+
+void plotViewTab::labelAxes() {
+    switch (m_plane) {
+    case XZ:
+        ImPlot::SetupAxes("X", "Z", ImPlotAxisFlags_Invert | ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks,
+                          ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks);
+        break;
+    case XY:
+        ImPlot::SetupAxes("X", "Y", ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks,
+                          ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks);
+        break;
+    case YZ:
+        ImPlot::SetupAxes("Z", "Y", ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks,
+                          ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks);
+        break;
+    }
+}
+
+void plotViewTab::plotDummyPoints() {
+    auto objects = m_world->getObjects();
+
+    std::sort(objects.begin(), objects.end(),
+              [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
+                  return a->getName() < b->getName();
+              });
+
+    // Ensures legend to be sorted by order by putting dummy points.
+    // My sincere apologies to anybody that sees this, I did not have a better idea.
+    if (objects.size() > 1) {
+        planetSettings settingsPlanet = objects[1]->getSettings();
+        auto [x, y] = getPositionOnPlane(settingsPlanet.origin);
+        for (auto object : objects) {
+            if (object == m_world->getUniverse())
+                continue;
+
+            color objectColor = object->getMaterial()->getVisibleColor();
+
+            ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 0,
+                                       ImVec4(objectColor[0], objectColor[1], objectColor[2], 1), -1.0,
+                                       ImVec4(objectColor[0], objectColor[1], objectColor[2], 1));
+            ImPlot::PlotScatter(object->getName().c_str(), &x, &y, 1);
+        }
+    }
+}
+
+void plotViewTab::plotCamera() {
+    cameraSettings settingsCamera = m_camera->getSettings();
+
+    auto [x, y] = getPositionOnPlane(settingsCamera.origin);
+
+    ImPlot::SetNextMarkerStyle(ImPlotMarker_Diamond, 8, ImVec4(0.3, 0.3, 0.3, 1), -1.0f, ImVec4(0.2, 0.2, 0.2, 1));
+    ImPlot::DragPoint(std::hash<std::string>{}("Camera"), &x, &y, ImVec4(0.3, 0.3, 0.3, 1), 7);
+}
+
+void plotViewTab::plotPlanets() {
+    auto objectsByPosition = m_world->getObjects();
+    auto objectsBySize = objectsByPosition;
+
+    std::sort(objectsBySize.begin(), objectsBySize.end(),
+              [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
+                  return a->getRadius() < b->getRadius();
+              });
+
+    switch (m_plane) {
+    case XZ:
+        std::sort(objectsByPosition.begin(), objectsByPosition.end(),
+                  [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
+                      return a->getOrigin()[1] < b->getOrigin()[1];
+                  });
+        break;
+    case XY:
+        std::sort(objectsByPosition.begin(), objectsByPosition.end(),
+                  [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
+                      return a->getOrigin()[2] < b->getOrigin()[2];
+                  });
+        break;
+    case YZ:
+    default:
+        std::sort(objectsByPosition.begin(), objectsByPosition.end(),
+                  [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
+                      return a->getOrigin()[0] < b->getOrigin()[0];
+                  });
+        break;
+    }
+
+    for (auto object : objectsBySize) {
+        if (object == m_world->getUniverse())
+            continue;
+
+        planetSettings settingsPlanet = object->getSettings();
+        auto [x, y] = getPositionOnPlane(settingsPlanet.origin);
+
+        color objectColor = object->getMaterial()->getVisibleColor();
+
+        ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle,
+                                   settingsPlanet.radius / ImPlot::GetPlotLimits().X.Size() *
+                                       (0.95 * ImGui::GetWindowWidth()),
+                                   ImVec4(objectColor[0], objectColor[1], objectColor[2], 1), -1.0,
+                                   ImVec4(objectColor[0], objectColor[1], objectColor[2], 1));
+
+        ImPlot::DragPoint(std::hash<std::string>{}(settingsPlanet.name), &x, &y,
+                          ImVec4(objectColor[0], objectColor[1], objectColor[2], 1),
+                          settingsPlanet.radius / ImPlot::GetPlotLimits().X.Size() * (0.95 * ImGui::GetWindowWidth()));
+    }
+
+    for (auto object : objectsByPosition) {
+        if (object == m_world->getUniverse())
+            continue;
+
+        planetSettings settingsPlanet = object->getSettings();
+
+        auto [x, y] = getPositionOnPlane(settingsPlanet.origin);
+
+        float lx = x - settingsPlanet.radius - 5;
+        float ly = y - settingsPlanet.radius - 5;
+        float tx = x + settingsPlanet.radius + 5;
+        float ty = y + settingsPlanet.radius + 5;
+
+        float xBorders[4] = {lx, lx, tx, tx};
+        float yBorders[4] = {ly, ty, ly, ty};
+
+        color objectColor = object->getMaterial()->getVisibleColor();
+
+        ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle,
+                                   settingsPlanet.radius / ImPlot::GetPlotLimits().X.Size() *
+                                       (0.95 * ImGui::GetWindowWidth()),
+                                   ImVec4(objectColor[0], objectColor[1], objectColor[2], 1), -1.0,
+                                   ImVec4(objectColor[0], objectColor[1], objectColor[2], 1));
+
+        ImPlot::DragPoint(std::hash<std::string>{}(settingsPlanet.name), &x, &y,
+                          ImVec4(objectColor[0], objectColor[1], objectColor[2], 1),
+                          settingsPlanet.radius / ImPlot::GetPlotLimits().X.Size() * (0.95 * ImGui::GetWindowWidth()));
+
+        ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 0);
+        ImPlot::PlotScatter(settingsPlanet.name.c_str(), xBorders, yBorders, 4);
+    }
+}
+
+std::pair<double, double> plotViewTab::getPositionOnPlane(point3 point) {
+    double x;
+    double y;
+    switch (m_plane) {
+    case XZ:
+        x = point[0];
+        y = point[2];
+        break;
+    case XY:
+        x = point[0];
+        y = point[1];
+        break;
+    case YZ:
+    default:
+        x = point[2];
+        y = point[1];
+        break;
+    }
+
+    return {x, y};
 }
 
 } // namespace shkyera
