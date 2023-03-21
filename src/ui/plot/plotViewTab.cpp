@@ -98,6 +98,18 @@ cameraSettings plotViewTab::plotCamera() {
 
     settingsCamera.origin = getPointFromPlane(settingsCamera.origin, x, y);
 
+    static float focusX[361];
+    static float focusY[361];
+    for (double deg = 0; deg <= 360; ++deg) {
+        double angle = deg * 2 * PI / 360;
+        focusX[static_cast<int>(deg)] = cosf(angle) * settingsCamera.focusDistance + x;
+        focusY[static_cast<int>(deg)] = sinf(angle) * settingsCamera.focusDistance + y;
+    }
+
+    ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
+    ImPlot::SetNextLineStyle(ImVec4(0.3, 0.3, 0.3, settingsCamera.depthOfField), 2);
+    ImPlot::PlotLine("Camera Focus", focusX, focusY, 361);
+
     return settingsCamera;
 }
 
