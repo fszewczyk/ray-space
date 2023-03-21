@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <functional>
+#include <map>
 
 #include "imgui.h"
 #include "implot.h"
@@ -11,7 +12,7 @@ plotViewTab::plotViewTab(std::shared_ptr<visibleWorld> world, std::shared_ptr<ca
     : m_world(world), m_camera(cam), m_plane(plane) {}
 
 systemSettings plotViewTab::render(bool &updated) {
-    worldSettings settingsWorld;
+    worldSettings settingsWorld = m_world->getSettings();
     cameraSettings settingsCamera = m_camera->getSettings();
     systemSettings settingsPlot = {settingsWorld, settingsCamera};
 
@@ -22,11 +23,21 @@ systemSettings plotViewTab::render(bool &updated) {
 
         labelAxes();
         plotDummyPoints();
-        plotPlanets();
-        plotCamera();
+        settingsCamera = plotCamera();
+        settingsWorld = plotPlanets();
+        settingsCamera = plotCamera();
 
         ImPlot::EndPlot();
     }
+
+    if (!(settingsCamera == m_camera->getSettings()))
+        updated = true;
+
+    for (auto wasUpdated : settingsWorld.updatedPlanets)
+        updated |= wasUpdated;
+
+    settingsPlot.cam = settingsCamera;
+    settingsPlot.world = settingsWorld;
 
     return settingsPlot;
 }
@@ -56,8 +67,8 @@ void plotViewTab::plotDummyPoints() {
                   return a->getName() < b->getName();
               });
 
-    // Ensures legend to be sorted by order by putting dummy points.
-    // My sincere apologies to anybody that sees this, I did not have a better idea.
+    // Ensures legend to be sorted in lexicographical order by putting dummy points.
+    // My sincere apologies to anybody that reads this, I did not have a better idea.
     if (objects.size() > 1) {
         planetSettings settingsPlanet = objects[1]->getSettings();
         auto [x, y] = getPositionOnPlane(settingsPlanet.origin);
@@ -75,18 +86,29 @@ void plotViewTab::plotDummyPoints() {
     }
 }
 
-void plotViewTab::plotCamera() {
+cameraSettings plotViewTab::plotCamera() {
     cameraSettings settingsCamera = m_camera->getSettings();
 
     auto [x, y] = getPositionOnPlane(settingsCamera.origin);
 
     ImPlot::SetNextMarkerStyle(ImPlotMarker_Diamond, 8, ImVec4(0.3, 0.3, 0.3, 1), -1.0f, ImVec4(0.2, 0.2, 0.2, 1));
     ImPlot::DragPoint(std::hash<std::string>{}("Camera"), &x, &y, ImVec4(0.3, 0.3, 0.3, 1), 7);
+
+    settingsCamera.origin = getPointFromPlane(settingsCamera.origin, x, y);
+
+    return settingsCamera;
 }
 
-void plotViewTab::plotPlanets() {
+worldSettings plotViewTab::plotPlanets() {
+    worldSettings settingsWorld = m_world->getSettings();
+
     auto objectsByPosition = m_world->getObjects();
     auto objectsBySize = objectsByPosition;
+
+    std::map<shared_ptr<sphere>, size_t> originalPlanetIndices;
+    for (size_t i = 1; i < objectsBySize.size(); ++i) {
+        originalPlanetIndices.insert(std::make_pair(objectsBySize[i], i - 1));
+    }
 
     std::sort(objectsBySize.begin(), objectsBySize.end(),
               [](const std::shared_ptr<sphere> &a, const std::shared_ptr<sphere> &b) -> bool {
@@ -165,7 +187,16 @@ void plotViewTab::plotPlanets() {
 
         ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 0);
         ImPlot::PlotScatter(settingsPlanet.name.c_str(), xBorders, yBorders, 4);
+
+        settingsPlanet.origin = getPointFromPlane(settingsPlanet.origin, x, y);
+
+        if (settingsPlanet.origin != object->getSettings().origin) {
+            settingsWorld.planets[originalPlanetIndices[object]] = settingsPlanet;
+            settingsWorld.updatedPlanets[originalPlanetIndices[object]] = true;
+        }
     }
+
+    return settingsWorld;
 }
 
 std::pair<double, double> plotViewTab::getPositionOnPlane(point3 point) {
@@ -188,6 +219,26 @@ std::pair<double, double> plotViewTab::getPositionOnPlane(point3 point) {
     }
 
     return {x, y};
+}
+
+point3 plotViewTab::getPointFromPlane(point3 point, float x, float y) {
+    switch (m_plane) {
+    case XZ:
+        point[0] = x;
+        point[2] = y;
+        break;
+    case XY:
+        point[0] = x;
+        point[1] = y;
+        break;
+    case YZ:
+    default:
+        point[2] = x;
+        point[1] = y;
+        break;
+    }
+
+    return point;
 }
 
 } // namespace shkyera

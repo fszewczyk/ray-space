@@ -16,12 +16,13 @@ class plotViewTab {
 
   private:
     void plotDummyPoints();
-    void plotCamera();
-    void plotPlanets();
+    cameraSettings plotCamera();
+    worldSettings plotPlanets();
 
     void labelAxes();
 
     std::pair<double, double> getPositionOnPlane(point3 point);
+    point3 getPointFromPlane(point3 point, float x, float y);
 
     std::shared_ptr<visibleWorld> m_world;
     std::shared_ptr<camera> m_camera;

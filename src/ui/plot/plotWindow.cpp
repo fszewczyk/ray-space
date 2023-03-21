@@ -11,16 +11,25 @@ systemSettings plotWindow::render(bool &updated) {
     systemSettings settings;
 
     ImGui::Begin("Front view");
-    settings = m_frontViewTab.render(updated);
+    systemSettings frontSettings = m_frontViewTab.render(updated);
+    settings = frontSettings;
     ImGui::End();
 
     ImGui::Begin("Side view");
-    settings = m_sideViewTab.render(updated);
+    bool sideUpdated = false;
+    systemSettings sideSettings = m_sideViewTab.render(sideUpdated);
+    if (sideUpdated)
+        settings = sideSettings;
     ImGui::End();
 
     ImGui::Begin("Top view");
-    settings = m_topViewTab.render(updated);
+    bool topUpdated = false;
+    systemSettings topSettings = m_topViewTab.render(topUpdated);
+    if (topUpdated)
+        settings = topSettings;
     ImGui::End();
+
+    updated |= sideUpdated | topUpdated;
 
     return settings;
 }

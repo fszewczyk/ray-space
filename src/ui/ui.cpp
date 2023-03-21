@@ -257,9 +257,18 @@ void ui::run() {
         ImGui::End();
 
         bool updatedSettings = false;
-        cameraSettings newCameraSettings = m_cameraSettingsWindow.render(updatedSettings);
-        worldSettings newWorldSettings = m_worldSettingsWindow.render(updatedSettings);
         systemSettings newSystemSettings = m_plotWindow.render(updatedSettings);
+
+        cameraSettings newCameraSettings = newSystemSettings.cam;
+        worldSettings newWorldSettings = newSystemSettings.world;
+
+        if (updatedSettings) {
+            m_cameraSettingsWindow.render(updatedSettings);
+            m_worldSettingsWindow.render(updatedSettings);
+        } else {
+            newCameraSettings = m_cameraSettingsWindow.render(updatedSettings);
+            newWorldSettings = m_worldSettingsWindow.render(updatedSettings);
+        }
 
         point3 cameraTranslation;
         std::pair<int, int> mouseMovement;
