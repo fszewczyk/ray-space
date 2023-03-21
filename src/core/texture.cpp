@@ -2,6 +2,8 @@
 
 namespace shkyera {
 
+color texture::getColor() const { return color(0.2, 0.8, 0.4); }
+
 solidColor::solidColor(color c) : m_color(c) {}
 solidColor::solidColor(double r, double g, double b) : m_color(color(r, g, b)) {}
 
@@ -29,6 +31,8 @@ color checkerTexture::value(double u, double v, const point3 &p) const {
         return m_even->value(u, v, p);
 }
 
+color checkerTexture::getColor() const { return (m_even->getColor() + m_odd->getColor()) / 2; }
+
 imageTexture::imageTexture(std::shared_ptr<image> image) : m_image(image) {}
 
 color imageTexture::value(double u, double v, const point3 &p) const {
@@ -49,5 +53,7 @@ color imageTexture::value(double u, double v, const point3 &p) const {
 
     return pixelColor;
 }
+
+color imageTexture::getColor() const { return m_image->getColor(); }
 
 } // namespace shkyera

@@ -30,15 +30,14 @@ planetSettings planetSettingsWindow::render(bool &updated) {
         ImGui::PushFont(ui::BOLD_FONT);
         ImGui::Text("Visual");
         ImGui::PopFont();
-        settings.mat = renderMaterialSettings();
-        ImGui::SameLine();
         ImGui::SliderFloat(("Radius##" + settings.name).c_str(), &radius, 0.1f, 20.0f, "%.2f");
 
         ImGui::Dummy(ImVec2(0.0f, 5.0f));
+        settings.mat = renderMaterialSettings();
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(82, 3, 23)));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(166, 15, 53)));
-
-        if (ImGui::Button("Remove", ImVec2(0.96 * ImGui::GetWindowWidth() - 100, 0.0f))) {
+        ImGui::SameLine();
+        if (ImGui::Button("Remove", ImVec2((ImGui::GetWindowWidth() - 122) / 2, 0))) {
             settings.remove = true;
         }
 
@@ -76,7 +75,8 @@ std::shared_ptr<material> planetSettingsWindow::renderMaterialSettings() {
     static bool isLight = planetLightColor != nullptr;
     static float lightIntensity = 5;
 
-    if (ImGui::Button(("Choose Texture##" + m_planet->getName()).c_str())) {
+    if (ImGui::Button(("Choose Texture##" + m_planet->getName()).c_str(),
+                      ImVec2((ImGui::GetWindowWidth() - 122) / 2, 0))) {
         ImGui::OpenPopup((m_planet->getName() + " Texture").c_str());
         useSolidColor = false;
     }

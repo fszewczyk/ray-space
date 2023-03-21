@@ -14,11 +14,11 @@
 
 namespace shkyera {
 
-image::image() : m_width(0), m_height(0) {}
+image::image() : m_width(0), m_height(0), m_dominantColor(randomDouble(0, 1), randomDouble(0, 1), randomDouble(0, 1)) {}
 
 image::image(int width, int height)
     : m_width(width), m_height(height), m_data(height, std::vector<color>(width)), m_verticalPixels(height),
-      m_horizontalPixels(width) {
+      m_horizontalPixels(width), m_dominantColor(0, 0, 0) {
     std::iota(m_verticalPixels.begin(), m_verticalPixels.end(), 0);
     std::iota(m_horizontalPixels.begin(), m_horizontalPixels.end(), 0);
 }
@@ -48,6 +48,9 @@ image::image(const char *filename) {
 
     m_data.resize(height());
 
+    color averageColor;
+    double imageArea = height() * width();
+
     for (int y = 0; y < height(); ++y) {
         std::vector<color> row(width());
 
@@ -60,10 +63,14 @@ image::image(const char *filename) {
             }
 
             row[x] = pixel;
+
+            averageColor += pixel / imageArea;
         }
 
         m_data[y] = row;
     }
+
+    m_dominantColor = averageColor / 255;
 
     delete raw_data;
 }
@@ -77,6 +84,8 @@ void image::writeImage(std::ostream &out) const {
         }
     }
 }
+
+color image::getColor() const { return m_dominantColor; }
 
 void image::scaleImage(std::shared_ptr<image> destinationImage, bool uniformScaling) {
     float scaleHorizontal = static_cast<float>(width()) / destinationImage->width();

@@ -42,6 +42,8 @@ add_library(
     src/ui/ui.cpp
     src/ui/renderer.cpp
     src/ui/render/renderWindow.cpp
+    src/ui/plot/plotWindow.cpp
+    src/ui/plot/plotViewTab.cpp
     src/ui/settings/cameraSettingsWindow.cpp
     src/ui/settings/worldSettingsWindow.cpp
     src/ui/settings/planetSettingsWindow.cpp
@@ -58,10 +60,13 @@ target_include_directories(shkyera PRIVATE src)
 target_include_directories(core PRIVATE src ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
 target_include_directories(shapes PRIVATE src)
 target_include_directories(world PRIVATE src)
-target_include_directories(ui PRIVATE src  ${CMAKE_BINARY_DIR}/_deps/imgui-src ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
+target_include_directories(ui PRIVATE src  
+    ${CMAKE_BINARY_DIR}/_deps/imgui-src 
+    ${CMAKE_BINARY_DIR}/_deps/implot-src 
+    ${CMAKE_BINARY_DIR}/_deps/glfw-src/include)
 
 target_link_libraries(shkyera PRIVATE core shapes world ui imgui glfw glad)
-target_link_libraries(ui PRIVATE imgui glfw glad core)
+target_link_libraries(ui PRIVATE world imgui implot glfw glad core)
 target_link_libraries(core PRIVATE stb_image glfw glad)
 
 

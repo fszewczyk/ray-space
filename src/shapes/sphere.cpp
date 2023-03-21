@@ -47,6 +47,12 @@ void sphere::setMaterial(shared_ptr<material> material) { m_material = material;
 std::string sphere::getName() const { return m_name; }
 void sphere::setName(std::string name) { m_name = name; }
 
+point3 sphere::getOrigin() const { return m_center; }
+void sphere::setOrigin(point3 p) { m_center = p; }
+
+double sphere::getRadius() const { return m_radius; }
+void sphere::setRadius(double radius) { m_radius = radius; }
+
 planetSettings sphere::getSettings() const {
     planetSettings settings;
 

@@ -2,6 +2,7 @@
 #define UI_H
 
 #include "core/image.hpp"
+#include "ui/plot/plotWindow.hpp"
 #include "ui/render/renderWindow.hpp"
 #include "ui/renderer.hpp"
 #include "ui/settings/cameraSettingsWindow.hpp"
@@ -37,6 +38,7 @@ class ui {
     renderWindow m_renderWindow;
     cameraSettingsWindow m_cameraSettingsWindow;
     worldSettingsWindow m_worldSettingsWindow;
+    plotWindow m_plotWindow;
 
     GLFWwindow *m_window;
     ImVec4 m_clearColor;

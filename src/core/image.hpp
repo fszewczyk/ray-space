@@ -50,6 +50,8 @@ class image {
     void clear();
     void writeImage(std::ostream &out) const;
 
+    color getColor() const;
+
     void scaleImage(std::shared_ptr<image> destinationImage, bool uniformScaling = false);
 
     void updateTextureId();
@@ -109,6 +111,8 @@ class image {
 
     uint64_t m_textureId;
     bool m_assignedTextureId;
+
+    color m_dominantColor;
 };
 
 } // namespace shkyera

@@ -37,9 +37,9 @@ void visibleWorld::add(shared_ptr<sphere> object) {
     m_objects.push_back(object);
 }
 
-std::vector<shared_ptr<sphere>> visibleWorld::getObjects() { return m_objects; }
-std::shared_ptr<sphere> visibleWorld::getUniverse() { return m_universe; }
-std::shared_ptr<sphere> visibleWorld::getObjectByIndex(size_t i) { return m_objects[i + 1]; }
+std::vector<shared_ptr<sphere>> visibleWorld::getObjects() const { return m_objects; }
+std::shared_ptr<sphere> visibleWorld::getUniverse() const { return m_universe; }
+std::shared_ptr<sphere> visibleWorld::getObjectByIndex(size_t i) const { return m_objects[i + 1]; }
 
 size_t visibleWorld::size() const { return m_objects.size(); }
 
@@ -57,6 +57,16 @@ bool visibleWorld::hit(const ray &r, double minT, double maxT, hitData &data) co
     }
 
     return hitAnything;
+}
+
+worldSettings visibleWorld::getSettings() const {
+    worldSettings settings;
+    settings.planets.resize(getObjects().size());
+    settings.updatedPlanets.resize(getObjects().size());
+
+    settings.ambientColor = getAmbientLightColor();
+
+    return settings;
 }
 
 void visibleWorld::setSettings(worldSettings &settings) {
@@ -84,6 +94,6 @@ void visibleWorld::setAmbientLightColor(color c) {
     m_universe->setMaterial(newAmbientLightMaterial);
 }
 
-color visibleWorld::getAmbientLightColor() { return m_ambientLightColor; }
+color visibleWorld::getAmbientLightColor() const { return m_ambientLightColor; }
 
 } // namespace shkyera
