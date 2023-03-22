@@ -347,7 +347,6 @@ void ui::exportPopup(exportSettings settings) {
     static bool exported = false;
 
     if (ImGui::BeginPopupModal("Exporting", nullptr)) {
-        ImGui::Dummy(ImVec2(300, 0));
         ImGui::Text("Progress: %.0f%%",
                     std::min(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
 
