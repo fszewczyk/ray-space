@@ -289,6 +289,18 @@ void ui::run() {
 
         switch (m_renderMode) {
         case EXPORT:
+            if (m_renderer->renderedImage() && !m_renderer->isExporting()) {
+                m_renderer->stopRendering();
+                m_renderer->renderingThread().join();
+
+                auto previewImage = m_renderer->setupImageToExport(settingsExport);
+                m_renderWindow.setImage(previewImage);
+
+                m_renderer->startRendering();
+            }
+            ImGui::OpenPopup("Exporting...");
+            exportPopup(settingsExport);
+            break;
         case PREVIEW:
             if (m_renderer->renderedImage() && !m_renderer->isExporting()) {
                 m_renderer->stopRendering();
@@ -328,6 +340,35 @@ void ui::run() {
         glfwSwapBuffers(m_window);
     } else {
         close();
+    }
+}
+
+void ui::exportPopup(exportSettings settings) {
+    static bool exported = false;
+
+    if (ImGui::BeginPopupModal("Exporting...", nullptr)) {
+        ImGui::Dummy(ImVec2(400, 0));
+        ImGui::Text("Progress: %.0f%%", std::max(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
+
+        if (exported) {
+            ImGui::Text(("Succesfully saved the image to: " + settings.path).c_str());
+            if (ImGui::Button("OK")) {
+                m_renderMode = EDIT;
+                ImGui::CloseCurrentPopup();
+            }
+        } else {
+            if (ImGui::Button("Cancel")) {
+                m_renderMode = EDIT;
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        if (m_renderer->getTakenSamples() >= settings.raysPerPixel) {
+            m_renderWindow.getImage()->saveToPng(settings.path);
+            exported = true;
+        }
+
+        ImGui::EndPopup();
     }
 }
 

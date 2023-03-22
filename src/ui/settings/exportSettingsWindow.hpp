@@ -14,6 +14,7 @@ struct exportSettings {
     int maximumRayDepth;
     int raysPerPixel;
 
+    std::string path;
     RENDER_FILE_EXTENSION extension;
 
     bool lockAspectRatio;

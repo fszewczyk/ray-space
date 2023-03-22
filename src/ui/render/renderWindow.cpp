@@ -93,7 +93,6 @@ void renderWindow::updateImageTexture() {
 
     if (m_renderTexture.size() != 4 * m_loadWidth * m_loadHeight)
         m_renderTexture.resize(4 * m_loadWidth * m_loadHeight);
-    std::cerr << m_loadWidth << ' ' << m_loadHeight << '\n';
 
     for (size_t y = 0; y < m_loadHeight; ++y) {
         for (size_t x = 0; x < m_loadWidth; ++x) {

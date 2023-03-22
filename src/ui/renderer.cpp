@@ -50,6 +50,8 @@ std::shared_ptr<image> renderer::stopExporting() {
     return m_image;
 }
 
+unsigned int renderer::getTakenSamples() const { return m_samplesTaken; }
+
 std::thread &renderer::renderingThread() { return m_renderingThread; }
 
 void renderer::renderRow(int y) {

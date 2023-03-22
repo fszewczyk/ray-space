@@ -32,6 +32,8 @@ class ui {
   private:
     void style();
 
+    void exportPopup(exportSettings settings);
+
     std::shared_ptr<renderer> m_renderer;
     std::shared_ptr<camera> m_camera;
     std::shared_ptr<visibleWorld> m_world;

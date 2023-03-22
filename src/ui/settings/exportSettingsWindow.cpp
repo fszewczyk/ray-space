@@ -49,7 +49,7 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
         ImGui::EndTooltip();
     }
 
-    ImGui::SliderInt("Rays Per Pixel", &settings.raysPerPixel, 10, 100);
+    ImGui::SliderInt("Rays Per Pixel", &settings.raysPerPixel, 10, 200);
     if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
         ImGui::BeginTooltip();
         ImGui::TextUnformatted("Rays shot out for every pixel.\nThe higher, the less noisy the image.\nUse high values "
@@ -63,6 +63,11 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
         if (ImGui::Button("Start Preview", ImVec2(160, 0))) {
             mode = PREVIEW;
         }
+        if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
+            ImGui::BeginTooltip();
+            ImGui::TextUnformatted("The program might run slower after running preview.");
+            ImGui::EndTooltip();
+        }
     } else {
         if (ImGui::Button("Stop Preview", ImVec2(160, 0))) {
             mode = EDIT;
@@ -72,6 +77,12 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     ImGui::SameLine();
 
     if (ImGui::Button("Export", ImVec2(160, 0))) {
+        mode = EXPORT;
+    }
+    if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
+        ImGui::BeginTooltip();
+        ImGui::TextUnformatted("The program might run slower after starting the export.");
+        ImGui::EndTooltip();
     }
 
     ImGui::End();
@@ -84,7 +95,8 @@ exportSettings exportSettingsWindow::getDefaultExportSettings() {
     settings.width = 1920;
     settings.height = 1080;
     settings.maximumRayDepth = 5;
-    settings.raysPerPixel = 20;
+    settings.raysPerPixel = 40;
+    settings.path = "test.png";
     settings.extension = PNG;
     settings.lockAspectRatio = true;
 

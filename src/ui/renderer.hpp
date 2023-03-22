@@ -28,6 +28,8 @@ class renderer {
     bool isExporting() const;
     std::shared_ptr<image> stopExporting();
 
+    unsigned int getTakenSamples() const;
+
     static constexpr float SCALING_FACTOR = 2.5;
     static constexpr int MAXIMUM_RAY_DEPTH = 3;
 
