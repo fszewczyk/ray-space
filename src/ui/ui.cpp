@@ -371,7 +371,7 @@ void ui::exportPopup(exportSettings settings) {
                 break;
             case JPG:
             default:
-                m_renderWindow.getImage()->saveToPng(settings.path);
+                m_renderWindow.getImage()->saveToJpg(settings.path);
             }
             exported = true;
         }

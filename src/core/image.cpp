@@ -179,8 +179,6 @@ color &image::operator()(int x, int y) { return m_data[y][x]; }
 color &image::at(int x, int y) { return m_data[y][x]; }
 
 void image::saveToPng(std::string path) {
-    std::cerr << path << '\n';
-
     char *data = new char[3 * width() * height()];
 
     for (int y = 0; y < height(); ++y) {
@@ -193,6 +191,21 @@ void image::saveToPng(std::string path) {
     }
 
     stbi_write_png(path.c_str(), width(), height(), 3, data, 3 * width());
+}
+
+void image::saveToJpg(std::string path) {
+    char *data = new char[3 * width() * height()];
+
+    for (int y = 0; y < height(); ++y) {
+        for (int x = 0; x < width(); ++x) {
+            color c = at(x, y);
+            data[(y * width() + x) * 3 + 0] = static_cast<int>(c[0] * 255);
+            data[(y * width() + x) * 3 + 1] = static_cast<int>(c[1] * 255);
+            data[(y * width() + x) * 3 + 2] = static_cast<int>(c[2] * 255);
+        }
+    }
+
+    stbi_write_jpg(path.c_str(), width(), height(), 3, data, 100);
 }
 
 std::shared_ptr<image> image::EARTH_DAY_TEXTURE = std::make_shared<image>("resources/textures/earthday.jpg");
