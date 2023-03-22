@@ -226,8 +226,8 @@ void ui::run() {
 
                 ImGuiID dock_id_left, dock_id_right, dock_id_top_right, dock_id_bottom_right, dock_id_top_left,
                     dock_id_bottom_left;
-                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.65f, &dock_id_left, &dock_id_right);
-                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.3f, &dock_id_top_right,
+                ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.6f, &dock_id_left, &dock_id_right);
+                ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.4f, &dock_id_top_right,
                                             &dock_id_bottom_right);
                 ImGui::DockBuilderSplitNode(dock_id_left, ImGuiDir_Up, 0.5f, &dock_id_top_left, &dock_id_bottom_left);
 
@@ -298,7 +298,7 @@ void ui::run() {
 
                 m_renderer->startRendering();
             }
-            ImGui::OpenPopup("Exporting...");
+            ImGui::OpenPopup("Exporting");
             exportPopup(settingsExport);
             break;
         case PREVIEW:
@@ -346,12 +346,13 @@ void ui::run() {
 void ui::exportPopup(exportSettings settings) {
     static bool exported = false;
 
-    if (ImGui::BeginPopupModal("Exporting...", nullptr)) {
-        ImGui::Dummy(ImVec2(400, 0));
-        ImGui::Text("Progress: %.0f%%", std::max(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
+    if (ImGui::BeginPopupModal("Exporting", nullptr)) {
+        ImGui::Dummy(ImVec2(300, 0));
+        ImGui::Text("Progress: %.0f%%",
+                    std::min(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
 
         if (exported) {
-            ImGui::Text(("Succesfully saved the image to: " + settings.path).c_str());
+            ImGui::Text(("Succesfully saved the image to:\n" + settings.path).c_str());
             if (ImGui::Button("OK")) {
                 m_renderMode = EDIT;
                 ImGui::CloseCurrentPopup();
@@ -363,8 +364,15 @@ void ui::exportPopup(exportSettings settings) {
             }
         }
 
-        if (m_renderer->getTakenSamples() >= settings.raysPerPixel) {
-            m_renderWindow.getImage()->saveToPng(settings.path);
+        if (!exported && m_renderer->getTakenSamples() >= settings.raysPerPixel) {
+            switch (settings.extension) {
+            case PNG:
+                m_renderWindow.getImage()->saveToPng(settings.path);
+                break;
+            case JPG:
+            default:
+                m_renderWindow.getImage()->saveToPng(settings.path);
+            }
             exported = true;
         }
 

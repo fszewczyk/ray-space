@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <unistd.h>
+
 #include "ui/settings/exportSettingsWindow.hpp"
 #include "ui/ui.hpp"
 
@@ -23,6 +26,38 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
         if (ImGui::Selectable("JPG", settings.extension == JPG))
             settings.extension = JPG;
         ImGui::EndCombo();
+    }
+
+    static char fileName[128] = "shkyera_render";
+    ImGui::InputText("File Name", fileName, IM_ARRAYSIZE(fileName));
+
+    static const char *localDirectory = settings.path.c_str();
+    static char directory[1024];
+    static bool loadedLocalDirectory = false;
+    if (!loadedLocalDirectory) {
+        strcpy(directory, localDirectory);
+        loadedLocalDirectory = true;
+    }
+
+    ImGui::TextWrapped(directory);
+    if (ImGui::Button("Choose Destination")) {
+        FILE *f = popen("zenity  --file-selection --directory --title=\"Choose a directory\"", "r");
+        fgets(directory, 1024, f);
+    }
+
+    settings.path = directory;
+    settings.path.pop_back();
+    settings.path += "/";
+    settings.path += fileName;
+
+    switch (settings.extension) {
+    case PNG:
+        settings.path += ".png";
+        break;
+    case JPG:
+    default:
+        settings.path += ".jpg";
+        break;
     }
 
     ImGui::Checkbox("Lock Aspect Ratio", &settings.lockAspectRatio);
@@ -96,7 +131,7 @@ exportSettings exportSettingsWindow::getDefaultExportSettings() {
     settings.height = 1080;
     settings.maximumRayDepth = 5;
     settings.raysPerPixel = 40;
-    settings.path = "test.png";
+    settings.path = get_current_dir_name();
     settings.extension = PNG;
     settings.lockAspectRatio = true;
 

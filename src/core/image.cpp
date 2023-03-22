@@ -179,6 +179,8 @@ color &image::operator()(int x, int y) { return m_data[y][x]; }
 color &image::at(int x, int y) { return m_data[y][x]; }
 
 void image::saveToPng(std::string path) {
+    std::cerr << path << '\n';
+
     char *data = new char[3 * width() * height()];
 
     for (int y = 0; y < height(); ++y) {
