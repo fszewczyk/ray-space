@@ -33,9 +33,27 @@ cameraSettings cameraSettingsWindow::render(bool &updated) {
     ImGui::PushFont(ui::BOLD_FONT);
     ImGui::Text("Visual");
     ImGui::PopFont();
-    ImGui::SliderFloat("Depth of Field", &depthOfField, 0.0f, 1.0f, "%.2f");
     ImGui::SliderFloat("Field of View", &fieldOfView, 10.0f, 140.0f, "%.2f");
+    if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
+        ImGui::BeginTooltip();
+        ImGui::TextUnformatted("The bigger, the more the camera sees.");
+        ImGui::EndTooltip();
+    }
+
+    ImGui::SliderFloat("Depth of Field", &depthOfField, 0.0f, 1.0f, "%.2f");
+    if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
+        ImGui::BeginTooltip();
+        ImGui::TextUnformatted("Size of the camera aperture.\nUse in combination with Focus Distance.");
+        ImGui::EndTooltip();
+    }
+
     ImGui::SliderFloat("Focus Distance", &focusDistance, 0.5f, 30.0f, "%.2f");
+    if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
+        ImGui::BeginTooltip();
+        ImGui::TextUnformatted("Camera will be focused at the specified distance.\nEffect only visible if Depth of "
+                               "Field is larger than 0.");
+        ImGui::EndTooltip();
+    }
 
     ImGui::End();
 

@@ -12,14 +12,14 @@ namespace shkyera {
 
 renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im,
                    color backgroundColor)
-    : m_world(world), m_cam(cam), m_image(im), m_stop(false) {
-    m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
+    : m_world(world), m_cam(cam), m_image(im), m_stop(false), m_isExporting(false) {
+    m_imageToDraw = std::make_shared<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
     m_backgroundColor = backgroundColor;
 }
 
 renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> cam, std::shared_ptr<image> im)
-    : m_world(world), m_cam(cam), m_image(im) {
-    m_imageToDraw = std::make_unique<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
+    : m_world(world), m_cam(cam), m_image(im), m_isExporting(false) {
+    m_imageToDraw = std::make_shared<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
 }
 
 void renderer::startRendering() {
@@ -30,6 +30,25 @@ void renderer::startRendering() {
 bool renderer::renderedImage() const { return m_renderedImage; }
 
 void renderer::stopRendering() { m_stop = true; }
+
+std::shared_ptr<image> renderer::setupImageToExport(exportSettings settings) {
+    m_imageToDraw = std::make_shared<image>(settings.width, settings.height);
+    m_exportRayDepth = settings.maximumRayDepth;
+    m_exportRayCount = settings.raysPerPixel;
+
+    m_isExporting = true;
+
+    return m_imageToDraw;
+}
+
+bool renderer::isExporting() const { return m_isExporting; }
+
+std::shared_ptr<image> renderer::stopExporting() {
+    m_imageToDraw = std::make_shared<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
+    m_isExporting = false;
+
+    return m_image;
+}
 
 std::thread &renderer::renderingThread() { return m_renderingThread; }
 

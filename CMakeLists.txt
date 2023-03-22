@@ -47,6 +47,7 @@ add_library(
     src/ui/settings/cameraSettingsWindow.cpp
     src/ui/settings/worldSettingsWindow.cpp
     src/ui/settings/planetSettingsWindow.cpp
+    src/ui/settings/exportSettingsWindow.cpp
     )
 
 

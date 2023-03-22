@@ -37,7 +37,7 @@ planetSettings planetSettingsWindow::render(bool &updated) {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(82, 3, 23)));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(166, 15, 53)));
         ImGui::SameLine();
-        if (ImGui::Button("Remove", ImVec2((ImGui::GetWindowWidth() - 122) / 2, 0))) {
+        if (ImGui::Button("Remove", ImVec2((ImGui::GetWindowWidth() - 122) * 0.4, 0))) {
             settings.remove = true;
         }
 
@@ -76,7 +76,7 @@ std::shared_ptr<material> planetSettingsWindow::renderMaterialSettings() {
     static float lightIntensity = 5;
 
     if (ImGui::Button(("Choose Texture##" + m_planet->getName()).c_str(),
-                      ImVec2((ImGui::GetWindowWidth() - 122) / 2, 0))) {
+                      ImVec2((ImGui::GetWindowWidth() - 122) * 0.6, 0))) {
         ImGui::OpenPopup((m_planet->getName() + " Texture").c_str());
         useSolidColor = false;
     }

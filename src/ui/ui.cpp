@@ -20,7 +20,8 @@ namespace shkyera {
 ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::shared_ptr<visibleWorld> world,
        std::shared_ptr<camera> cam)
     : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_world(world), m_cameraSettingsWindow(cam),
-      m_worldSettingsWindow(world), m_plotWindow(world, cam), m_mouseSensitivity(MOUSE_SENSITIVITY) {}
+      m_worldSettingsWindow(world), m_exportSettingsWindow(cam), m_plotWindow(world, cam),
+      m_mouseSensitivity(MOUSE_SENSITIVITY), m_renderMode(EDIT) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -207,17 +208,6 @@ void ui::run() {
         ImGui::Begin("Shkyera Engine", &open, window_flags);
         ImGui::PopStyleVar(3);
 
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Load scene")) {
-                }
-                if (ImGui::MenuItem("Save scene")) {
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
-
         ImGuiIO &io = ImGui::GetIO();
 
         if (io.ConfigFlags) {
@@ -248,6 +238,7 @@ void ui::run() {
                 ImGui::DockBuilderDockWindow("Side view", dock_id_bottom_left);
 
                 ImGui::DockBuilderDockWindow("Camera", dock_id_top_right);
+                ImGui::DockBuilderDockWindow("Export", dock_id_top_right);
                 ImGui::DockBuilderDockWindow("World", dock_id_bottom_right);
 
                 ImGui::DockBuilderFinish(dockspace_id);
@@ -255,6 +246,8 @@ void ui::run() {
         }
 
         ImGui::End();
+
+        exportSettings settingsExport = m_exportSettingsWindow.render(m_renderMode);
 
         bool updatedSettings = false;
         systemSettings newSystemSettings = m_plotWindow.render(updatedSettings);
@@ -292,6 +285,33 @@ void ui::run() {
             m_world->setSettings(newWorldSettings);
 
             m_renderer->startRendering();
+        }
+
+        switch (m_renderMode) {
+        case EXPORT:
+        case PREVIEW:
+            if (m_renderer->renderedImage() && !m_renderer->isExporting()) {
+                m_renderer->stopRendering();
+                m_renderer->renderingThread().join();
+
+                auto previewImage = m_renderer->setupImageToExport(settingsExport);
+                m_renderWindow.setImage(previewImage);
+
+                m_renderer->startRendering();
+            }
+            break;
+        case EDIT:
+        default:
+            if (m_renderer->renderedImage() && m_renderer->isExporting()) {
+                m_renderer->stopRendering();
+                m_renderer->renderingThread().join();
+
+                auto editImage = m_renderer->stopExporting();
+                m_renderWindow.setImage(editImage);
+
+                m_renderer->startRendering();
+            }
+            break;
         }
 
         ImGui::Render();

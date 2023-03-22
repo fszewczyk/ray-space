@@ -12,6 +12,7 @@ class renderWindow {
 
     point3 render(bool sampleTexture, bool &updated, std::pair<int, int> &mouseMovement);
 
+    void setImage(std::shared_ptr<image> image);
     std::shared_ptr<image> getImage() const;
 
   private:

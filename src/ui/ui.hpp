@@ -6,6 +6,7 @@
 #include "ui/render/renderWindow.hpp"
 #include "ui/renderer.hpp"
 #include "ui/settings/cameraSettingsWindow.hpp"
+#include "ui/settings/exportSettingsWindow.hpp"
 #include "ui/settings/worldSettingsWindow.hpp"
 
 #include "imgui.h"
@@ -38,14 +39,16 @@ class ui {
     renderWindow m_renderWindow;
     cameraSettingsWindow m_cameraSettingsWindow;
     worldSettingsWindow m_worldSettingsWindow;
+    exportSettingsWindow m_exportSettingsWindow;
     plotWindow m_plotWindow;
 
     GLFWwindow *m_window;
     ImVec4 m_clearColor;
 
     bool m_open;
-
     float m_mouseSensitivity;
+
+    RENDER_MODE m_renderMode;
 };
 
 } // namespace shkyera

@@ -3,6 +3,7 @@
 
 #include "core/image.hpp"
 #include "core/utils.hpp"
+#include "ui/settings/exportSettingsWindow.hpp"
 #include "world/camera.hpp"
 #include "world/visibleWorld.hpp"
 
@@ -23,6 +24,10 @@ class renderer {
 
     bool renderedImage() const;
 
+    std::shared_ptr<image> setupImageToExport(exportSettings settings);
+    bool isExporting() const;
+    std::shared_ptr<image> stopExporting();
+
     static constexpr float SCALING_FACTOR = 2.5;
     static constexpr int MAXIMUM_RAY_DEPTH = 3;
 
@@ -37,7 +42,7 @@ class renderer {
     color m_backgroundColor;
 
     std::shared_ptr<image> m_image;
-    std::unique_ptr<image> m_imageToDraw;
+    std::shared_ptr<image> m_imageToDraw;
     std::shared_ptr<camera> m_cam;
     std::shared_ptr<visibleWorld> m_world;
 
@@ -47,6 +52,11 @@ class renderer {
     unsigned int m_samplesTaken;
 
     std::thread m_renderingThread;
+
+    int m_exportRayDepth;
+    int m_exportRayCount;
+    std::string m_exportPath;
+    bool m_isExporting;
 };
 
 } // namespace shkyera
