@@ -13,7 +13,7 @@ namespace shkyera {
 exportSettingsWindow::exportSettingsWindow(std::shared_ptr<camera> cam) : m_camera(cam) {}
 
 exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
-    ImGui::Begin("Export", nullptr, ImGuiWindowFlags_NoScrollWithMouse);
+    ImGui::Begin("Export", nullptr, ImGuiWindowFlags_None);
 
     static exportSettings settings = getDefaultExportSettings();
     int setWidth = settings.width;

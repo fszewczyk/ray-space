@@ -51,6 +51,7 @@ class ui {
     float m_mouseSensitivity;
 
     bool m_exported;
+    std::chrono::steady_clock::time_point m_startedExportTime;
 
     RENDER_MODE m_renderMode;
 };

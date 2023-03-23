@@ -170,7 +170,7 @@ void ui::style() {
     style.Colors[ImGuiCol_Separator] = GREY;
     style.Colors[ImGuiCol_SeparatorHovered] = LIGHT_GREY;
     style.Colors[ImGuiCol_SeparatorActive] = LIGHT_GREY;
-    style.WindowMinSize = ImVec2(350, 100);
+    style.WindowMinSize = ImVec2(380, 200);
 
     ImPlotStyle &plotStyle = ImPlot::GetStyle();
     plotStyle.Colors[ImPlotCol_FrameBg] = BACKGROUND_COLOR;
@@ -302,6 +302,7 @@ void ui::run() {
                 m_renderer->startRendering();
 
                 m_exported = false;
+                m_startedExportTime = std::chrono::steady_clock::now();
                 ImGui::OpenPopup("Exporting");
             }
             exportPopup(settingsExport);
@@ -351,12 +352,26 @@ void ui::run() {
 }
 
 void ui::exportPopup(exportSettings settings) {
-    if (ImGui::BeginPopupModal("Exporting", nullptr), ImGuiWindowFlags_AlwaysAutoResize) {
+    ImGui::SetNextWindowSize(ImVec2(300, 0));
+    if (ImGui::BeginPopupModal("Exporting", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
+        int elapsedNanoseconds =
+            std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startedExportTime).count();
+
+        std::cerr << elapsedNanoseconds << '\n';
+
+        int nanosecondsPerPass = elapsedNanoseconds / (m_renderer->getTakenSamples() + 0.01f);
+        int nanosecondsToFinish = nanosecondsPerPass * (settings.raysPerPixel - m_renderer->getTakenSamples());
+        int secondsToFinish = nanosecondsToFinish / 1e3;
+
+        ImGui::Dummy(ImVec2(150.0f, 5.0f));
         ImGui::Text("Progress: %.0f%%",
                     std::min(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
+        ImGui::SameLine();
+        ImGui::Text("\tTime left: %d seconds", std::max(0, secondsToFinish));
 
         if (m_exported) {
-            ImGui::Text(("Succesfully saved the image to:\n" + settings.path).c_str());
+            ImGui::TextWrapped(("Succesfully saved the image to:\n" + settings.path).c_str());
             if (ImGui::Button("OK")) {
                 m_renderMode = EDIT;
                 ImGui::CloseCurrentPopup();
