@@ -11,7 +11,6 @@ enum RENDER_MODE { EDIT, PREVIEW, EXPORT };
 struct exportSettings {
     int width;
     int height;
-    int maximumRayDepth;
     int raysPerPixel;
 
     std::string path;

@@ -33,9 +33,6 @@ void renderer::stopRendering() { m_stop = true; }
 
 std::shared_ptr<image> renderer::setupImageToExport(exportSettings settings) {
     m_imageToDraw = std::make_shared<image>(settings.width, settings.height);
-    m_exportRayDepth = settings.maximumRayDepth;
-    m_exportRayCount = settings.raysPerPixel;
-
     m_isExporting = true;
 
     return m_imageToDraw;
@@ -46,6 +43,7 @@ bool renderer::isExporting() const { return m_isExporting; }
 std::shared_ptr<image> renderer::stopExporting() {
     m_imageToDraw = std::make_shared<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
     m_isExporting = false;
+    m_cam->setAspectRatio(static_cast<float>(m_imageToDraw->width()) / m_imageToDraw->height());
 
     return m_image;
 }

@@ -83,4 +83,9 @@ void camera::setSettings(const cameraSettings config) {
     setDirection(config.direction);
 }
 
+void camera::setAspectRatio(float aspectRatio) {
+    m_aspectRatio = aspectRatio;
+    setSettings(getSettings());
+}
+
 } // namespace shkyera

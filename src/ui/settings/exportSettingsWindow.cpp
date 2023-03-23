@@ -75,15 +75,6 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     settings.width = std::max(128, setWidth);
     settings.height = std::max(128, setHeight);
 
-    ImGui::SliderInt("Ray Depth", &settings.maximumRayDepth, 2, 10);
-    if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
-        ImGui::BeginTooltip();
-        ImGui::TextUnformatted(
-            "Maximum number of bounces of every ray.\nUse large values only if your objects are very "
-            "close to each other.");
-        ImGui::EndTooltip();
-    }
-
     ImGui::SliderInt("Rays Per Pixel", &settings.raysPerPixel, 10, 200);
     if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
         ImGui::BeginTooltip();
@@ -129,7 +120,6 @@ exportSettings exportSettingsWindow::getDefaultExportSettings() {
     exportSettings settings;
     settings.width = 1920;
     settings.height = 1080;
-    settings.maximumRayDepth = 5;
     settings.raysPerPixel = 40;
     settings.path = get_current_dir_name();
     settings.extension = PNG;

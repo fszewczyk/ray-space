@@ -31,7 +31,7 @@ class renderer {
     unsigned int getTakenSamples() const;
 
     static constexpr float SCALING_FACTOR = 2.5;
-    static constexpr int MAXIMUM_RAY_DEPTH = 3;
+    static constexpr int MAXIMUM_RAY_DEPTH = 5;
 
   private:
     void render();
@@ -55,9 +55,6 @@ class renderer {
 
     std::thread m_renderingThread;
 
-    int m_exportRayDepth;
-    int m_exportRayCount;
-    std::string m_exportPath;
     bool m_isExporting;
 };
 

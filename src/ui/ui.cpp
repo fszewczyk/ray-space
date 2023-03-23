@@ -293,6 +293,8 @@ void ui::run() {
                 m_renderer->stopRendering();
                 m_renderer->renderingThread().join();
 
+                m_camera->setAspectRatio(static_cast<float>(settingsExport.width) / settingsExport.height);
+
                 auto previewImage = m_renderer->setupImageToExport(settingsExport);
                 m_renderWindow.setImage(previewImage);
 
@@ -305,6 +307,8 @@ void ui::run() {
             if (m_renderer->renderedImage() && !m_renderer->isExporting()) {
                 m_renderer->stopRendering();
                 m_renderer->renderingThread().join();
+
+                m_camera->setAspectRatio(static_cast<float>(settingsExport.width) / settingsExport.height);
 
                 auto previewImage = m_renderer->setupImageToExport(settingsExport);
                 m_renderWindow.setImage(previewImage);

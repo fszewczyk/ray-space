@@ -37,6 +37,8 @@ class camera {
     cameraSettings getSettings() const;
     void setSettings(const cameraSettings config);
 
+    void setAspectRatio(float aspectRatio);
+
   private:
     point3 m_origin;
     point3 m_lowerLeftCorner;
