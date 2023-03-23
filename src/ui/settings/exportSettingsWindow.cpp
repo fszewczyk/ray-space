@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -40,13 +41,18 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     }
 
     ImGui::TextWrapped(directory);
+
+#ifndef __APPLE__
     if (ImGui::Button("Choose Destination")) {
         FILE *f = popen("zenity  --file-selection --directory --title=\"Choose a directory\"", "r");
         fgets(directory, 1024, f);
     }
+#endif
 
     settings.path = directory;
+#ifndef __APPLE__
     settings.path.pop_back();
+#endif
     settings.path += "/";
     settings.path += fileName;
 
@@ -78,7 +84,8 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     ImGui::SliderInt("Rays Per Pixel", &settings.raysPerPixel, 10, 200);
     if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
         ImGui::BeginTooltip();
-        ImGui::TextUnformatted("Rays shot out for every pixel.\nThe higher, the less noisy the image.\nUse high values "
+        ImGui::TextUnformatted("Rays shot out for every pixel.\nThe higher, the "
+                               "less noisy the image.\nUse high values "
                                "if you have relatively small light sources.");
         ImGui::EndTooltip();
     }
@@ -121,9 +128,14 @@ exportSettings exportSettingsWindow::getDefaultExportSettings() {
     settings.width = 1920;
     settings.height = 1080;
     settings.raysPerPixel = 40;
-    settings.path = get_current_dir_name();
     settings.extension = PNG;
     settings.lockAspectRatio = true;
+
+#ifdef __APPLE__
+    settings.path = std::filesystem::current_path();
+#else
+    settings.path = get_current_dir_name();
+#endif
 
     return settings;
 }
