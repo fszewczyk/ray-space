@@ -399,6 +399,7 @@ void ui::exportPopup(exportSettings settings) {
           ("Succesfully saved the image to:\n" + settings.path).c_str());
       if (ImGui::Button("OK")) {
         m_renderMode = EDIT;
+        m_exported = false;
         ImGui::CloseCurrentPopup();
       }
     } else {

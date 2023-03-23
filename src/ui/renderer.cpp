@@ -24,6 +24,7 @@ renderer::renderer(std::shared_ptr<visibleWorld> world, std::shared_ptr<camera> 
 
 void renderer::startRendering() {
     m_renderedImage = false;
+    m_samplesTaken = 0;
     m_renderingThread = std::thread([this] { render(); });
 }
 
