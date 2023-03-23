@@ -58,7 +58,7 @@ void ui::init() { // Setup window
 #endif
 
     // Create window with graphics context
-    m_window = glfwCreateWindow(1000, 800, "SHKYERA Engine", NULL, NULL);
+    m_window = glfwCreateWindow(1100, 800, "Shkyera Engine", NULL, NULL);
     if (m_window == NULL)
         return;
 
@@ -170,6 +170,7 @@ void ui::style() {
     style.Colors[ImGuiCol_Separator] = GREY;
     style.Colors[ImGuiCol_SeparatorHovered] = LIGHT_GREY;
     style.Colors[ImGuiCol_SeparatorActive] = LIGHT_GREY;
+    style.WindowMinSize = ImVec2(350, 100);
 
     ImPlotStyle &plotStyle = ImPlot::GetStyle();
     plotStyle.Colors[ImPlotCol_FrameBg] = BACKGROUND_COLOR;
@@ -350,7 +351,7 @@ void ui::run() {
 }
 
 void ui::exportPopup(exportSettings settings) {
-    if (ImGui::BeginPopupModal("Exporting", nullptr)) {
+    if (ImGui::BeginPopupModal("Exporting", nullptr), ImGuiWindowFlags_AlwaysAutoResize) {
         ImGui::Text("Progress: %.0f%%",
                     std::min(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
 

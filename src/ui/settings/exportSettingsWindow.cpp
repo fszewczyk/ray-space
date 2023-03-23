@@ -13,7 +13,7 @@ namespace shkyera {
 exportSettingsWindow::exportSettingsWindow(std::shared_ptr<camera> cam) : m_camera(cam) {}
 
 exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
-    ImGui::Begin("Export");
+    ImGui::Begin("Export", nullptr, ImGuiWindowFlags_NoScrollWithMouse);
 
     static exportSettings settings = getDefaultExportSettings();
     int setWidth = settings.width;
@@ -95,7 +95,7 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     ImGui::Dummy(ImVec2(0, 5.0f));
 
     if (mode == EDIT) {
-        if (ImGui::Button("Start Preview", ImVec2(160, 0))) {
+        if (ImGui::Button("Start Preview", ImVec2(130, 0))) {
             mode = PREVIEW;
         }
         if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
@@ -104,14 +104,14 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
             ImGui::EndTooltip();
         }
     } else {
-        if (ImGui::Button("Stop Preview", ImVec2(160, 0))) {
+        if (ImGui::Button("Stop Preview", ImVec2(130, 0))) {
             mode = EDIT;
         }
     }
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Export", ImVec2(160, 0))) {
+    if (ImGui::Button("Export", ImVec2(130, 0))) {
         mode = EXPORT;
     }
     if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
