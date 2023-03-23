@@ -51,7 +51,7 @@ void vec3::rotateAroundY(double angle) {
 }
 
 void vec3::rotateUpAndDown(double angle) {
-    float baseAngle = atan2(m_cords[0], m_cords[2]);
+    float baseAngle = atan2(m_cords[2], m_cords[0]);
     rotateAroundY(baseAngle);
 
     double new_x = m_cords[0] * cos(angle) - m_cords[1] * sin(angle);
