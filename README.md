@@ -16,7 +16,7 @@
 
 
 ## Quick start
-Download appropriate executives for your system from [here](). 
+Download appropriate executives for your system from [here](https://github.com/fszewczyk/shkyera-engine/releases). 
 ### Linux
 Everything should work from the beginning. Just extract the contents and launch the app.
 
