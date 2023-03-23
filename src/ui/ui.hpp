@@ -6,6 +6,7 @@
 #include "ui/render/renderWindow.hpp"
 #include "ui/renderer.hpp"
 #include "ui/settings/cameraSettingsWindow.hpp"
+#include "ui/settings/exportSettingsWindow.hpp"
 #include "ui/settings/worldSettingsWindow.hpp"
 
 #include "imgui.h"
@@ -31,6 +32,8 @@ class ui {
   private:
     void style();
 
+    void exportPopup(exportSettings settings);
+
     std::shared_ptr<renderer> m_renderer;
     std::shared_ptr<camera> m_camera;
     std::shared_ptr<visibleWorld> m_world;
@@ -38,14 +41,19 @@ class ui {
     renderWindow m_renderWindow;
     cameraSettingsWindow m_cameraSettingsWindow;
     worldSettingsWindow m_worldSettingsWindow;
+    exportSettingsWindow m_exportSettingsWindow;
     plotWindow m_plotWindow;
 
     GLFWwindow *m_window;
     ImVec4 m_clearColor;
 
     bool m_open;
-
     float m_mouseSensitivity;
+
+    bool m_exported;
+    std::chrono::steady_clock::time_point m_startedExportTime;
+
+    RENDER_MODE m_renderMode;
 };
 
 } // namespace shkyera

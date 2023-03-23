@@ -4,9 +4,14 @@ project(shkyeraEngine)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fPIE -no-pie")
+endif()
 
 set(FETCHCONTENT_BASE_DIR ${CMAKE_BINARY_DIR}/_deps)
 
@@ -47,6 +52,7 @@ add_library(
     src/ui/settings/cameraSettingsWindow.cpp
     src/ui/settings/worldSettingsWindow.cpp
     src/ui/settings/planetSettingsWindow.cpp
+    src/ui/settings/exportSettingsWindow.cpp
     )
 
 

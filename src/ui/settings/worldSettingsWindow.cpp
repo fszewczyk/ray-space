@@ -42,7 +42,7 @@ worldSettings worldSettingsWindow::render(bool &updated) {
         ImGui::OpenPopup("Add New Object");
     }
 
-    if (ImGui::BeginPopupModal("Add New Object", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+    if (ImGui::BeginPopupModal("Add New Object", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::InputText("Name", planetName, IM_ARRAYSIZE(planetName));
         ImGui::Dummy(ImVec2(0.0f, 5.0f));
         if (ImGui::Button("Cancel")) {

@@ -60,6 +60,9 @@ class image {
     color &operator()(int x, int y);
     color &at(int x, int y);
 
+    void saveToPng(std::string path);
+    void saveToJpg(std::string path);
+
     static constexpr int TEXTURE_BYTES_PER_PIXEL = 3;
     static constexpr int ICON_SIZE = 64;
 

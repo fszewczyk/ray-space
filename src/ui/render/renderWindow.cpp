@@ -91,7 +91,7 @@ void renderWindow::updateImageTexture() {
     m_loadWidth = m_image->width();
     m_loadHeight = m_image->height();
 
-    if (m_renderTexture.size() == 0)
+    if (m_renderTexture.size() != 4 * m_loadWidth * m_loadHeight)
         m_renderTexture.resize(4 * m_loadWidth * m_loadHeight);
 
     for (size_t y = 0; y < m_loadHeight; ++y) {
@@ -103,6 +103,7 @@ void renderWindow::updateImageTexture() {
             m_renderTexture[(y * m_loadWidth + x) * 4 + 3] = 255;
         }
     }
+
     unsigned textureId = m_loadTexId;
 
     if (m_loadedImage)
@@ -120,6 +121,11 @@ void renderWindow::updateImageTexture() {
 
     m_loadedImage = true;
     m_loadTexId = textureId;
+}
+
+void renderWindow::setImage(std::shared_ptr<image> image) {
+    m_image = image;
+    updateImageTexture();
 }
 
 std::shared_ptr<image> renderWindow::getImage() const { return m_image; }

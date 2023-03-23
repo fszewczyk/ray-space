@@ -16,8 +16,7 @@
 
 using namespace shkyera;
 
-int main(int argc, char *argv[]) {
-
+ui prepareUserInterface() {
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 600;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
@@ -46,8 +45,13 @@ int main(int argc, char *argv[]) {
 
     ui interface(im, r, world, cam);
 
-    interface.init();
+    return interface;
+}
 
+int main(int argc, char *argv[]) {
+    ui interface = prepareUserInterface();
+
+    interface.init();
     while (interface.isOpen()) {
         interface.run();
     }

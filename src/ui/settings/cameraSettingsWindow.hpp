@@ -7,7 +7,7 @@ namespace shkyera {
 
 class cameraSettingsWindow {
   public:
-    cameraSettingsWindow(std::shared_ptr<camera> im);
+    cameraSettingsWindow(std::shared_ptr<camera> cam);
 
     cameraSettings render(bool &updated);
 

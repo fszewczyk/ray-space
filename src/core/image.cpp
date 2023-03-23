@@ -1,7 +1,9 @@
 #include "core/image.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image.h"
+#include "stb_image_write.h"
 
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -29,6 +31,9 @@ image::image(const char *filename) {
 
     if (!raw_data) {
         std::cerr << "\033[0;31mCould not load texture from file '" << filename << "'\033[0m" << std::endl;
+#ifdef __APPLE__
+        std::cerr << "\tMake sure you are running the executive from its directory." << std::endl;
+#endif
         m_width = 0;
         m_height = 0;
         return;
@@ -175,6 +180,36 @@ void image::writeColor(std::ostream &out, color pixelColor) const {
 
 color &image::operator()(int x, int y) { return m_data[y][x]; }
 color &image::at(int x, int y) { return m_data[y][x]; }
+
+void image::saveToPng(std::string path) {
+    char *data = new char[3 * width() * height()];
+
+    for (int y = 0; y < height(); ++y) {
+        for (int x = 0; x < width(); ++x) {
+            color c = at(x, y);
+            data[(y * width() + x) * 3 + 0] = static_cast<int>(c[0] * 255);
+            data[(y * width() + x) * 3 + 1] = static_cast<int>(c[1] * 255);
+            data[(y * width() + x) * 3 + 2] = static_cast<int>(c[2] * 255);
+        }
+    }
+
+    stbi_write_png(path.c_str(), width(), height(), 3, data, 3 * width());
+}
+
+void image::saveToJpg(std::string path) {
+    char *data = new char[3 * width() * height()];
+
+    for (int y = 0; y < height(); ++y) {
+        for (int x = 0; x < width(); ++x) {
+            color c = at(x, y);
+            data[(y * width() + x) * 3 + 0] = static_cast<int>(c[0] * 255);
+            data[(y * width() + x) * 3 + 1] = static_cast<int>(c[1] * 255);
+            data[(y * width() + x) * 3 + 2] = static_cast<int>(c[2] * 255);
+        }
+    }
+
+    stbi_write_jpg(path.c_str(), width(), height(), 3, data, 100);
+}
 
 std::shared_ptr<image> image::EARTH_DAY_TEXTURE = std::make_shared<image>("resources/textures/earthday.jpg");
 std::shared_ptr<image> image::EARTH_NIGHT_TEXTURE = std::make_shared<image>("resources/textures/earthnight.jpg");
