@@ -21,7 +21,7 @@ cameraSettings cameraSettingsWindow::render(bool &updated) {
     float fieldOfView = settings.fieldOfView;
     float focusDistance = settings.focusDistance;
 
-    ImGui::Begin("Camera", nullptr, ImGuiWindowFlags_NoScrollWithMouse);
+    ImGui::Begin("Camera", nullptr, ImGuiWindowFlags_None);
 
     ImGui::PushFont(ui::BOLD_FONT);
     ImGui::Text("Position");
