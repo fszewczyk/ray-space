@@ -31,7 +31,6 @@ Everything should be taken care of if you just do this.
 
 ```sh
 chmod +x ./build.sh
-
 ./build.sh -r
 ```
 
