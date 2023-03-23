@@ -50,6 +50,8 @@ class ui {
     bool m_open;
     float m_mouseSensitivity;
 
+    bool m_exported;
+
     RENDER_MODE m_renderMode;
 };
 

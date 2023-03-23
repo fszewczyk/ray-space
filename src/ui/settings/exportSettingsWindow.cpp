@@ -46,13 +46,13 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     if (ImGui::Button("Choose Destination")) {
         FILE *f = popen("zenity  --file-selection --directory --title=\"Choose a directory\"", "r");
         fgets(directory, 1024, f);
+        std::string stringifiedDirectory(directory);
+        stringifiedDirectory.pop_back();
+        strcpy(directory, stringifiedDirectory.c_str());
     }
 #endif
 
     settings.path = directory;
-#ifndef __APPLE__
-    settings.path.pop_back();
-#endif
     settings.path += "/";
     settings.path += fileName;
 
@@ -65,6 +65,8 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
         settings.path += ".jpg";
         break;
     }
+
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
     ImGui::Checkbox("Lock Aspect Ratio", &settings.lockAspectRatio);
 

@@ -21,7 +21,7 @@ ui::ui(std::shared_ptr<image> im, std::shared_ptr<renderer> renderer, std::share
        std::shared_ptr<camera> cam)
     : m_renderWindow(im, cam), m_renderer(renderer), m_camera(cam), m_world(world), m_cameraSettingsWindow(cam),
       m_worldSettingsWindow(world), m_exportSettingsWindow(cam), m_plotWindow(world, cam),
-      m_mouseSensitivity(MOUSE_SENSITIVITY), m_renderMode(EDIT) {}
+      m_mouseSensitivity(MOUSE_SENSITIVITY), m_renderMode(EDIT), m_exported(false) {}
 
 void glfw_error_callback(int error, const char *description) {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -299,8 +299,10 @@ void ui::run() {
                 m_renderWindow.setImage(previewImage);
 
                 m_renderer->startRendering();
+
+                m_exported = false;
+                ImGui::OpenPopup("Exporting");
             }
-            ImGui::OpenPopup("Exporting");
             exportPopup(settingsExport);
             break;
         case PREVIEW:
@@ -348,13 +350,11 @@ void ui::run() {
 }
 
 void ui::exportPopup(exportSettings settings) {
-    static bool exported = false;
-
     if (ImGui::BeginPopupModal("Exporting", nullptr)) {
         ImGui::Text("Progress: %.0f%%",
                     std::min(100.0f, 100.0f * m_renderer->getTakenSamples() / settings.raysPerPixel));
 
-        if (exported) {
+        if (m_exported) {
             ImGui::Text(("Succesfully saved the image to:\n" + settings.path).c_str());
             if (ImGui::Button("OK")) {
                 m_renderMode = EDIT;
@@ -367,7 +367,7 @@ void ui::exportPopup(exportSettings settings) {
             }
         }
 
-        if (!exported && m_renderer->getTakenSamples() >= settings.raysPerPixel) {
+        if (!m_exported && m_renderer->getTakenSamples() >= settings.raysPerPixel) {
             switch (settings.extension) {
             case PNG:
                 m_renderWindow.getImage()->saveToPng(settings.path);
@@ -376,7 +376,7 @@ void ui::exportPopup(exportSettings settings) {
             default:
                 m_renderWindow.getImage()->saveToJpg(settings.path);
             }
-            exported = true;
+            m_exported = true;
         }
 
         ImGui::EndPopup();
