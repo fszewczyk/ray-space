@@ -16,13 +16,9 @@
 
 
 ## Quick start
-Download appropriate executives for your system from [here](https://github.com/fszewczyk/shkyera-engine/releases). 
-### Linux
-_Tested on Ubuntu 20.04_
+### Linux and MacOS
+_Tested on Ubuntu 20.04 and MacOS Monterey (Intel)_
 
-Everything should work from the beginning. Just extract the contents and launch the app.
-
-## Building from source
 Everything should be taken care of if you just do this.
 
 ```sh
