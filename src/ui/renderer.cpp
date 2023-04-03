@@ -39,12 +39,17 @@ std::shared_ptr<image> renderer::setupImageToExport(exportSettings settings) {
     return m_imageToDraw;
 }
 
+void renderer::setDenoiseCoordinates(std::vector<std::pair<size_t, size_t>> coords) { m_denoiseCoordinates = coords; }
+
+bool renderer::isDenoising() const { return !m_denoiseCoordinates.empty(); }
+
 bool renderer::isExporting() const { return m_isExporting; }
 
 std::shared_ptr<image> renderer::stopExporting() {
     m_imageToDraw = std::make_shared<image>(m_image->width() / SCALING_FACTOR, m_image->height() / SCALING_FACTOR);
     m_isExporting = false;
     m_cam->setAspectRatio(static_cast<float>(m_imageToDraw->width()) / m_imageToDraw->height());
+    m_denoiseCoordinates.clear();
 
     return m_image;
 }
@@ -55,6 +60,21 @@ std::thread &renderer::renderingThread() { return m_renderingThread; }
 
 void renderer::renderRow(int y) {
     for (int x = 0; x < m_imageToDraw->width(); ++x) {
+        auto u = (x + randomDouble()) / (m_imageToDraw->width() - 1);
+        auto v = ((m_imageToDraw->height() - y) + randomDouble()) / (m_imageToDraw->height() - 1);
+
+        ray r = m_cam->getRay(u, v);
+        color c = rayColor(r, MAXIMUM_RAY_DEPTH);
+
+        color result = m_imageToDraw->at(x, y) * (double(m_samplesTaken) / (m_samplesTaken + 1)) +
+                       (1.0 / (m_samplesTaken + 1)) * c;
+
+        m_imageToDraw->at(x, y) = clamp(result, 0, 1);
+    }
+}
+
+void renderer::renderCoordinates(std::vector<std::pair<size_t, size_t>> coords) {
+    for (auto [x, y] : coords) {
         auto u = (x + randomDouble()) / (m_imageToDraw->width() - 1);
         auto v = ((m_imageToDraw->height() - y) + randomDouble()) / (m_imageToDraw->height() - 1);
 
@@ -86,8 +106,17 @@ void renderer::render() {
         // Whoever reads this, I'm sorry it's done this way. Nothing else
         // worked.
         std::vector<std::thread> renderingThreads;
-        for (int y = 0; y < m_imageToDraw->height(); ++y) {
-            renderingThreads.push_back(std::thread([this, y] { renderRow(y); }));
+        if (m_denoiseCoordinates.empty()) {
+            for (int y = 0; y < m_imageToDraw->height(); ++y) {
+                renderingThreads.push_back(std::thread([this, y] { renderRow(y); }));
+            }
+        } else {
+            for (size_t i = 0; i < m_denoiseCoordinates.size(); i += 100) {
+                size_t last = std::min(i + 100, m_denoiseCoordinates.size());
+                std::vector<std::pair<size_t, size_t>> cords(m_denoiseCoordinates.begin() + i,
+                                                             m_denoiseCoordinates.begin() + last);
+                renderingThreads.push_back(std::thread([this, cords] { renderCoordinates(cords); }));
+            }
         }
 
         for (auto &t : renderingThreads) {

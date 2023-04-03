@@ -181,6 +181,66 @@ void image::writeColor(std::ostream &out, color pixelColor) const {
 color &image::operator()(int x, int y) { return m_data[y][x]; }
 color &image::at(int x, int y) { return m_data[y][x]; }
 
+std::shared_ptr<image> image::getBlurred(int size) const {
+    if (size < 3)
+        throw std::invalid_argument("Image blur size needs to be at least 3.");
+
+    if (size % 2 == 0)
+        throw std::invalid_argument("Image blur size needs to be odd.");
+
+    auto blurred = std::make_shared<image>(m_width, m_height);
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            int lowerBoundY = std::max(0, y - size / 2);
+            int lowerBoundX = std::max(0, x - size / 2);
+            int upperBoundY = std::min(m_height, y + size / 2 + 1);
+            int upperBoundX = std::min(m_width, x + size / 2 + 1);
+
+            color average(0, 0, 0);
+            int n = 0;
+
+            for (int cy = lowerBoundY; cy < upperBoundY; ++cy) {
+                for (int cx = lowerBoundX; cx < upperBoundX; ++cx) {
+                    average += m_data[cy][cx];
+                    n++;
+                }
+            }
+
+            average /= n * 255;
+            blurred->at(x, y) = average;
+        }
+    }
+
+    return blurred;
+}
+
+std::shared_ptr<image> image::getNoiseMap() const {
+    auto blurred = getBlurred(3);
+    auto noise = std::make_shared<image>(m_width, m_height);
+
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            double diff = (blurred->at(x, y) - m_data[y][x]).length();
+            noise->at(x, y) = color(diff, diff, diff);
+        }
+    }
+
+    return noise;
+}
+
+std::vector<std::pair<size_t, size_t>> image::getPixelsAbove(double threshold) const {
+    std::vector<std::pair<size_t, size_t>> coords;
+
+    for (int y = 0; y < m_height; ++y) {
+        for (int x = 0; x < m_width; ++x) {
+            if (m_data[y][x].length() > threshold)
+                coords.push_back({x, y});
+        }
+    }
+
+    return coords;
+}
+
 void image::saveToPng(std::string path) {
     char *data = new char[3 * width() * height()];
 

@@ -25,6 +25,8 @@ class renderer {
     bool renderedImage() const;
 
     std::shared_ptr<image> setupImageToExport(exportSettings settings);
+    void setDenoiseCoordinates(std::vector<std::pair<size_t, size_t>> coords);
+    bool isDenoising() const;
     bool isExporting() const;
     std::shared_ptr<image> stopExporting();
 
@@ -36,6 +38,7 @@ class renderer {
   private:
     void render();
     void renderRow(int y);
+    void renderCoordinates(std::vector<std::pair<size_t, size_t>> coords);
     void updateScaledImage();
 
     void clearScene();
@@ -56,6 +59,7 @@ class renderer {
     std::thread m_renderingThread;
 
     bool m_isExporting;
+    std::vector<std::pair<size_t, size_t>> m_denoiseCoordinates;
 };
 
 } // namespace shkyera
