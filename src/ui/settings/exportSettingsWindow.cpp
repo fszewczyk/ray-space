@@ -83,7 +83,7 @@ exportSettings exportSettingsWindow::render(RENDER_MODE &mode) {
     settings.width = std::max(128, setWidth);
     settings.height = std::max(128, setHeight);
 
-    ImGui::SliderInt("Rays Per Pixel", &settings.raysPerPixel, 10, 200);
+    ImGui::SliderInt("Rays Per Pixel", &settings.raysPerPixel, 100, 2000);
     if (ImGui::IsItemHovered() && !ImGui::IsItemActive()) {
         ImGui::BeginTooltip();
         ImGui::TextUnformatted("Rays shot out for every pixel.\nThe higher, the "

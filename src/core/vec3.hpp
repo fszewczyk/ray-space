@@ -19,6 +19,8 @@ class vec3 {
     double y() const;
     double z() const;
 
+    vec3 absolute();
+
     vec3 operator-() const;
     double operator[](int i) const;
     double &operator[](int i);

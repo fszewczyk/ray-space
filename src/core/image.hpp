@@ -60,6 +60,11 @@ class image {
     color &operator()(int x, int y);
     color &at(int x, int y);
 
+    std::shared_ptr<image> getBlurred(int size) const;
+    std::shared_ptr<image> getNoiseMap() const;
+
+    std::vector<std::pair<size_t, size_t>> getPixelsAbove(double threshold) const;
+
     void saveToPng(std::string path);
     void saveToJpg(std::string path);
 
