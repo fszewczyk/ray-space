@@ -382,7 +382,7 @@ void ui::exportPopup(exportSettings settings) {
             }
         }
 
-        if (!m_renderer->isDenoising() && !m_exported && m_renderer->getTakenSamples() >= 20) {
+        if (!m_renderer->isDenoising() && !m_exported && m_renderer->getTakenSamples() >= 40) {
             auto noise = m_renderWindow.getImage()->getNoiseMap();
             auto coordsToDenoise = noise->getPixelsAbove(0.1);
             m_renderer->setDenoiseCoordinates(coordsToDenoise);

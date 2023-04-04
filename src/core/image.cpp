@@ -215,7 +215,7 @@ std::shared_ptr<image> image::getBlurred(int size) const {
 }
 
 std::shared_ptr<image> image::getNoiseMap() const {
-    auto blurred = getBlurred(3);
+    auto blurred = getBlurred(5);
     auto noise = std::make_shared<image>(m_width, m_height);
 
     for (int y = 0; y < m_height; ++y) {
