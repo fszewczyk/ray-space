@@ -2,12 +2,12 @@
 
 <div align="center">
  
-<h1>SHKYERA Engine</h1>
+<h1>Ray Space</h1>
 
 <div>
   
-![LinuxBuild](https://github.com/fszewczyk/shkyera-engine/actions/workflows/linux.yml/badge.svg) 
-![MacOSBuild](https://github.com/fszewczyk/shkyera-engine/actions/workflows/macos.yml/badge.svg) 
+![LinuxBuild](https://github.com/fszewczyk/ray-space/actions/workflows/linux.yml/badge.svg) 
+![MacOSBuild](https://github.com/fszewczyk/ray-space/actions/workflows/macos.yml/badge.svg) 
 [![LICENSE](https://img.shields.io/badge/license-Beerware-yellow)](LICENSE) 
   
 </div>
